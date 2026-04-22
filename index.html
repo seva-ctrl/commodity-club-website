@@ -1,0 +1,1678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Commodity Trading &amp; Shipping Club · Indiana University</title>
+<meta name="viewport" content="width=1280">
+<style>
+/* =========================================================
+   Commodity Trading & Shipping Club — Design System
+   Typography + Color CSS Variables
+   Inspired by Ferrari's editorial chiaroscuro, adapted for
+   a maritime commodities club aesthetic.
+   ========================================================= */
+
+/* ---------- Fonts ----------
+   FerrariSans is proprietary and cannot be redistributed.
+   Substitution: Inter (for UI/body) and Söhne-like stack
+   via Inter for headings. For the editorial uppercase "Body-Font"
+   role we use a wide-tracked Inter at lighter weights.
+   Flagged in README — user should provide licensed files if
+   they wish to use their own proprietary fonts.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+
+:root {
+  /* ============ COLORS ============ */
+
+  /* --- Brand core (derived from logo) --- */
+  --c-navy-ink:       #132531;  /* Primary brand navy — logo hull color */
+  --c-navy-deep:      #0B1A24;  /* Deeper navy for hover/pressed states */
+  --c-navy-abyssal:   #060F16;  /* Near-black navy — dark cinematic surface */
+  --c-navy-tide:      #1E3A4C;  /* Lifted navy for secondary surfaces */
+
+  /* --- Accent / CTA (maritime signal red — lifeboat/flare) --- */
+  --c-signal:         #C8321E;  /* Primary CTA — used sparingly */
+  --c-signal-deep:    #A02614;  /* Hover/pressed */
+  --c-signal-darker:  #7E1C0D;  /* Active */
+
+  /* --- Heritage accent (brass/gold — nautical instruments) --- */
+  --c-brass:          #C49A3E;  /* Heritage accent — trophies, markers */
+  --c-brass-deep:     #8E6E26;
+
+  /* --- Surfaces --- */
+  --c-ivory:          #F8F7F3;  /* Primary light surface — matches logo bg */
+  --c-ivory-warm:     #F1EEE6;  /* Warmer ivory for alternate panels */
+  --c-paper:          #FFFFFF;  /* Pure white for editorial content */
+  --c-surface-dark:   #181818;  /* Near-black primary text / dark secondary surface */
+  --c-void:           #000000;  /* Absolute black for hero/cinematic */
+
+  /* --- Neutrals (warm-shifted for maritime feel) --- */
+  --c-ink-900:        #121212;
+  --c-ink-800:        #1C1C1C;
+  --c-ink-700:        #2E2E2E;
+  --c-ink-600:        #4A4A4A;
+  --c-ink-500:        #6B6B6B;  /* body text secondary */
+  --c-ink-400:        #8F8F8F;  /* tertiary text */
+  --c-ink-300:        #BFBFBF;  /* disabled, placeholders */
+  --c-ink-200:        #D8D4CC;  /* warm borders on ivory */
+  --c-ink-100:        #ECE8DF;  /* subtle dividers on ivory */
+
+  /* --- Semantic (accessible) --- */
+  --c-success:        #2E6B3E;  /* Confirmed trade — muted seafaring green */
+  --c-warning:        #D89A2B;  /* Advisory — brass/amber family */
+  --c-danger:         #C8321E;  /* Same as signal — single red */
+  --c-info:           #3A6B8C;  /* Chart-ink blue */
+
+  /* --- Overlays --- */
+  --c-overlay-dark:   hsla(205, 44%, 6%, 0.82);
+  --c-overlay-light:  hsla(40,  20%, 96%, 0.88);
+
+  /* ============ TYPOGRAPHY ============ */
+  --ff-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-display: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-editorial: "Fraunces", "Times New Roman", Georgia, serif; /* optional editorial headline voice */
+  --ff-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* Sizes — maps Ferrari spec */
+  --fs-display:   2.75rem;   /* 44px — larger hero moments */
+  --fs-title:     1.625rem;  /* 26px — section titles */
+  --fs-card:      1.5rem;    /* 24px — card headings */
+  --fs-sub:       1.125rem;  /* 18px — subheadings */
+  --fs-ui:        1rem;      /* 16px */
+  --fs-button:    1rem;      /* 16px — with wide tracking */
+  --fs-button-sm: 0.9rem;    /* 14.4px */
+  --fs-nav:       0.8125rem; /* 13px */
+  --fs-caption:   0.8125rem; /* 13px */
+  --fs-micro-btn: 0.75rem;   /* 12px */
+  --fs-label:     0.75rem;   /* 12px — uppercase */
+  --fs-micro:     0.6875rem; /* 11px */
+
+  /* Line heights */
+  --lh-tight:   1.00;
+  --lh-snug:    1.20;
+  --lh-normal:  1.30;
+  --lh-base:    1.40;
+  --lh-relaxed: 1.50;
+
+  /* Tracking */
+  --tr-tight:  normal;
+  --tr-nav:    0.13px;
+  --tr-ui:     0.08px;
+  --tr-caption:0.195px;
+  --tr-label:  1px;         /* uppercase labels */
+  --tr-button: 1.28px;      /* button tracking */
+  --tr-micro:  0.96px;
+
+  /* ============ SPACING (8px base) ============ */
+  --sp-1:  1px;
+  --sp-2:  2px;
+  --sp-4:  4px;
+  --sp-6:  6px;
+  --sp-8:  8px;
+  --sp-10: 10px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-40: 40px;
+  --sp-56: 56px;
+  --sp-80: 80px;
+  --sp-120:120px;
+
+  /* ============ RADII ============ */
+  --r-hair: 1px;
+  --r-xs:   2px;    /* default — razor precision */
+  --r-sm:   4px;
+  --r-md:   8px;    /* modals */
+  --r-pill: 999px;
+  --r-full: 50%;
+
+  /* ============ ELEVATION ============ */
+  --shadow-0: none;
+  --shadow-1: rgba(19, 37, 49, 0.12) 1px 1px 1px 0px;
+  --shadow-2: rgba(19, 37, 49, 0.18) 0 2px 6px 0px;
+  --shadow-card: rgba(19, 37, 49, 0.08) 0 1px 2px 0, rgba(19, 37, 49, 0.06) 0 4px 12px 0;
+
+  /* ============ BORDERS ============ */
+  --bd-hair:  1px solid var(--c-ink-200);
+  --bd-rule:  1px solid var(--c-ink-300);
+  --bd-ink:   1px solid var(--c-navy-ink);
+  --bd-white: 1px solid var(--c-paper);
+
+  /* ============ MOTION ============ */
+  --ease-std:  cubic-bezier(.2, .0, .0, 1);
+  --ease-out:  cubic-bezier(.16, 1, .3, 1);
+  --dur-fast:  120ms;
+  --dur-base:  220ms;
+  --dur-slow:  420ms;
+}
+
+/* =========================================================
+   SEMANTIC TYPE ROLES
+   ========================================================= */
+
+html { font-family: var(--ff-sans); color: var(--c-surface-dark); background: var(--c-ivory); }
+body { margin: 0; }
+
+h1, .h1 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: normal;
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-card);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-sub);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-base);
+  letter-spacing: var(--tr-ui);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--c-surface-dark);
+  margin: 0;
+}
+
+.body-bold { font-weight: var(--fw-bold); line-height: var(--lh-normal); }
+
+.caption {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--tr-caption);
+  color: var(--c-ink-500);
+}
+
+/* Uppercase editorial label — the "Body-Font" role */
+.label, .label-upper {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-regular);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.label-micro {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-micro);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.nav-link {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-nav);
+  font-weight: var(--fw-semi);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-nav);
+  color: var(--c-paper);
+  text-decoration: none;
+}
+.nav-link:hover { color: var(--c-brass); }
+
+/* =========================================================
+   CORE COMPONENT PRIMITIVES
+   ========================================================= */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-8);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-button);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--tr-button);
+  padding: var(--sp-12) var(--sp-20);
+  border-radius: var(--r-xs);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-std),
+              color var(--dur-base) var(--ease-std),
+              border-color var(--dur-base) var(--ease-std);
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--c-paper);
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--primary:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--signal {
+  background: var(--c-signal);
+  color: var(--c-paper);
+  border-color: var(--c-signal);
+}
+.btn--signal:hover { background: var(--c-signal-deep); border-color: var(--c-signal-deep); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--c-paper);
+  border-color: var(--c-paper);
+}
+.btn--ghost:hover { background: var(--c-paper); color: var(--c-navy-ink); }
+
+.btn--ghost-dark {
+  background: transparent;
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--ghost-dark:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--sm { font-size: var(--fs-button-sm); font-weight: var(--fw-bold); padding: var(--sp-8) var(--sp-16); letter-spacing: normal; }
+.btn--micro { font-size: var(--fs-micro-btn); font-weight: var(--fw-bold); padding: var(--sp-6) var(--sp-12); letter-spacing: var(--tr-micro); }
+
+/* Text link */
+.link {
+  color: var(--c-navy-ink);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: color var(--dur-base) var(--ease-std);
+}
+.link:hover { color: var(--c-signal); }
+
+/* Inputs */
+.input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--c-ink-300);
+  border-radius: var(--r-xs);
+  padding: var(--sp-12) var(--sp-16);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  color: var(--c-surface-dark);
+  transition: border-color var(--dur-base) var(--ease-std);
+}
+.input::placeholder { color: var(--c-ink-400); }
+.input:focus { outline: none; border-color: var(--c-navy-ink); }
+
+/* Card */
+.card {
+  background: var(--c-paper);
+  border: none;
+  border-radius: 0;
+}
+
+/* Section rhythm */
+.section--dark  { background: var(--c-void); color: var(--c-paper); }
+.section--navy  { background: var(--c-navy-ink); color: var(--c-paper); }
+.section--ivory { background: var(--c-ivory); color: var(--c-surface-dark); }
+.section--paper { background: var(--c-paper); color: var(--c-surface-dark); }
+
+/* Divider rule */
+.rule { height: 1px; background: var(--c-ink-200); border: 0; }
+.rule--dark { background: rgba(255,255,255,0.16); }
+
+</style>
+<style>
+  html, body { margin: 0; background: #F8F7F3; }
+  * { box-sizing: border-box; }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] > summary > span:last-child { transform: rotate(45deg); }
+  details > summary > span:last-child { transition: transform 220ms; display: inline-block; }
+  select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #132531 50%), linear-gradient(135deg, #132531 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+  a.link { color: #132531; text-decoration: none; border-bottom: 1px solid currentColor; transition: color 220ms; }
+  a.link:hover { color: #C8321E; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+
+
+
+// ======== components/Primitives.jsx ========
+/* global React */
+const { useState: usePrimState } = React;
+
+function Button({ variant = 'primary', size, children, onClick, as = 'button', href, icon, style, ...rest }) {
+  const cls = ['btn', `btn--${variant}`, size ? `btn--${size}` : ''].join(' ').trim();
+  if (as === 'a') return <a className={cls} href={href} onClick={onClick} style={style} {...rest}>{icon}{children}</a>;
+  return <button className={cls} onClick={onClick} style={style} {...rest}>{icon}{children}</button>;
+}
+
+function Label({ children, color, style }) {
+  return <div className="label-upper" style={{ color, ...style }}>{children}</div>;
+}
+
+function BrassRule({ style, width = 40 }) {
+  return <div style={{ width, height: 2, background: '#C49A3E', ...style }} />;
+}
+
+function HairRule({ tone = 'light', style }) {
+  return <div style={{ height: 1, background: tone === 'dark' ? 'rgba(255,255,255,0.14)' : '#D8D4CC', border: 0, ...style }} />;
+}
+
+function Chip({ children, variant = 'outline', style }) {
+  const base = {
+    fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase',
+    padding: '5px 10px', borderRadius: 2, fontWeight: 400, display: 'inline-block'
+  };
+  const styles = {
+    solid: { background: '#132531', color: '#fff' },
+    outline: { background: 'transparent', color: '#132531', border: '1px solid #132531' },
+    brass: { background: '#C49A3E', color: '#132531' },
+    good: { background: '#2E6B3E', color: '#fff' },
+    warn: { background: '#D89A2B', color: '#132531' },
+    urgent: { background: '#C8321E', color: '#fff' },
+    muted: { background: '#ECE8DF', color: '#6B6B6B' },
+    darkOutline: { background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.35)' }
+  };
+  return <span style={{ ...base, ...styles[variant], ...style }}>{children}</span>;
+}
+
+// Editorial image with grayscale filter for B&W tone required by design system
+function EditorialImage({ src, alt = '', aspect = '16 / 9', style, overlay = false, grayscale = true }) {
+  return (
+    <div style={{ position: 'relative', aspectRatio: aspect, overflow: 'hidden', background: '#132531', ...style }}>
+      <img src={src} alt={alt} style={{
+        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+        filter: grayscale ? 'grayscale(100%) contrast(1.05)' : 'none'
+      }} />
+      {overlay && <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.25) 0%, rgba(6,15,22,0.75) 100%)' }} />}
+    </div>);
+
+}
+
+// Navy/void placeholder for when imagery isn't available
+function ImagePlaceholder({ label, aspect = '16 / 9', tone = 'dark', style, children }) {
+  const bg = tone === 'dark' ?
+  'linear-gradient(135deg, #060F16 0%, #132531 60%, #1E3A4C 100%)' :
+  'linear-gradient(135deg, #1E3A4C 0%, #2E2E2E 100%)';
+  return (
+    <div style={{ position: 'relative', aspectRatio: aspect, background: bg, width: '100%', overflow: 'hidden', ...style }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.04), transparent 60%)' }} />
+      <div style={{ position: 'absolute', left: 16, bottom: 14, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#BFBFBF' }}>
+        IMAGE — {label}
+      </div>
+      {children}
+    </div>);
+
+}
+
+function ArrowIcon({ size = 12, style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 12 12" fill="none" style={{ display: 'inline-block', ...style }}>
+      <path d="M2 10L10 2M10 2H3.5M10 2V8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" />
+    </svg>);
+
+}
+
+Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon });
+
+
+// ======== components/Chrome.jsx ========
+/* global React, Button, Label, HairRule, ArrowIcon */
+
+function Header({ current = 'about', onNav, tone = 'dark' }) {
+  const dark = tone === 'dark';
+  const bg = dark ? 'transparent' : '#F8F7F3';
+  const fg = dark ? '#fff' : '#132531';
+  const sub = dark ? 'rgba(255,255,255,0.65)' : '#6B6B6B';
+  const rule = dark ? 'rgba(255,255,255,0.12)' : '#D8D4CC';
+
+  const links = [
+  { id: 'about', label: 'About' },
+  { id: 'commodities', label: 'Commodities' },
+  { id: 'newsletter', label: 'Newsletter' },
+  { id: 'membership', label: 'Membership' }];
+
+
+  return (
+    <header style={{
+      background: bg, color: fg, padding: '22px 40px',
+      borderBottom: `1px solid ${rule}`,
+      position: dark ? 'absolute' : 'relative',
+      top: 0, left: 0, right: 0, zIndex: 20
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, maxWidth: 1360, margin: '0 auto' }}>
+        <a href="#about" onClick={(e) => {e.preventDefault();onNav?.('about');}} style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none', color: fg, cursor: 'pointer' }}>
+          <img
+            src={dark ? 'data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E' : 'data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23132531%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E'}
+            alt="CTSC" style={{ height: 52, width: 'auto' }} />
+          
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+            <span style={{ fontWeight: 700, fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+              Commodity Trading
+            </span>
+            <span style={{ fontWeight: 400, fontSize: 10.5, letterSpacing: '0.22em', textTransform: 'uppercase', color: sub, marginTop: 3 }}>
+              &amp; Shipping Club
+            </span>
+            <span style={{ fontWeight: 400, fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: sub, marginTop: 3 }}>
+              Indiana University
+            </span>
+          </div>
+        </a>
+        <nav style={{ display: 'flex', gap: 36 }}>
+          {links.map((l) =>
+          <a key={l.id}
+          onClick={(e) => {e.preventDefault();onNav?.(l.id);}}
+          href={`#${l.id}`}
+          style={{
+            fontSize: 13, fontWeight: 500, letterSpacing: '0.04em',
+            color: current === l.id ? dark ? '#C49A3E' : '#C8321E' : fg,
+            textDecoration: 'none', cursor: 'pointer',
+            paddingBottom: 4,
+            borderBottom: current === l.id ? `1px solid ${dark ? '#C49A3E' : '#C8321E'}` : '1px solid transparent',
+            transition: 'color 220ms, border-color 220ms'
+          }}>
+              {l.label}
+            </a>
+          )}
+        </nav>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
+            BeInvolved <ArrowIcon />
+          </Button>
+        </div>
+      </div>
+    </header>);
+
+}
+
+function Footer({ onNav }) {
+  return (
+    <footer style={{ background: '#060F16', color: '#BFBFBF', padding: '64px 40px 28px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48 }}>
+          <div>
+            <img src="data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" alt="CTSC" style={{ height: 64 }} />
+            <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginTop: 18, color: '#8F8F8F', lineHeight: 1.9 }}>
+              COMMODITY TRADING<br />&amp; SHIPPING CLUB<br />INDIANA UNIVERSITY · EST. 2019
+            </div>
+            <div style={{ fontSize: 13, color: '#BFBFBF', lineHeight: 1.7, marginTop: 22, maxWidth: 300 }}>
+              Kelley School of Business<br />
+              1309 E. Tenth Street<br />
+              Bloomington, IN 47405
+            </div>
+          </div>
+          {[
+          { h: 'THE CLUB', l: [['About', 'about'], ['Leadership', 'about'], ['Events', 'about']] },
+          { h: 'MARKETS', l: [['Crude', 'commodities'], ['Refined Products', 'commodities'], ['Power / Nat Gas', 'commodities'], ['Metals', 'commodities'], ['Agriculture', 'commodities']] },
+          { h: 'MEMBERS', l: [['Newsletter', 'newsletter'], ['Membership', 'membership'], ['Contact', 'membership']] }].
+          map((col) =>
+          <div key={col.h}>
+              <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#fff', fontWeight: 500 }}>{col.h}</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '20px 0 0', display: 'flex', flexDirection: 'column', gap: 11 }}>
+                {col.l.map(([label, target]) =>
+              <li key={label}>
+                    <a href={`#${target}`} onClick={(e) => {e.preventDefault();onNav?.(target);}}
+                style={{ color: '#BFBFBF', fontSize: 13, textDecoration: 'none', cursor: 'pointer' }}>
+                      {label}
+                    </a>
+                  </li>
+              )}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '48px 0 22px' }} />
+        <div style={{ marginBottom: 16, fontSize: 12, color: '#8F8F8F' }}>
+          <a href="mailto:commoditytradingshippingclub@gmail.com" style={{ color: '#8F8F8F', textDecoration: 'none' }}>commoditytradingshippingclub@gmail.com</a>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+          <span>2025–2026 COMMODITY TRADING &amp; SHIPPING CLUB · INDIANA UNIVERSITY</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
+            <button onClick={() => { localStorage.removeItem('ctsc-unlocked'); window.location.reload(); }}
+              style={{ background: 'transparent', border: '1px solid #4A4A4A', color: '#6B6B6B', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', padding: '6px 12px', cursor: 'pointer', borderRadius: 2, transition: 'all 220ms' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8321E'; e.currentTarget.style.color = '#C8321E'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#4A4A4A'; e.currentTarget.style.color = '#6B6B6B'; }}>
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>);
+
+}
+
+Object.assign(window, { Header, Footer });
+
+
+// ======== pages/AboutPage.jsx ========
+/* global React, Button, Label, BrassRule, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useAboutState } = React;
+
+function AboutPage({ onNav }) {
+  return (
+    <>
+      {/* HERO — full-bleed editorial photograph, inspired by Novarc structure */}
+      <section style={{ position: 'relative', minHeight: '88vh', background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="about" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img
+            src="Oil_cargo_about_cover.jpeg"
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(15%) brightness(0.88) contrast(1.05)' }}
+            onError={(e) => {e.target.src = 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=2000&q=80';}} />
+          
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.55) 0%, rgba(6,15,22,0.35) 40%, rgba(6,15,22,0.85) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: '180px 40px 100px' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>INDIANA UNIVERSITY · KELLEY SCHOOL OF BUSINESS · EST. 2025</Label>
+          <h1 style={{ fontSize: 72, fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, textWrap: 'balance', color: '#F8F7F3' }}>
+            An association of students<br />in commodity trading<br />&amp; shipping.
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University offering students insight into the physical commodity market from crude oil and refined products to natural gas, and freight.
+
+          </p>
+          <div style={{ display: 'flex', gap: 14, marginTop: 36 }}>
+            <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
+            <Button variant="ghost" onClick={() => onNav?.('commodities')}>Product Groups</Button>
+          </div>
+        </div>
+
+        {/* Floating stat card bottom right, Novarc style */}
+        <div style={{
+          position: 'absolute', right: 40, bottom: 56,
+          background: 'rgba(19, 37, 49, 0.88)', backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          padding: '22px 28px', color: '#fff', maxWidth: 240
+        }}>
+          <div style={{ fontSize: 44, fontWeight: 400, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            1<sup style={{ fontSize: 18, color: '#C8321E' }}>yr</sup>
+          </div>
+          <div style={{ fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C8321E', marginTop: 10 }}>
+            Operating at Kelley
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginTop: 5 }}>
+            Founded in 2025.
+          </div>
+        </div>
+      </section>
+
+      {/* EDITORIAL MISSION — signal red panel */}
+      <section style={{ background: '#C8321E', padding: '64px 40px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 42, fontWeight: 400, color: '#F8F7F3', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
+            <span style={{ fontWeight: 700 }}>Our mission is simple:</span> To develop the next generation of IU energy trading professionals.
+          </h2>
+        </div>
+      </section>
+
+      {/* PRINCIPLES — 3 pillars on navy */}
+      <section style={{ background: '#132531', color: '#fff', padding: '48px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', marginBottom: 32 }}>What we do</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.1)' }}>
+            {[
+            { n: '01', t: 'Weekly Discussions', d: 'Members meet weekly to discuss current events across energy, commodities, and markets. Guest speakers from industry are invited throughout the semester to share their experience firsthand.' },
+            { n: '02', t: 'Trading Simulations & Games', d: 'Members compete in commodity and energy trading simulations, applying market knowledge to live case scenarios. Past competitions have included intercollegiate trading challenges and internal desk exercises.' },
+            { n: '03', t: 'Network & Resources', d: 'Members gain access to a growing network of Kelley alumni placed across the energy industry in Houston and beyond. The club provides resources, introductions, and career guidance to help members break into the field.' }].
+            map((p) =>
+            <div key={p.n} style={{ background: '#132531', padding: '36px 36px 32px' }}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: '#C49A3E', letterSpacing: 1, marginBottom: 20 }}>— {p.n}</div>
+                <h3 style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, color: '#fff' }}>{p.t}</h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 16 }}>{p.d}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT WE DO — paper panel with dark accent card */}
+      <section style={{ background: '#F8F7F3', padding: '48px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
+            2026 Inaugural Houston Trip
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 24, marginTop: 32, alignItems: 'stretch' }}>
+            <div style={{ overflow: 'hidden', background: '#132531', display: 'flex' }}>
+              <img src="houston_trip.JPG" alt="2026 Inaugural Houston Trip"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+
+            <div style={{ background: '#132531', color: '#fff', padding: '40px 40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <Label style={{ color: '#C49A3E', marginBottom: 22 }}>FIRMS VISITED</Label>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {['Phillips66', 'BP', 'Mercuria', 'Gunvor', 'TotalEnergies'].
+                  map((firm, i) =>
+                  <li key={firm} style={{ padding: '18px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                        <span style={{ fontSize: 16, fontWeight: 500 }}>{firm}</span>
+                        <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>— 0{i + 1}</span>
+                      </div>
+                    </li>
+                  )}
+                </ul>
+              </div>
+              <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E', marginTop: 30, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                Houston, TX · Spring 2026
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS BAND — editorial metrics like Novarc */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <h2 style={{ fontSize: 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+              Fastest growing career path at Kelley<br />Backed by a strong alumni network
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
+            {[
+            { n: '50+', l: 'Active members', d: 'Across all undergraduate grade levels.' },
+            { n: '4', l: 'Placements since 2025', d: 'Members placing in oil majors, midstream energy, and trading houses in Houston.' },
+            { n: '10+', l: 'Firms with IU alumni', d: 'Kelley has many alumni in the Houston area and the network is constantly growing.' }].
+            map((s, i) =>
+            <div key={s.l} style={{ padding: '44px 36px', borderRight: i < 2 ? '1px solid #D8D4CC' : 'none' }}>
+                <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}>{s.n}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* LEADERSHIP TABLE */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Leadership Team
+              </h2>
+            </div>
+            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Founded · 2025
+            </div>
+          </div>
+          <div style={{ borderTop: '1px solid #132531' }}>
+            {[
+            ['Co-Founder', 'Marco Chao', 'Finance · Class of 2026', 'Bearing Commodities LLC'],
+            ['Co-President', 'Evan Reitz', 'Finance · Class of 2027', 'Phillips 66'],
+            ['Co-President', 'Nick Scerbo', 'Finance · Class of 2028', 'Phillips 66'],
+            ['Internal Social', 'Landon Johnson', 'Finance · Class of 2028', ''],
+            ['External Social', 'Seva Ulyanov', 'Finance · Class of 2029', '']].
+            map(([role, name, detail, company], i) =>
+            <div key={role + name} style={{
+              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 1.2fr 40px',
+              padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center'
+            }}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
+                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
+                <div style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{name}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B' }}>{detail}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B' }}>{company}</div>
+                <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
+              </div>
+            )}
+          </div>
+          <p style={{ fontSize: 13, color: '#6B6B6B', marginTop: 28, lineHeight: 1.65 }}>
+            Have a question for the team? Reach out at{' '}
+            <a href="mailto:commoditytradingshippingclub@gmail.com" style={{ color: '#132531', textDecoration: 'none', borderBottom: '1px solid #132531' }}>
+              commoditytradingshippingclub@gmail.com
+            </a>
+          </p>
+        </div>
+      </section>
+
+      {/* FULL-BLEED CTA */}
+      <section style={{ position: 'relative', minHeight: 460, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img
+            src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=2000&q=80"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(55%) brightness(0.55)' }}
+            alt="" />
+          
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(6,15,22,0.85) 0%, rgba(6,15,22,0.35) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '120px 40px' }}>
+          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em', color: '#F8F7F3' }}>
+            Interested in the field?
+          </h2>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, maxWidth: 460, marginTop: 22 }}>
+            Fill out the application to get involved. For any questions, reach out to the leadership team and we'd love to hear from you.
+          </p>
+          <div style={{ marginTop: 32 }}>
+            <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { AboutPage });
+
+
+// ======== pages/CommoditiesPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useCommState } = React;
+
+const COMMODITIES = [
+{
+  cat: 'CRUDE & REFINED', sub: 'Crude oil &amp; refined products',
+  items: [
+  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '82.14', chg: '+0.42%', featured: true },
+  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '78.62', chg: '−0.18%' },
+  { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '2.412', chg: '−0.21%' },
+  { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '2.641', chg: '+0.31%' },
+  { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '2.580', chg: '+0.18%' }],
+  img: 'refinery.jpeg',
+  imgLabel: 'REFINERY AT DUSK',
+  description: 'Crude and refined products are the foundation of global energy markets. Brent crude — the world\'s most actively traded commodity — sets the international pricing benchmark. Members study the spread between crude grades, refinery crack spreads, and the economics of moving barrels from wellhead to end consumer.'
+},
+{
+  cat: 'NAT GAS & POWER', sub: 'Natural gas &amp; electricity',
+  items: [
+  { sym: 'HH', name: 'Henry Hub', unit: '$/MMBtu', price: '2.15', chg: '+1.64%', note: 'US Gulf Coast · prompt month' },
+  { sym: 'TTF', name: 'TTF', unit: '€/MWh', price: '28.40', chg: '−0.88%', note: 'Netherlands · European benchmark' },
+  { sym: 'JKM', name: 'JKM', unit: '$/MMBtu', price: '9.80', chg: '+0.52%', note: 'Platts · Asia LNG benchmark' },
+  { sym: 'ERC', name: 'ERCOT', unit: '$/MWh', price: '34.20', chg: '−1.10%', note: 'Texas real-time power' }],
+  noTable: true,
+  img: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1400&q=80',
+  imgLabel: 'GAS INFRASTRUCTURE',
+  description: 'Natural gas and power markets are shaped by pipeline infrastructure, LNG trade flows, and weather-driven demand. Members study the spread between US Henry Hub and international benchmarks like TTF and JKM, as well as the relationship between gas prices and electricity markets across regions.'
+},
+{
+  cat: 'METALS', sub: 'Base &amp; precious metals',
+  items: [
+  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '4.284', chg: '+0.72%', note: 'LME 3M · Grade A cathode' },
+  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '2,418', chg: '−0.34%', note: 'LME · P1020A' },
+  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '2,384.10', chg: '+0.12%', note: 'COMEX · 100 oz' },
+  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '108.40', chg: '−1.82%', note: 'Platts · 62% Fe CFR China' },
+  { sym: 'NI', name: 'Nickel', unit: '$/mt', price: '16,840', chg: '+0.55%', note: 'LME · Class 1' },
+  { sym: 'LI', name: 'Lithium', unit: '$/mt', price: '13,200', chg: '−0.92%', note: 'Fastmarkets · battery grade' }],
+  img: 'dump truck.jpeg',
+  imgLabel: 'MINING OPERATIONS',
+  description: 'Copper is the most actively traded base metal and a key barometer of global industrial health. Members track LME warehouse stocks, the Shanghai premium, and supply dynamics from major producing regions in Chile and the DRC alongside precious metals as macro hedges.'
+},
+{
+  cat: 'AGRICULTURE', sub: 'Grains, softs &amp; oilseeds',
+  items: [
+  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '438.25', chg: '−0.44%', note: 'CBOT · #2 Yellow', featured: true },
+  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,184.50', chg: '+0.32%', note: 'CBOT · #1 Yellow' },
+  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '572.00', chg: '+1.06%', note: 'CBOT · SRW' },
+  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '72.84', chg: '−0.08%', note: 'ICE · #2 grade' },
+  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '218.40', chg: '+2.14%', note: 'ICE · Arabica C' }],
+  img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80',
+  imgLabel: 'GRAIN TERMINAL',
+  description: 'Corn is the most heavily traded agricultural commodity globally, driving livestock feed, ethanol production, and export markets. Members study USDA crop reports, the basis between futures and physical grain, and the seasonal patterns that move prices from planting to harvest.'
+}];
+
+
+function PriceRow({ item }) {
+  const up = item.chg.startsWith('+');
+  return (
+    <tr style={{ borderBottom: '1px solid #ECE8DF', background: item.featured ? '#F8F7F3' : 'transparent' }}>
+      <td style={{ padding: '14px 0', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#C49A3E', letterSpacing: 1 }}>{item.sym}</td>
+      <td style={{ padding: '14px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontWeight: item.featured ? 700 : 500, fontSize: 15, color: '#132531' }}>{item.name}</span>
+          {item.featured && <span style={{ fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#C8321E', fontWeight: 500 }}>Most traded</span>}
+        </div>
+      </td>
+      <td style={{ padding: '14px 0', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{item.unit}</td>
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 15, color: '#132531', fontWeight: 500 }}>{item.price}</td>
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: up ? '#2E6B3E' : '#C8321E' }}>{item.chg}</td>
+    </tr>);
+}
+
+function GasHubDiagram() {
+  const hubs = [
+    { id: 'WAH', name: 'Waha', sub: 'Permian Basin', x: 62, y: 158 },
+    { id: 'HH',  name: 'Henry Hub', sub: 'US Gulf Coast', x: 118, y: 172, primary: true },
+    { id: 'CHI', name: 'Chicago CG', sub: 'Midwest US', x: 155, y: 122 },
+    { id: 'AGQ', name: 'Algonquin', sub: 'US Northeast', x: 192, y: 96 },
+    { id: 'NBP', name: 'NBP', sub: 'United Kingdom', x: 268, y: 72 },
+    { id: 'TTF', name: 'TTF', sub: 'Netherlands', x: 305, y: 84, primary: true },
+    { id: 'JKM', name: 'JKM', sub: 'Asia Pacific LNG', x: 432, y: 148, primary: true },
+  ];
+  const pipelines = [['WAH','HH'],['HH','CHI'],['CHI','AGQ'],['NBP','TTF']];
+  const lngRoutes  = [['AGQ','TTF'],['HH','JKM'],['TTF','JKM']];
+  const get = (id) => hubs.find(h => h.id === id);
+  return (
+    <div>
+      <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', marginBottom: 12 }}>Global Natural Gas Pricing Hubs</div>
+      <svg viewBox="0 0 500 240" style={{ width: '100%', height: 'auto', display: 'block' }}>
+        <rect width="500" height="240" fill="#F8F7F3" rx="2" />
+        {pipelines.map(([a,b]) => { const ha=get(a),hb=get(b); return <line key={a+b} x1={ha.x} y1={ha.y} x2={hb.x} y2={hb.y} stroke="#D8D4CC" strokeWidth="1.5" />; })}
+        {lngRoutes.map(([a,b])  => { const ha=get(a),hb=get(b); return <line key={a+b+'l'} x1={ha.x} y1={ha.y} x2={hb.x} y2={hb.y} stroke="#C49A3E" strokeWidth="1" strokeDasharray="5 3" opacity="0.55" />; })}
+        {hubs.map(h => (
+          <g key={h.id}>
+            {h.primary && <circle cx={h.x} cy={h.y} r="10" fill="#C49A3E" opacity="0.15" />}
+            <circle cx={h.x} cy={h.y} r={h.primary ? 5 : 3.5} fill={h.primary ? '#C49A3E' : '#132531'} />
+            <text x={h.x+10} y={h.y-5} fill="#132531" fontSize="8.5" fontFamily="Inter,sans-serif" fontWeight="600" letterSpacing="0.3">{h.name}</text>
+            <text x={h.x+10} y={h.y+7}  fill="#8F8F8F"  fontSize="7.5" fontFamily="Inter,sans-serif">{h.sub}</text>
+          </g>
+        ))}
+        <line x1="16" y1="218" x2="36" y2="218" stroke="#D8D4CC" strokeWidth="1.5" />
+        <text x="40" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">Pipeline</text>
+        <line x1="90" y1="218" x2="110" y2="218" stroke="#C49A3E" strokeWidth="1" strokeDasharray="5 3" opacity="0.55" />
+        <text x="114" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">LNG route</text>
+        <circle cx="172" cy="218" r="4" fill="#C49A3E" />
+        <text x="180" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">Primary benchmark</text>
+      </svg>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginTop: 14 }}>
+        {[
+          { hub: 'Henry Hub', region: 'US Gulf Coast', price: '$2.15 / MMBtu', up: true },
+          { hub: 'TTF',        region: 'Netherlands',   price: '€28.40 / MWh',  up: false },
+          { hub: 'JKM',        region: 'Asia Pacific',  price: '$9.80 / MMBtu', up: true },
+          { hub: 'ERCOT',      region: 'Texas Power',   price: '$34.20 / MWh',  up: false },
+        ].map(h => (
+          <div key={h.hub} style={{ padding: '10px 12px', background: '#F8F7F3', borderLeft: '2px solid #C49A3E' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#132531' }}>{h.hub}</div>
+            <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>{h.region}</div>
+            <div style={{ fontSize: 13, fontFamily: 'ui-monospace,Menlo,monospace', color: h.up ? '#2E6B3E' : '#C8321E', marginTop: 4 }}>{h.price}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CommoditiesPage({ onNav }) {
+  const [active, setActive] = useCommState('CRUDE & REFINED');
+  const cat = COMMODITIES.find((c) => c.cat === active) || COMMODITIES[0];
+
+  return (
+    <>
+      {/* HERO — darker, inset, with market ticker feel */}
+      <section style={{ position: 'relative', minHeight: 560, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="commodities" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img src="Trading_floor.jpeg"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(20%) brightness(0.55) saturate(1)' }} alt="" />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.65) 0%, rgba(6,15,22,0.55) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 80px' }}>
+          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.88)' }}>
+            Product Groups
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.7)', marginTop: 24, maxWidth: 500 }}>
+            The club covers a range of commodity markets throughout the curriculum, with a heavier focus on crude oil and refined products. Our alumni, however, are active across all of them.
+          </p>
+        </div>
+      </section>
+
+      {/* TICKER STRIP */}
+      <section style={{ background: '#181818', color: '#fff', padding: '18px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap', animation: 'ticker 60s linear infinite' }}>
+          {[...COMMODITIES.flatMap((c) => c.items), ...COMMODITIES.flatMap((c) => c.items)].map((it, i) => {
+            const up = it.chg.startsWith('+');
+            return (
+              <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', color: '#C49A3E', letterSpacing: 1 }}>{it.sym}</span>
+                <span style={{ color: '#BFBFBF' }}>{it.name}</span>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace' }}>{it.price}</span>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', color: up ? '#6ED08B' : '#E85E4A' }}>{it.chg}</span>
+              </div>);
+
+          })}
+        </div>
+        <style>{`@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+      </section>
+
+      {/* DESK SELECTOR + DETAIL */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Select a product.
+              </h2>
+            </div>
+            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Prices · indicative · refreshed weekly
+            </div>
+          </div>
+
+          {/* tab bar */}
+          <div style={{ display: 'flex', borderTop: '1px solid #132531', borderBottom: '1px solid #D8D4CC' }}>
+            {COMMODITIES.map((c) =>
+            <button key={c.cat}
+            onClick={() => setActive(c.cat)}
+            style={{
+              flex: 1, padding: '22px 16px', background: c.cat === active ? '#132531' : 'transparent',
+              color: c.cat === active ? '#fff' : '#132531',
+              border: 'none', borderRight: '1px solid #D8D4CC', cursor: 'pointer',
+              textAlign: 'left', transition: 'all 220ms'
+            }}>
+                <div style={{ fontSize: 15, fontWeight: 500, marginTop: 6 }}>{c.cat}</div>
+              </button>
+            )}
+          </div>
+
+          {/* detail: grid of image + description, then price table or hub diagram */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
+            <EditorialImage src={cat.img} aspect="auto" style={{ height: '100%', minHeight: 380 }} />
+            <div style={{ padding: '40px 40px 32px' }}>
+              <Label style={{ color: '#C49A3E' }}>{cat.cat}</Label>
+              <h3 style={{ fontSize: 26, fontWeight: 500, color: '#132531', marginTop: 12, lineHeight: 1.25, letterSpacing: '-0.01em' }}
+              dangerouslySetInnerHTML={{ __html: cat.sub }} />
+              <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 16 }}>{cat.description}</p>
+              <div style={{ height: 1, background: '#ECE8DF', margin: '24px 0' }} />
+              {cat.noTable ? <GasHubDiagram /> :
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #132531' }}>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Sym</th>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Instrument</th>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Unit</th>
+                    <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Last</th>
+                    <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Chg</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cat.items.map((it) => <PriceRow key={it.sym} item={it} />)}
+                </tbody>
+              </table>}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MARKET OVERVIEW — four detailed cards */}
+      <section style={{ background: '#132531', color: '#fff', padding: '80px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', marginBottom: 48 }}>
+            Market overviews
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'rgba(255,255,255,0.08)' }}>
+            {[
+            {
+              cat: 'Crude Oil',
+              desc: 'Crude oil is raw petroleum pulled out of the ground before it gets refined into anything usable. It\'s the world\'s most traded commodity, and nearly every economy depends on it. Prices move on geopolitics, OPEC production decisions, storage levels, and global demand. Traders deal in physical barrels as well as financial contracts that let buyers and sellers lock in prices without ever touching the oil itself. Two grades dominate global pricing: WTI (West Texas Intermediate), the U.S. benchmark, and Brent, which prices most crude from the Atlantic Basin and North Sea. The gap between them is itself a tradeable instrument that reflects regional supply and demand at any given moment.',
+              firms: ['Saudi Aramco','ExxonMobil','Shell','BP','TotalEnergies','Chevron','Rosneft','ADNOC','Vitol','Trafigura','Glencore','Gunvor','Mercuria','Goldman Sachs','Morgan Stanley','JPMorgan'],
+              instruments: ['WTI Crude (NYMEX: CL)','Brent Crude (ICE: B)','Dubai/Oman','WTI-Brent Spread','CMA Swaps','CFD Swaps']
+            },
+            {
+              cat: 'Refined Products',
+              desc: 'Crude oil does nothing on its own. Refineries crack it into usable products: gasoline, diesel, jet fuel, heating oil, fuel oil, naphtha. Each has its own supply chain and price logic. Refinery margins, called the crack spread, measure the difference between what a refinery pays for crude and what it earns selling products, and they\'re one of the most watched numbers in the oil market. Real demand tends to show up in products before it shows up in crude. A cold winter tightens heating oil. Summer driving lifts gasoline. Jet fuel demand fell off a cliff in 2020 well before crude markets fully processed it.',
+              firms: ['Valero','Marathon Petroleum','Phillips 66','Neste','Reliance Industries','PetroChina','Vitol','Trafigura','Gunvor','Freepoint Commodities'],
+              instruments: ['RBOB Gasoline (NYMEX: RB)','ULSD / Heating Oil (NYMEX: HO)','Gasoil (ICE: G)','Jet Fuel / Jet Kerosene','Crack Spreads (3-2-1)','Product Swaps']
+            },
+            {
+              cat: 'Natural Gas',
+              desc: 'Natural gas heats buildings, generates electricity, and feeds industrial and petrochemical processes. Unlike oil, it\'s expensive and difficult to transport: you either pipe it or liquefy it (LNG) and ship it. That constraint keeps gas markets regional in a way oil markets are not. U.S. prices can be completely disconnected from European or Asian prices depending on infrastructure and LNG flow. Seasonality drives everything. Cold winters and hot summers create demand spikes that can move prices dramatically in a short window. Storage levels are tracked obsessively, since a deficit heading into winter can push prices to multiples of where they started the year.',
+              firms: ['EQT','Chesapeake Energy','ConocoPhillips','Shell','QatarEnergy','Novatek','Cheniere Energy','Vitol','Trafigura','Goldman Sachs','Citigroup'],
+              instruments: ['Henry Hub (NYMEX: NG)','TTF (ICE)','JKM (Japan Korea Marker)','NBP (National Balancing Point)','Basis Swaps','Seasonal Spreads']
+            },
+            {
+              cat: 'Power / Electricity',
+              desc: 'Power is unlike every other commodity because you can\'t store it at scale. Electricity has to be generated and consumed at the same instant. That balancing requirement produces some of the most extreme price swings in any market: prices can go negative overnight when wind farms are producing and nobody needs the output, then spike to extraordinary levels during a heatwave when grid capacity gets overwhelmed. Traders deal in everything from day-ahead auctions to long-dated financial contracts that let utilities and large industrial consumers hedge years out. Renewable growth has changed how these markets behave. Wind and solar add cheap but unpredictable supply, which tends to create more volatility rather than less.',
+              firms: ['NextEra Energy','Duke Energy','Enel','RWE','Orsted','EDF','Vitol','Trafigura','Shell Energy','Castleton Commodities','Hartree Partners','Macquarie Energy'],
+              instruments: ['PJM','ERCOT','CAISO','EEX (European Energy Exchange)','Day-Ahead Markets','Real-Time Markets','Spark Spreads','Dark Spreads','RECs (Renewable Energy Certificates)']
+            },
+            {
+              cat: 'Metals',
+              desc: 'Metals fall into two categories: base metals (copper, aluminum, zinc, nickel, lead, tin) and precious metals (gold, silver, platinum, palladium). Base metals are industrial, going into buildings, cars, wiring, batteries, and infrastructure. Precious metals sit between industrial use and financial demand, with gold functioning as a store of value and a hedge against currency weakness. Copper has earned the nickname "Dr. Copper" because its price tracks global economic activity fairly well. The energy transition has added another layer: EVs and grid buildout consume enormous amounts of copper, nickel, and cobalt, creating structural demand that runs on top of the normal economic cycle.',
+              firms: ['BHP','Rio Tinto','Glencore','Freeport-McMoRan','Vale','Norilsk Nickel','Barrick Gold','Newmont','Trafigura','IXM','Gerald Metals','ICBC Standard Bank','Goldman Sachs','HSBC'],
+              instruments: ['LME Copper (CA)','LME Aluminum (AH)','LME Nickel','LME Zinc','COMEX Gold (GC)','COMEX Silver (SI)','COMEX Copper (HG)','Gold Spot (XAUUSD)','TCs/RCs','Metal Swaps','Cash vs. 3-Month Spreads']
+            },
+            {
+              cat: 'Agriculture',
+              desc: 'Ag commodities cover grains (corn, wheat, soybeans, rice), softs (sugar, coffee, cocoa, cotton), oilseeds, and livestock. These markets predate nearly everything else in commodity trading. Exchanges were originally built so farmers and processors could manage price risk before crops were even harvested. Weather is the main driver: a drought in Brazil, a flood in the Midwest, or a frost in Vietnam can move coffee or soy 20% in a week. What separates ag from other commodities is the crop cycle. Supply resets every harvest. A bad year sends prices to multi-year highs; one good growing season can knock them back down just as fast.',
+              firms: ['ADM','Bunge','Cargill','Louis Dreyfus','Viterra','COFCO'],
+              instruments: ['CBOT Corn (C)','CBOT Soybeans (S)','CBOT Wheat (W)','ICE Sugar No. 11 (SB)','ICE Cotton (CT)','ICE Cocoa (CC)','ICE Coffee (KC)','MATIF Milling Wheat','Basis','Soybean Crush Spread','Weather Derivatives']
+            }
+            ].map((m) => (
+            <div key={m.cat} style={{ background: '#0F2030', padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div>
+                <h3 style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', color: '#F8F7F3' }}>{m.cat}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginTop: 12 }}>{m.desc}</p>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 10 }}>Major Firms</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {m.firms.map((f) => (
+                    <span key={f} style={{ fontSize: 11, padding: '4px 10px', border: '1px solid rgba(196,154,62,0.4)', color: '#C49A3E', borderRadius: 2, letterSpacing: 0.5 }}>{f}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>Key Instruments</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {m.instruments.map((inst) => (
+                    <span key={inst} style={{ fontSize: 11, fontFamily: 'ui-monospace, Menlo, monospace', padding: '4px 10px', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', borderRadius: 2 }}>{inst}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NEWS SOURCES */}
+      <section style={{ background: '#F8F7F3', padding: '80px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ marginBottom: 48 }}>
+            <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', margin: 0 }}>
+              News &amp; Data Sources
+            </h2>
+            <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 12, maxWidth: 560 }}>
+              A curated list of where commodity professionals follow markets. Free sources are open to anyone; IU-access sources are available through your Indiana University credentials.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+
+            {/* FREE */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', background: '#132531', color: '#F8F7F3', padding: '5px 12px', borderRadius: 2 }}>Free</span>
+                <div style={{ flex: 1, height: 1, background: '#D8D4CC' }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { name: 'EIA', desc: 'U.S. Energy Information Administration — production, storage, and demand data', url: 'https://www.eia.gov' },
+                  { name: 'CME Group', desc: 'Exchange data, contract specs, and settlement prices for futures', url: 'https://www.cmegroup.com' },
+                  { name: 'ICE', desc: 'Intercontinental Exchange — Brent, Gasoil, TTF, and more', url: 'https://www.theice.com' },
+                  { name: 'LME', desc: 'London Metal Exchange — official base metals pricing and warehouse data', url: 'https://www.lme.com' },
+                  { name: 'Reuters Commodities', desc: 'Breaking news on energy, metals, and agricultural markets', url: 'https://www.reuters.com/business/energy' },
+                  { name: 'CNBC Futures & Commodities', desc: 'Prices, news, and analysis for all major commodity classes', url: 'https://www.cnbc.com/futures-and-commodities' },
+                  { name: 'OilPrice.com', desc: 'Oil and gas news, prices, and market commentary', url: 'https://oilprice.com' },
+                  { name: 'Argus Media', desc: 'Price assessments and market coverage across energy and agriculture', url: 'https://www.argusmedia.com/en/news-and-insights' },
+                  { name: 'USDA Market News', desc: 'Government crop reports, grain prices, and agricultural market data', url: 'https://www.ams.usda.gov/market-news' },
+                ].map((s) => (
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: '#fff', borderLeft: '3px solid #132531', textDecoration: 'none', transition: 'border-color 0.15s, background 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#C49A3E'; e.currentTarget.style.background = '#FAFAF8'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#132531'; e.currentTarget.style.background = '#fff'; }}>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#132531', letterSpacing: '-0.01em' }}>{s.name}</div>
+                      <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 3, lineHeight: 1.5 }}>{s.desc}</div>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginLeft: 16, opacity: 0.4 }}>
+                      <path d="M2 7h10M7 2l5 5-5 5" stroke="#132531" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* IU ACCESS */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', background: '#C8321E', color: '#F8F7F3', padding: '5px 12px', borderRadius: 2 }}>IU Access</span>
+                <div style={{ flex: 1, height: 1, background: '#D8D4CC' }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { name: 'Bloomberg Terminal', desc: 'Full terminal access via IU Libraries — real-time data, analytics, and news across every asset class', url: 'https://guides.libraries.indiana.edu/bloomberg' },
+                  { name: 'S&P Global Commodity Insights', desc: 'Platts price assessments, market reports, and commodity intelligence across energy, metals, and agriculture', url: 'https://www.spglobal.com/commodityinsights/en' },
+                  { name: 'Financial Times', desc: 'In-depth commodity and energy market coverage, data, and analysis', url: 'https://www.ft.com' },
+                  { name: 'Wall Street Journal', desc: 'Markets and commodities reporting, energy sector coverage, and commodity price tables', url: 'https://www.wsj.com' },
+                ].map((s) => (
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: '#fff', borderLeft: '3px solid #C8321E', textDecoration: 'none', transition: 'border-color 0.15s, background 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#C49A3E'; e.currentTarget.style.background = '#FAFAF8'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#C8321E'; e.currentTarget.style.background = '#fff'; }}>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#132531', letterSpacing: '-0.01em' }}>{s.name}</div>
+                      <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 3, lineHeight: 1.5 }}>{s.desc}</div>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginLeft: 16, opacity: 0.4 }}>
+                      <path d="M2 7h10M7 2l5 5-5 5" stroke="#132531" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
+                ))}
+                <div style={{ marginTop: 16, padding: '14px 20px', background: 'rgba(196,154,62,0.08)', border: '1px solid rgba(196,154,62,0.3)', borderRadius: 2 }}>
+                  <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 4 }}>Note</div>
+                  <div style={{ fontSize: 12, color: '#4A4A4A', lineHeight: 1.6 }}>IU-access sources require your <strong>@iu.edu</strong> credentials. Bloomberg Terminal is available in-person at the Kelley School of Business library.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { CommoditiesPage });
+
+
+// ======== pages/NewsletterPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useNewsState } = React;
+
+const ISSUES = [
+{
+  no: 'Vol. VII · No. 14', date: '20 Mar 2026', cat: 'THE WEEKLY BULLETIN',
+  title: 'A VLCC fixture confirmed at premium on the Piraeus roads.',
+  lede: 'Members will note the Thalassa I reporting at Ras Tanura loadings with a firm sub-contract — an early sign that Q2 demand for Middle East crude may be firmer than the forward curve implies.',
+  img: 'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=1400&q=80',
+  imgLabel: 'VLCC AT SEA',
+  author: 'From the Secretariat', tag: 'FIXTURES'
+},
+{
+  no: 'Vol. VII · No. 13', date: '13 Mar 2026', cat: 'VIEWPOINT',
+  title: "On the quiet reopening of the Bosporus and what the cargo books will say next.",
+  lede: "Three days of closed straits at Istanbul would cost the Black Sea grain complex more than an advisory; the club's grain desk walks through the arithmetic in this week's note.",
+  img: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?w=1400&q=80',
+  imgLabel: 'BOSPORUS AT DAWN',
+  author: 'E. Novak, VP Markets', tag: 'VIEWPOINT'
+},
+{
+  no: 'Vol. VII · No. 12', date: '06 Mar 2026', cat: 'THE WEEKLY BULLETIN',
+  title: 'Spring dinner returns to the Long Room after four seasons away.',
+  lede: "The President will host members at the Indiana Memorial Union on 18 April. A printed ledger of the cohort's placements will be circulated.",
+  img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80',
+  imgLabel: "MEMBERS' DINNER",
+  author: 'The President', tag: 'THE CLUB'
+}];
+
+
+const PAST_ISSUES = [
+{ no: 'No. 11', date: '27 Feb 2026', title: 'Copper warehouse queues at Johor and the LME carry.', cat: 'METALS' },
+{ no: 'No. 10', date: '20 Feb 2026', title: 'A soybean season in two hemispheres.', cat: 'AGRICULTURE' },
+{ no: 'No. 09', date: '13 Feb 2026', title: 'Diesel crack spreads and the refinery calendar.', cat: 'ENERGY' },
+{ no: 'No. 08', date: '06 Feb 2026', title: "On reading an aging sister's bill of lading.", cat: 'VIEWPOINT' },
+{ no: 'No. 07', date: '30 Jan 2026', title: 'The Baltic Dry closes the month above 1,800.', cat: 'FREIGHT' },
+{ no: 'No. 06', date: '23 Jan 2026', title: 'Arabica at two-year highs — the Brazilian basis.', cat: 'AGRICULTURE' }];
+
+
+function NewsletterPage({ onNav }) {
+  const [email, setEmail] = useNewsState('');
+  const [sent, setSent] = useNewsState(false);
+  const [filter, setFilter] = useNewsState('ALL');
+
+  const lead = ISSUES[0];
+  const rest = ISSUES.slice(1);
+
+  return (
+    <>
+      {/* HERO — masthead treatment */}
+      <section style={{ background: '#F8F7F3', paddingBottom: 40 }}>
+        <Header current="newsletter" onNav={onNav} tone="light" />
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 40px 56px', textAlign: 'center' }}>
+          <Label style={{ marginBottom: 24 }}>/ The weekly bulletin · published since 2019</Label>
+          <h1 style={{
+            fontFamily: 'Fraunces, Times New Roman, serif',
+            fontSize: 92, fontWeight: 400, color: '#132531',
+            lineHeight: 0.95, letterSpacing: '-0.03em',
+            margin: 0
+          }}>
+            The Dispatch
+          </h1>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 18, marginTop: 22 }}>
+            <div style={{ width: 80, height: 1, background: '#132531' }} />
+            <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Vol. VII · Issue 14 · Friday 20 Mar 2026
+            </div>
+            <div style={{ width: 80, height: 1, background: '#132531' }} />
+          </div>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: '#4A4A4A', marginTop: 32, maxWidth: 620, margin: '32px auto 0' }}>
+            A Friday-morning note from the Secretariat. Fixtures, admissions, and a single editorial observation from the desks. No advertisements. Members and candidates only.
+          </p>
+        </div>
+      </section>
+
+      {/* LEAD ISSUE — big editorial treatment */}
+      <section style={{ background: '#F8F7F3', padding: '0 40px 96px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ height: 1, background: '#132531', marginBottom: 24 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+            <span>This Friday · Lead article</span>
+            <span>{lead.no} · {lead.date}</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 56, alignItems: 'center' }}>
+            <EditorialImage src={lead.img} aspect="4 / 3" />
+            <div>
+              <Chip variant="solid" style={{ marginBottom: 22 }}>{lead.tag}</Chip>
+              <h2 style={{
+                fontFamily: 'Fraunces, serif',
+                fontSize: 44, fontWeight: 400, color: '#132531',
+                lineHeight: 1.1, letterSpacing: '-0.01em', textWrap: 'balance'
+              }}>
+                {lead.title}
+              </h2>
+              <p style={{ fontSize: 16, lineHeight: 1.7, color: '#4A4A4A', marginTop: 20, textWrap: 'pretty' }}>
+                {lead.lede}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 28 }}>
+                <BrassRule />
+                <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{lead.author}</span>
+              </div>
+              <div style={{ marginTop: 36 }}>
+                <Button variant="primary">Read the entry <ArrowIcon /></Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SUBSCRIBE — dark band, centered, high ceremony */}
+      <section style={{ background: '#060F16', color: '#fff', padding: '96px 40px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
+          <img src="https://images.unsplash.com/photo-1494412651409-8dd6e94a9db2?w=2000&q=80"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) brightness(0.5)' }} alt="" />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Subscribe</Label>
+          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+            <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Friday morning,</span> a short note<br />from the Secretariat.
+          </h2>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, marginTop: 22, maxWidth: 520, margin: '22px auto 0' }}>
+            One issue, each Friday, before morning markets. No advertisements, no trackers, one-click unsubscribe.
+          </p>
+          {!sent ?
+          <form onSubmit={(e) => {e.preventDefault();if (email) setSent(true);}}
+          style={{ display: 'flex', gap: 10, marginTop: 36, maxWidth: 480, margin: '36px auto 0' }}>
+              <input
+              value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@indiana.edu"
+              style={{
+                flex: 1, background: 'transparent', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.35)', borderRadius: 2, padding: '14px 16px',
+                fontSize: 15, outline: 'none'
+              }} />
+            
+              <button type="submit" className="btn btn--signal">Subscribe <ArrowIcon /></button>
+            </form> :
+
+          <div style={{ marginTop: 36, maxWidth: 480, margin: '36px auto 0', padding: '14px 18px', border: '1px solid #2E6B3E', color: '#A6D5B2', fontSize: 14, borderRadius: 2 }}>
+              Confirmed. A note will follow from the Secretariat.
+            </div>
+          }
+          <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F', marginTop: 20 }}>
+            Never shared · Unsubscribe in one click · IU email preferred
+          </div>
+        </div>
+      </section>
+
+      {/* RECENT ISSUES */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <Label>/ Recent issues</Label>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                From the Secretariat and the membership.
+              </h2>
+            </div>
+            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>All issues →</a>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+            {rest.map((d) =>
+            <article key={d.no} style={{ background: '#fff', display: 'grid', gridTemplateColumns: '1fr 1fr', border: '1px solid #ECE8DF' }}>
+                <EditorialImage src={d.img} aspect="auto" style={{ height: '100%' }} />
+                <div style={{ padding: '28px 28px 24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <Chip variant="outline">{d.tag}</Chip>
+                    <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>{d.date}</span>
+                  </div>
+                  <h3 style={{ fontSize: 18, fontWeight: 500, lineHeight: 1.3, color: '#132531', textWrap: 'pretty' }}>{d.title}</h3>
+                  <p style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.6, marginTop: 10 }}>{d.lede.split('.')[0]}.</p>
+                  <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <BrassRule width={24} />
+                    <span style={{ fontSize: 12, color: '#132531', letterSpacing: 0.5, fontWeight: 500 }}>Read the entry</span>
+                  </div>
+                </div>
+              </article>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ARCHIVE TABLE */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+            <div>
+              <Label>/ The archive</Label>
+              <h2 style={{ fontSize: 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Retained in perpetuity.
+              </h2>
+            </div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['ALL', 'ENERGY', 'METALS', 'AGRICULTURE', 'FREIGHT', 'VIEWPOINT'].map((t) =>
+              <button key={t}
+              onClick={() => setFilter(t)}
+              className={t === filter ? 'btn btn--primary btn--micro' : 'btn btn--ghost-dark btn--micro'}
+              style={{
+                border: t === filter ? '1px solid #132531' : '1px solid #D8D4CC',
+                background: t === filter ? '#132531' : 'transparent',
+                color: t === filter ? '#fff' : '#132531'
+              }}>
+                  {t}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid #132531' }}>
+            {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).map((iss, i) =>
+            <div key={iss.no} style={{
+              display: 'grid', gridTemplateColumns: '110px 110px 1fr 140px 40px',
+              padding: '20px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center',
+              cursor: 'pointer', transition: 'background 220ms'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{iss.no}</div>
+                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#132531' }}>{iss.date}</div>
+                <div style={{ fontSize: 16, fontWeight: 500, color: '#132531' }}>{iss.title}</div>
+                <div><Chip variant="outline">{iss.cat}</Chip></div>
+                <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
+              </div>
+            )}
+          </div>
+          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>
+              Showing {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).length} of 142 issues
+            </span>
+            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>Open full archive →</a>
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { NewsletterPage });
+
+
+// ======== pages/MembershipPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useMemState } = React;
+
+function MembershipPage({ onNav }) {
+  const [form, setForm] = useMemState({ name: '', email: '', year: '', major: '', interest: [] });
+  const [submitted, setSubmitted] = useMemState(false);
+
+  const toggleInterest = (i) => {
+    setForm((f) => ({
+      ...f,
+      interest: f.interest.includes(i) ? f.interest.filter((x) => x !== i) : [...f.interest, i]
+    }));
+  };
+
+  return (
+    <>
+      {/* HERO */}
+      <section style={{ position: 'relative', minHeight: 540, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="membership" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img src="LNG_Tanker.jpeg"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.6) saturate(1)' }} alt="" />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.5) 0%, rgba(6,15,22,0.5) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: 400, justifyContent: 'space-between' }}>
+          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.72)' }}>
+            Membership is by admission only.
+          </h1>
+          <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340 }}>
+            Your application will be reviewed by the leadership team. Join the mailing list below to stay up to date with news, events, and announcements.
+          </p>
+        </div>
+      </section>
+
+      {/* JOIN FORM */}
+      <section style={{ background: '#F8F7F3', padding: '80px 40px' }}>
+        <div style={{ maxWidth: 560, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textAlign: 'center', marginBottom: 40 }}>
+            Join the mailing list
+          </h2>
+          {submitted ? (
+            <div style={{ padding: '20px 24px', border: '1px solid #2E6B3E', color: '#2E6B3E', fontSize: 14, borderRadius: 2, textAlign: 'center' }}>
+              You're on the list. We'll be in touch.
+            </div>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); if (form.name && form.email) setSubmitted(true); }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <label>
+                <Label>FULL NAME</Label>
+                <input className="input" placeholder="First and last name" value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ marginTop: 6 }} required />
+              </label>
+              <label>
+                <Label>IU EMAIL</Label>
+                <input className="input" type="email" placeholder="name@indiana.edu" value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })} style={{ marginTop: 6 }} required />
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 14 }}>
+                <label>
+                  <Label>CLASS</Label>
+                  <select className="input" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} style={{ marginTop: 6 }}>
+                    <option value="">—</option>
+                    <option>Class of 2026</option>
+                    <option>Class of 2027</option>
+                    <option>Class of 2028</option>
+                    <option>Class of 2029</option>
+                    <option>Graduate</option>
+                  </select>
+                </label>
+                <label>
+                  <Label>MAJOR</Label>
+                  <input className="input" placeholder="e.g. Finance" value={form.major}
+                    onChange={(e) => setForm({ ...form, major: e.target.value })} style={{ marginTop: 6 }} />
+                </label>
+              </div>
+              <div>
+                <Label>INTERESTS · SELECT ANY</Label>
+                <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {['Crude & Refined', 'Nat Gas & Power', 'Metals', 'Agriculture', 'Trading', 'Finance'].map((i) =>
+                  <button key={i} type="button" onClick={() => toggleInterest(i)}
+                    style={{
+                      padding: '6px 12px', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase',
+                      border: '1px solid ' + (form.interest.includes(i) ? '#132531' : '#D8D4CC'),
+                      background: form.interest.includes(i) ? '#132531' : 'transparent',
+                      color: form.interest.includes(i) ? '#fff' : '#132531',
+                      cursor: 'pointer', borderRadius: 2, transition: 'all 220ms'
+                    }}>
+                    {i}
+                  </button>
+                  )}
+                </div>
+              </div>
+              <Button variant="signal" style={{ marginTop: 8 }}>Submit <ArrowIcon /></Button>
+            </form>
+          )}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+            FAQ
+          </h2>
+
+          <div style={{ marginTop: 40, borderTop: '1px solid #132531' }}>
+            {[
+            ['Who can join?', 'The club is open to all Indiana University students at the Kelley School of Business. No prior experience in energy or commodities is required — just a genuine interest in learning about markets and trading.'],
+            ['What does a typical meeting look like?', 'Members meet weekly for discussions on current events in energy and commodity markets, guest speaker sessions from industry professionals, and trading simulations and games.'],
+            ['Do I need to be a finance major?', 'No. While many members study finance, the club welcomes students from any major who have an interest in energy markets and trading.'],
+            ['How do I join?', 'Submit the interest form on this page to be added to our mailing list. For any questions or to connect directly with the leadership team, please reach out to us at commoditytradingshippingclub@gmail.com. We look forward to hearing from you.'],
+            ['What career paths do members typically pursue?', 'Members have gone on to roles at oil majors, trading houses, and midstream energy companies — particularly in Houston. The club provides direct exposure to these industries through speaker events, simulations, and our alumni network.']].
+            map(([q, a], i) =>
+            <details key={i} style={{ borderBottom: '1px solid #ECE8DF' }}>
+                <summary style={{
+                listStyle: 'none', cursor: 'pointer', padding: '24px 0',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 32
+              }}>
+                  <span style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{q}</span>
+                  <span style={{ fontSize: 18, color: '#C49A3E', fontWeight: 300 }}>+</span>
+                </summary>
+                <div style={{ padding: '0 0 24px', fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, maxWidth: 720 }}>
+                  {a}
+                </div>
+              </details>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { MembershipPage });
+
+
+
+const { useState, useEffect } = React;
+
+function SiteLock({ onUnlock }) {
+  const [pw, setPw] = useState('');
+  const [err, setErr] = useState(false);
+  const submit = (e) => {
+    e.preventDefault();
+    if (pw === 'PeaceAndQuiet') { onUnlock(); }
+    else { setErr(true); setPw(''); }
+  };
+  return (
+    <div style={{ minHeight: '100vh', background: '#060F16', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+      <img src="data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" alt="CTSC" style={{ height: 72, marginBottom: 40 }} />
+      <div style={{ width: '100%', maxWidth: 380 }}>
+        <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 14, textAlign: 'center' }}>Members only</div>
+        <h1 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', textAlign: 'center', marginBottom: 32 }}>
+          Commodity Trading<br />&amp; Shipping Club
+        </h1>
+        <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <input
+            type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
+            placeholder="Enter password"
+            autoFocus
+            style={{ background: 'transparent', border: `1px solid ${err ? '#C8321E' : 'rgba(255,255,255,0.25)'}`, borderRadius: 2, padding: '14px 16px', fontSize: 15, color: '#F8F7F3', outline: 'none', letterSpacing: '0.1em' }} />
+          {err && <div style={{ fontSize: 12, color: '#C8321E', letterSpacing: 1, textTransform: 'uppercase' }}>Incorrect password</div>}
+          <button type="submit" className="btn btn--signal" style={{ marginTop: 4 }}>Enter <ArrowIcon /></button>
+        </form>
+        <div style={{ marginTop: 32, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ marginTop: 20, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#4A4A4A', textAlign: 'center' }}>
+          Indiana University · Kelley School of Business
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewsletterGate({ onNav }) {
+  const [pw, setPw] = useState('');
+  const [unlocked, setUnlocked] = useState(false);
+  const [err, setErr] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  if (unlocked) return <NewsletterPage onNav={onNav} />;
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (pw === 'Analyst3') { setUnlocked(true); }
+    else { setErr(true); setPw(''); }
+  };
+
+  return (
+    <>
+      <Header current="newsletter" onNav={onNav} tone="light" />
+      <section style={{ minHeight: '80vh', background: '#F8F7F3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', textAlign: 'center' }}>
+        <h1 style={{ fontFamily: 'Fraunces, Times New Roman, serif', fontSize: 72, fontWeight: 400, color: '#132531', lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
+          Coming Soon
+        </h1>
+        <div style={{ marginTop: 36 }}>
+          <Button variant="ghost-dark" onClick={() => setShowPreview(!showPreview)}>Preview access</Button>
+        </div>
+        {showPreview && (
+          <form onSubmit={submit} style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
+            <input
+              type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
+              placeholder="Preview password"
+              autoFocus
+              style={{ background: 'transparent', border: `1px solid ${err ? '#C8321E' : '#D8D4CC'}`, borderRadius: 2, padding: '12px 16px', fontSize: 14, color: '#132531', outline: 'none' }} />
+            {err && <div style={{ fontSize: 12, color: '#C8321E', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'left' }}>Incorrect password</div>}
+            <button type="submit" className="btn btn--primary btn--sm">Unlock <ArrowIcon /></button>
+          </form>
+        )}
+      </section>
+      <Footer onNav={onNav} />
+    </>
+  );
+}
+
+Object.assign(window, { NewsletterGate });
+
+function App() {
+  const [siteUnlocked, setSiteUnlocked] = useState(() => localStorage.getItem('ctsc-unlocked') === '1');
+  const [page, setPage] = useState(() => localStorage.getItem('ctsc-iu-page') || 'about');
+  useEffect(() => {
+    localStorage.setItem('ctsc-iu-page', page);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [page]);
+
+  if (!siteUnlocked) {
+    return <SiteLock onUnlock={() => { localStorage.setItem('ctsc-unlocked', '1'); setSiteUnlocked(true); }} />;
+  }
+
+  const Page = window[
+  { about: 'AboutPage', commodities: 'CommoditiesPage', newsletter: 'NewsletterGate', membership: 'MembershipPage' }[page]] ||
+  window.AboutPage;
+  if (!Page) return <div style={{ padding: 40, color: '#132531' }}>Loading…</div>;
+  return <div data-screen-label={`CTSC · ${page}`}><Page onNav={setPage} /></div>;
+}
+function boot() {
+  if (!window.AboutPage || !window.CommoditiesPage || !window.NewsletterPage || !window.MembershipPage || !window.Header) {
+    return setTimeout(boot, 50);
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+}
+boot();
+</script>
+</body>
+</html>

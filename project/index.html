@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Commodity Trading &amp; Shipping Club · Indiana University</title>
+<meta name="viewport" content="width=1280">
+<style>
+/* =========================================================
+   Commodity Trading & Shipping Club — Design System
+   Typography + Color CSS Variables
+   Inspired by Ferrari's editorial chiaroscuro, adapted for
+   a maritime commodities club aesthetic.
+   ========================================================= */
+
+/* ---------- Fonts ----------
+   FerrariSans is proprietary and cannot be redistributed.
+   Substitution: Inter (for UI/body) and Söhne-like stack
+   via Inter for headings. For the editorial uppercase "Body-Font"
+   role we use a wide-tracked Inter at lighter weights.
+   Flagged in README — user should provide licensed files if
+   they wish to use their own proprietary fonts.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+
+:root {
+  /* ============ COLORS ============ */
+
+  /* --- Brand core (derived from logo) --- */
+  --c-navy-ink:       #132531;  /* Primary brand navy — logo hull color */
+  --c-navy-deep:      #0B1A24;  /* Deeper navy for hover/pressed states */
+  --c-navy-abyssal:   #060F16;  /* Near-black navy — dark cinematic surface */
+  --c-navy-tide:      #1E3A4C;  /* Lifted navy for secondary surfaces */
+
+  /* --- Accent / CTA (maritime signal red — lifeboat/flare) --- */
+  --c-signal:         #C8321E;  /* Primary CTA — used sparingly */
+  --c-signal-deep:    #A02614;  /* Hover/pressed */
+  --c-signal-darker:  #7E1C0D;  /* Active */
+
+  /* --- Heritage accent (brass/gold — nautical instruments) --- */
+  --c-brass:          #C49A3E;  /* Heritage accent — trophies, markers */
+  --c-brass-deep:     #8E6E26;
+
+  /* --- Surfaces --- */
+  --c-ivory:          #F8F7F3;  /* Primary light surface — matches logo bg */
+  --c-ivory-warm:     #F1EEE6;  /* Warmer ivory for alternate panels */
+  --c-paper:          #FFFFFF;  /* Pure white for editorial content */
+  --c-surface-dark:   #181818;  /* Near-black primary text / dark secondary surface */
+  --c-void:           #000000;  /* Absolute black for hero/cinematic */
+
+  /* --- Neutrals (warm-shifted for maritime feel) --- */
+  --c-ink-900:        #121212;
+  --c-ink-800:        #1C1C1C;
+  --c-ink-700:        #2E2E2E;
+  --c-ink-600:        #4A4A4A;
+  --c-ink-500:        #6B6B6B;  /* body text secondary */
+  --c-ink-400:        #8F8F8F;  /* tertiary text */
+  --c-ink-300:        #BFBFBF;  /* disabled, placeholders */
+  --c-ink-200:        #D8D4CC;  /* warm borders on ivory */
+  --c-ink-100:        #ECE8DF;  /* subtle dividers on ivory */
+
+  /* --- Semantic (accessible) --- */
+  --c-success:        #2E6B3E;  /* Confirmed trade — muted seafaring green */
+  --c-warning:        #D89A2B;  /* Advisory — brass/amber family */
+  --c-danger:         #C8321E;  /* Same as signal — single red */
+  --c-info:           #3A6B8C;  /* Chart-ink blue */
+
+  /* --- Overlays --- */
+  --c-overlay-dark:   hsla(205, 44%, 6%, 0.82);
+  --c-overlay-light:  hsla(40,  20%, 96%, 0.88);
+
+  /* ============ TYPOGRAPHY ============ */
+  --ff-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-display: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-editorial: "Fraunces", "Times New Roman", Georgia, serif; /* optional editorial headline voice */
+  --ff-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* Sizes — maps Ferrari spec */
+  --fs-display:   2.75rem;   /* 44px — larger hero moments */
+  --fs-title:     1.625rem;  /* 26px — section titles */
+  --fs-card:      1.5rem;    /* 24px — card headings */
+  --fs-sub:       1.125rem;  /* 18px — subheadings */
+  --fs-ui:        1rem;      /* 16px */
+  --fs-button:    1rem;      /* 16px — with wide tracking */
+  --fs-button-sm: 0.9rem;    /* 14.4px */
+  --fs-nav:       0.8125rem; /* 13px */
+  --fs-caption:   0.8125rem; /* 13px */
+  --fs-micro-btn: 0.75rem;   /* 12px */
+  --fs-label:     0.75rem;   /* 12px — uppercase */
+  --fs-micro:     0.6875rem; /* 11px */
+
+  /* Line heights */
+  --lh-tight:   1.00;
+  --lh-snug:    1.20;
+  --lh-normal:  1.30;
+  --lh-base:    1.40;
+  --lh-relaxed: 1.50;
+
+  /* Tracking */
+  --tr-tight:  normal;
+  --tr-nav:    0.13px;
+  --tr-ui:     0.08px;
+  --tr-caption:0.195px;
+  --tr-label:  1px;         /* uppercase labels */
+  --tr-button: 1.28px;      /* button tracking */
+  --tr-micro:  0.96px;
+
+  /* ============ SPACING (8px base) ============ */
+  --sp-1:  1px;
+  --sp-2:  2px;
+  --sp-4:  4px;
+  --sp-6:  6px;
+  --sp-8:  8px;
+  --sp-10: 10px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-40: 40px;
+  --sp-56: 56px;
+  --sp-80: 80px;
+  --sp-120:120px;
+
+  /* ============ RADII ============ */
+  --r-hair: 1px;
+  --r-xs:   2px;    /* default — razor precision */
+  --r-sm:   4px;
+  --r-md:   8px;    /* modals */
+  --r-pill: 999px;
+  --r-full: 50%;
+
+  /* ============ ELEVATION ============ */
+  --shadow-0: none;
+  --shadow-1: rgba(19, 37, 49, 0.12) 1px 1px 1px 0px;
+  --shadow-2: rgba(19, 37, 49, 0.18) 0 2px 6px 0px;
+  --shadow-card: rgba(19, 37, 49, 0.08) 0 1px 2px 0, rgba(19, 37, 49, 0.06) 0 4px 12px 0;
+
+  /* ============ BORDERS ============ */
+  --bd-hair:  1px solid var(--c-ink-200);
+  --bd-rule:  1px solid var(--c-ink-300);
+  --bd-ink:   1px solid var(--c-navy-ink);
+  --bd-white: 1px solid var(--c-paper);
+
+  /* ============ MOTION ============ */
+  --ease-std:  cubic-bezier(.2, .0, .0, 1);
+  --ease-out:  cubic-bezier(.16, 1, .3, 1);
+  --dur-fast:  120ms;
+  --dur-base:  220ms;
+  --dur-slow:  420ms;
+}
+
+/* =========================================================
+   SEMANTIC TYPE ROLES
+   ========================================================= */
+
+html { font-family: var(--ff-sans); color: var(--c-surface-dark); background: var(--c-ivory); }
+body { margin: 0; }
+
+h1, .h1 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: normal;
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-card);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-sub);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-base);
+  letter-spacing: var(--tr-ui);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--c-surface-dark);
+  margin: 0;
+}
+
+.body-bold { font-weight: var(--fw-bold); line-height: var(--lh-normal); }
+
+.caption {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--tr-caption);
+  color: var(--c-ink-500);
+}
+
+/* Uppercase editorial label — the "Body-Font" role */
+.label, .label-upper {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-regular);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.label-micro {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-micro);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.nav-link {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-nav);
+  font-weight: var(--fw-semi);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-nav);
+  color: var(--c-paper);
+  text-decoration: none;
+}
+.nav-link:hover { color: var(--c-brass); }
+
+/* =========================================================
+   CORE COMPONENT PRIMITIVES
+   ========================================================= */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-8);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-button);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--tr-button);
+  padding: var(--sp-12) var(--sp-20);
+  border-radius: var(--r-xs);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-std),
+              color var(--dur-base) var(--ease-std),
+              border-color var(--dur-base) var(--ease-std);
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--c-paper);
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--primary:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--signal {
+  background: var(--c-signal);
+  color: var(--c-paper);
+  border-color: var(--c-signal);
+}
+.btn--signal:hover { background: var(--c-signal-deep); border-color: var(--c-signal-deep); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--c-paper);
+  border-color: var(--c-paper);
+}
+.btn--ghost:hover { background: var(--c-paper); color: var(--c-navy-ink); }
+
+.btn--ghost-dark {
+  background: transparent;
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--ghost-dark:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--sm { font-size: var(--fs-button-sm); font-weight: var(--fw-bold); padding: var(--sp-8) var(--sp-16); letter-spacing: normal; }
+.btn--micro { font-size: var(--fs-micro-btn); font-weight: var(--fw-bold); padding: var(--sp-6) var(--sp-12); letter-spacing: var(--tr-micro); }
+
+/* Text link */
+.link {
+  color: var(--c-navy-ink);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: color var(--dur-base) var(--ease-std);
+}
+.link:hover { color: var(--c-signal); }
+
+/* Inputs */
+.input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--c-ink-300);
+  border-radius: var(--r-xs);
+  padding: var(--sp-12) var(--sp-16);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  color: var(--c-surface-dark);
+  transition: border-color var(--dur-base) var(--ease-std);
+}
+.input::placeholder { color: var(--c-ink-400); }
+.input:focus { outline: none; border-color: var(--c-navy-ink); }
+
+/* Card */
+.card {
+  background: var(--c-paper);
+  border: none;
+  border-radius: 0;
+}
+
+/* Section rhythm */
+.section--dark  { background: var(--c-void); color: var(--c-paper); }
+.section--navy  { background: var(--c-navy-ink); color: var(--c-paper); }
+.section--ivory { background: var(--c-ivory); color: var(--c-surface-dark); }
+.section--paper { background: var(--c-paper); color: var(--c-surface-dark); }
+
+/* Divider rule */
+.rule { height: 1px; background: var(--c-ink-200); border: 0; }
+.rule--dark { background: rgba(255,255,255,0.16); }
+
+</style>
+<style>
+  html, body { margin: 0; background: #F8F7F3; }
+  * { box-sizing: border-box; }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] > summary > span:last-child { transform: rotate(45deg); }
+  details > summary > span:last-child { transition: transform 220ms; display: inline-block; }
+  select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #132531 50%), linear-gradient(135deg, #132531 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+  a.link { color: #132531; text-decoration: none; border-bottom: 1px solid currentColor; transition: color 220ms; }
+  a.link:hover { color: #C8321E; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+
+
+
+// ======== components/Primitives.jsx ========
+/* global React */
+const { useState: usePrimState } = React;
+
+function Button({ variant = 'primary', size, children, onClick, as = 'button', href, icon, style, ...rest }) {
+  const cls = ['btn', `btn--${variant}`, size ? `btn--${size}` : ''].join(' ').trim();
+  if (as === 'a') return <a className={cls} href={href} onClick={onClick} style={style} {...rest}>{icon}{children}</a>;
+  return <button className={cls} onClick={onClick} style={style} {...rest}>{icon}{children}</button>;
+}
+
+function Label({ children, color, style }) {
+  return <div className="label-upper" style={{ color, ...style }}>{children}</div>;
+}
+
+function BrassRule({ style, width = 40 }) {
+  return <div style={{ width, height: 2, background: '#C49A3E', ...style }} />;
+}
+
+function HairRule({ tone = 'light', style }) {
+  return <div style={{ height: 1, background: tone === 'dark' ? 'rgba(255,255,255,0.14)' : '#D8D4CC', border: 0, ...style }} />;
+}
+
+function Chip({ children, variant = 'outline', style }) {
+  const base = {
+    fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase',
+    padding: '5px 10px', borderRadius: 2, fontWeight: 400, display: 'inline-block'
+  };
+  const styles = {
+    solid: { background: '#132531', color: '#fff' },
+    outline: { background: 'transparent', color: '#132531', border: '1px solid #132531' },
+    brass: { background: '#C49A3E', color: '#132531' },
+    good: { background: '#2E6B3E', color: '#fff' },
+    warn: { background: '#D89A2B', color: '#132531' },
+    urgent: { background: '#C8321E', color: '#fff' },
+    muted: { background: '#ECE8DF', color: '#6B6B6B' },
+    darkOutline: { background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.35)' }
+  };
+  return <span style={{ ...base, ...styles[variant], ...style }}>{children}</span>;
+}
+
+// Editorial image with grayscale filter for B&W tone required by design system
+function EditorialImage({ src, alt = '', aspect = '16 / 9', style, overlay = false, grayscale = true }) {
+  return (
+    <div style={{ position: 'relative', aspectRatio: aspect, overflow: 'hidden', background: '#132531', ...style }}>
+      <img src={src} alt={alt} style={{
+        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+        filter: grayscale ? 'grayscale(100%) contrast(1.05)' : 'none'
+      }} />
+      {overlay && <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.25) 0%, rgba(6,15,22,0.75) 100%)' }} />}
+    </div>);
+
+}
+
+// Navy/void placeholder for when imagery isn't available
+function ImagePlaceholder({ label, aspect = '16 / 9', tone = 'dark', style, children }) {
+  const bg = tone === 'dark' ?
+  'linear-gradient(135deg, #060F16 0%, #132531 60%, #1E3A4C 100%)' :
+  'linear-gradient(135deg, #1E3A4C 0%, #2E2E2E 100%)';
+  return (
+    <div style={{ position: 'relative', aspectRatio: aspect, background: bg, width: '100%', overflow: 'hidden', ...style }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.04), transparent 60%)' }} />
+      <div style={{ position: 'absolute', left: 16, bottom: 14, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#BFBFBF' }}>
+        IMAGE — {label}
+      </div>
+      {children}
+    </div>);
+
+}
+
+function ArrowIcon({ size = 12, style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 12 12" fill="none" style={{ display: 'inline-block', ...style }}>
+      <path d="M2 10L10 2M10 2H3.5M10 2V8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" />
+    </svg>);
+
+}
+
+Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon });
+
+
+// ======== components/Chrome.jsx ========
+/* global React, Button, Label, HairRule, ArrowIcon */
+
+function Header({ current = 'about', onNav, tone = 'dark' }) {
+  const dark = tone === 'dark';
+  const bg = dark ? 'transparent' : '#F8F7F3';
+  const fg = dark ? '#fff' : '#132531';
+  const sub = dark ? 'rgba(255,255,255,0.65)' : '#6B6B6B';
+  const rule = dark ? 'rgba(255,255,255,0.12)' : '#D8D4CC';
+
+  const links = [
+  { id: 'about', label: 'About' },
+  { id: 'commodities', label: 'Commodities' },
+  { id: 'newsletter', label: 'Newsletter' },
+  { id: 'membership', label: 'Membership' }];
+
+
+  return (
+    <header style={{
+      background: bg, color: fg, padding: '22px 40px',
+      borderBottom: `1px solid ${rule}`,
+      position: dark ? 'absolute' : 'relative',
+      top: 0, left: 0, right: 0, zIndex: 20
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, maxWidth: 1360, margin: '0 auto' }}>
+        <a href="#about" onClick={(e) => {e.preventDefault();onNav?.('about');}} style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none', color: fg, cursor: 'pointer' }}>
+          <img
+            src={dark ? 'data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E' : 'data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23132531%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E'}
+            alt="CTSC" style={{ height: 52, width: 'auto' }} />
+          
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+            <span style={{ fontWeight: 700, fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+              Commodity Trading
+            </span>
+            <span style={{ fontWeight: 400, fontSize: 10.5, letterSpacing: '0.22em', textTransform: 'uppercase', color: sub, marginTop: 3 }}>
+              &amp; Shipping Club
+            </span>
+            <span style={{ fontWeight: 400, fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: sub, marginTop: 3 }}>
+              Indiana University
+            </span>
+          </div>
+        </a>
+        <nav style={{ display: 'flex', gap: 36 }}>
+          {links.map((l) =>
+          <a key={l.id}
+          onClick={(e) => {e.preventDefault();onNav?.(l.id);}}
+          href={`#${l.id}`}
+          style={{
+            fontSize: 13, fontWeight: 500, letterSpacing: '0.04em',
+            color: current === l.id ? dark ? '#C49A3E' : '#C8321E' : fg,
+            textDecoration: 'none', cursor: 'pointer',
+            paddingBottom: 4,
+            borderBottom: current === l.id ? `1px solid ${dark ? '#C49A3E' : '#C8321E'}` : '1px solid transparent',
+            transition: 'color 220ms, border-color 220ms'
+          }}>
+              {l.label}
+            </a>
+          )}
+        </nav>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Button variant="signal" size="sm" onClick={() => onNav?.('membership')}>
+            Join the club <ArrowIcon />
+          </Button>
+        </div>
+      </div>
+    </header>);
+
+}
+
+function Footer({ onNav }) {
+  return (
+    <footer style={{ background: '#060F16', color: '#BFBFBF', padding: '64px 40px 28px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48 }}>
+          <div>
+            <img src="data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" alt="CTSC" style={{ height: 64 }} />
+            <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginTop: 18, color: '#8F8F8F', lineHeight: 1.9 }}>
+              COMMODITY TRADING<br />&amp; SHIPPING CLUB<br />INDIANA UNIVERSITY · EST. 2019
+            </div>
+            <div style={{ fontSize: 13, color: '#BFBFBF', lineHeight: 1.7, marginTop: 22, maxWidth: 300 }}>
+              Kelley School of Business<br />
+              1309 E. Tenth Street<br />
+              Bloomington, IN 47405
+            </div>
+          </div>
+          {[
+          { h: 'THE CLUB', l: [['About', 'about'], ['Leadership', 'about'], ['History', 'about']] },
+          { h: 'MARKETS', l: [['Commodities', 'commodities'], ['Energy', 'commodities'], ['Metals', 'commodities'], ['Agriculture', 'commodities']] },
+          { h: 'MEMBERS', l: [['Newsletter', 'newsletter'], ['Membership', 'membership'], ['Contact', 'membership']] }].
+          map((col) =>
+          <div key={col.h}>
+              <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#fff', fontWeight: 500 }}>{col.h}</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '20px 0 0', display: 'flex', flexDirection: 'column', gap: 11 }}>
+                {col.l.map(([label, target]) =>
+              <li key={label}>
+                    <a href={`#${target}`} onClick={(e) => {e.preventDefault();onNav?.(target);}}
+                style={{ color: '#BFBFBF', fontSize: 13, textDecoration: 'none', cursor: 'pointer' }}>
+                      {label}
+                    </a>
+                  </li>
+              )}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '48px 0 22px' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+          <span>© 2019–2026 COMMODITY TRADING &amp; SHIPPING CLUB · INDIANA UNIVERSITY</span>
+          <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
+        </div>
+      </div>
+    </footer>);
+
+}
+
+Object.assign(window, { Header, Footer });
+
+
+// ======== pages/AboutPage.jsx ========
+/* global React, Button, Label, BrassRule, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useAboutState } = React;
+
+function AboutPage({ onNav }) {
+  return (
+    <>
+      {/* HERO — full-bleed editorial photograph, inspired by Novarc structure */}
+      <section style={{ position: 'relative', minHeight: '88vh', background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="about" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img
+            src="https://images.unsplash.com/photo-1577345955312-8dc8fd6d7f6f?w=2000&q=80"
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(45%) brightness(0.7) contrast(1.05)' }}
+            onError={(e) => {e.target.src = 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=2000&q=80';}} />
+          
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.55) 0%, rgba(6,15,22,0.35) 40%, rgba(6,15,22,0.85) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: '180px 40px 100px' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>INDIANA UNIVERSITY · KELLEY SCHOOL OF BUSINESS · EST. 2019</Label>
+          <h1 style={{ fontSize: 72, fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, textWrap: 'balance' }}>
+            An association of students<br />in commodity trading<br />&amp; shipping.
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University offering students insight into the physical commodity market from crude oil and refined products to natural gas, and freight.
+
+          </p>
+          <div style={{ display: 'flex', gap: 14, marginTop: 36 }}>
+            <Button variant="signal" onClick={() => onNav?.('membership')}>Request admission <ArrowIcon /></Button>
+            <Button variant="ghost" onClick={() => onNav?.('commodities')}>View our markets</Button>
+          </div>
+        </div>
+
+        {/* Floating stat card bottom right, Novarc style */}
+        <div style={{
+          position: 'absolute', right: 40, bottom: 56,
+          background: 'rgba(19, 37, 49, 0.85)', backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(196,154,62,0.35)',
+          padding: '22px 28px', color: '#fff', maxWidth: 260
+        }}>
+          <div style={{ fontSize: 44, fontWeight: 400, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            7<sup style={{ fontSize: 18, color: '#C49A3E' }}>yrs</sup>
+          </div>
+          <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E', marginTop: 10 }}>
+            Operating at Kelley
+          </div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginTop: 6 }}>
+            Founded by finance undergraduates in 2019.
+          </div>
+        </div>
+      </section>
+
+      {/* EDITORIAL MISSION — ivory panel with crossed rule */}
+      <section style={{ background: '#F8F7F3', padding: '120px 40px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}>
+          <Label style={{ textAlign: 'center', marginBottom: 24 }}>/ About</Label>
+          <h2 style={{ fontSize: 42, fontWeight: 400, color: '#132531', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
+            <span style={{ color: '#8F8F8F', fontWeight: "500" }}>Our Mission is simple:</span> how physical goods move across the world — <span style={{ color: '#8F8F8F' }}>and</span> how markets price the risk of that movement.
+          </h2>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 44 }}>
+            <Button variant="primary" onClick={() => onNav?.('membership')}>About us <ArrowIcon /></Button>
+          </div>
+          {/* decorative vertical + horizontal hair rules like Novarc */}
+          <div style={{ position: 'absolute', top: -40, left: '50%', width: 1, height: 60, background: '#D8D4CC' }} />
+          <div style={{ position: 'absolute', bottom: -40, left: '50%', width: 1, height: 60, background: '#D8D4CC' }} />
+        </div>
+      </section>
+
+      {/* PRINCIPLES — 3 pillars on navy */}
+      <section style={{ background: '#132531', color: '#fff', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 56 }}>
+            <div>
+              <Label style={{ color: '#C49A3E' }}>/ Approach</Label>
+              <h2 style={{ fontSize: 40, fontWeight: 400, marginTop: 14, lineHeight: 1.15, maxWidth: 640, letterSpacing: '-0.01em' }}>
+                Our principles in action.
+              </h2>
+            </div>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, maxWidth: 340 }}>
+              We act on three principles: understand the cargo, respect the counterparty, and honor the fixture.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.1)' }}>
+            {[
+            { n: '01', t: 'Understand the cargo', d: 'We study crude, refined, softs, grains, and metals not as tickers but as physical goods — each with its own handling, storage, and delivery economics.' },
+            { n: '02', t: 'Respect the counterparty', d: 'Every trade has a name on the other side. Members learn the institutional manners that keep markets liquid over decades.' },
+            { n: '03', t: 'Honor the fixture', d: 'A word is a bond. We teach members the discipline of performing on every obligation, recorded and attested.' }].
+            map((p) =>
+            <div key={p.n} style={{ background: '#132531', padding: '44px 36px 40px', minHeight: 300 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
+                  <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: '#C49A3E', letterSpacing: 1 }}>— {p.n}</div>
+                  <div style={{ width: 48, height: 48, border: '1px solid rgba(196,154,62,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 12, height: 12, border: '1px solid #C49A3E', borderRadius: '50%' }} />
+                  </div>
+                </div>
+                <h3 style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, color: '#fff' }}>{p.t}</h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 16 }}>{p.d}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT WE DO — paper panel with dark accent card */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <Label style={{ marginBottom: 14 }}>/ What we do</Label>
+          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
+            Where the club convenes.
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 24, marginTop: 48 }}>
+            <EditorialImage
+              src="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1600&q=80"
+              aspect="4 / 3" />
+            
+            <div style={{ background: '#132531', color: '#fff', padding: '40px 40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <Label style={{ color: '#C49A3E', marginBottom: 22 }}>THE WEEKLY MEETING</Label>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {[
+                  ['Markets brief', 'A ten-minute price-action digest from the Secretariat.'],
+                  ['Guest principal', 'A practicing trader, broker, or shipowner addresses the floor.'],
+                  ['Fixture workshop', 'Members work a live case, drafted from the Register.'],
+                  ['The Register', 'New entries attested and archived in perpetuity.']].
+                  map(([t, d], i) =>
+                  <li key={t} style={{ padding: '18px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                        <span style={{ fontSize: 16, fontWeight: 500 }}>{t}</span>
+                        <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>— 0{i + 1}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>{d}</div>
+                    </li>
+                  )}
+                </ul>
+              </div>
+              <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E', marginTop: 30, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                Thursdays · 7:00 PM · Hodge Hall 2083
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS BAND — editorial metrics like Novarc */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <Label style={{ marginBottom: 16 }}>/ The membership</Label>
+            <h2 style={{ fontSize: 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+              Scale backed by fellowship<br />and a placed alumni network.
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
+            {[
+            { n: '140+', l: 'Active members', d: 'Across three undergraduate cohorts and a graduate fellowship, each admitted by proposal and seconding.' },
+            { n: '32', l: 'Placements since 2019', d: 'Members placed at trading houses, charterers, shipowners, and investment banks on four continents.' },
+            { n: '$3.5M', l: 'Training portfolio', d: 'A paper book run by members — crude, refined products, softs, and freight derivatives, settled monthly.' }].
+            map((s, i) =>
+            <div key={s.l} style={{ padding: '44px 36px', borderRight: i < 2 ? '1px solid #D8D4CC' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}>{s.n}</div>
+                  <div style={{ width: 56, height: 56, border: '1px solid #D8D4CC', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 20, height: 20, border: '1px solid #132531', borderRadius: '50%' }} />
+                  </div>
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* LEADERSHIP TABLE */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <Label>/ Leadership</Label>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                The 2025–26 officers.
+              </h2>
+            </div>
+            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Elected · October 2025
+            </div>
+          </div>
+          <div style={{ borderTop: '1px solid #132531' }}>
+            {[
+            ['President', 'Arjun Mehta', 'Finance · Class of 2026'],
+            ['Vice President, Markets', 'Emilia Novak', 'Finance + Economics · Class of 2026'],
+            ['Vice President, Shipping', 'Daniel Okafor', 'International Business · Class of 2027'],
+            ['Head of the Register', 'Chloe Whitfield', 'Finance · Class of 2026'],
+            ['Secretariat', 'Ravi Subramanian', 'Business Analytics · Class of 2027'],
+            ['Treasurer', 'Margaret Liang', 'Accounting · Class of 2027']].
+            map(([role, name, detail], i) =>
+            <div key={role} style={{
+              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 40px',
+              padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center'
+            }}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
+                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
+                <div style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{name}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B' }}>{detail}</div>
+                <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* FULL-BLEED CTA */}
+      <section style={{ position: 'relative', minHeight: 460, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img
+            src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=2000&q=80"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(55%) brightness(0.55)' }}
+            alt="" />
+          
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(6,15,22,0.85) 0%, rgba(6,15,22,0.35) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '120px 40px' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 18 }}>/ Connect</Label>
+          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em' }}>
+            A seat in the Register<br />begins with a proposal.
+          </h2>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, maxWidth: 460, marginTop: 22 }}>
+            Membership is by invitation. A current member may propose a candidate for the next sitting of the Admissions Committee.
+          </p>
+          <div style={{ marginTop: 32 }}>
+            <Button variant="signal" onClick={() => onNav?.('membership')}>Request admission <ArrowIcon /></Button>
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { AboutPage });
+
+
+// ======== pages/CommoditiesPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useCommState } = React;
+
+const COMMODITIES = [
+{
+  cat: 'ENERGY', sub: 'Crude &amp; refined hydrocarbons',
+  items: [
+  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '82.14', chg: '+0.42%', status: 'good', note: 'Dated Brent — North Sea benchmark' },
+  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '78.62', chg: '−0.18%', status: 'warn', note: 'Cushing, OK delivery' },
+  { sym: 'NAT', name: 'Natural Gas', unit: '$/MMBtu', price: '3.284', chg: '+1.64%', status: 'good', note: 'Henry Hub · LNG parity' },
+  { sym: 'GSL', name: 'RBOB Gasoline', unit: '$/gal', price: '2.412', chg: '−0.21%', status: 'warn', note: 'NY Harbor · summer grade' }],
+
+  img: 'https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=1400&q=80',
+  imgLabel: 'REFINERY AT DUSK',
+  description: 'Crude and refined products form the bedrock of the physical market. Our energy desk studies the arb between basins, the diesel crack, and the LNG voyage economics that tie Henry Hub to TTF.'
+},
+{
+  cat: 'METALS', sub: 'Base &amp; precious',
+  items: [
+  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '4.284', chg: '+0.72%', status: 'good', note: 'LME 3M · Grade A cathode' },
+  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '2,418', chg: '−0.34%', status: 'warn', note: 'LME · P1020A' },
+  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '2,384.10', chg: '+0.12%', status: 'good', note: 'COMEX · 100 oz' },
+  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '108.40', chg: '−1.82%', status: 'urgent', note: 'Platts · 62% Fe CFR China' }],
+
+  img: 'https://images.unsplash.com/photo-1605152276897-4f618f831968?w=1400&q=80',
+  imgLabel: 'COPPER CATHODES',
+  description: 'Base metals move to the rhythm of industrial demand; precious metals to the rhythm of macro anxiety. The metals desk tracks LME stocks, warehouse queues, and the premium structure from Shanghai to Rotterdam.'
+},
+{
+  cat: 'AGRICULTURE', sub: 'Grains, softs &amp; oilseeds',
+  items: [
+  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,184.50', chg: '+0.32%', status: 'good', note: 'CBOT · #1 Yellow' },
+  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '438.25', chg: '−0.44%', status: 'warn', note: 'CBOT · #2 Yellow' },
+  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '572.00', chg: '+1.06%', status: 'good', note: 'CBOT · SRW' },
+  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '72.84', chg: '−0.08%', status: 'warn', note: 'ICE · #2 grade' },
+  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '218.40', chg: '+2.14%', status: 'good', note: 'ICE · Arabica C' },
+  { sym: 'SB', name: 'Sugar', unit: '¢/lb', price: '19.84', chg: '−0.92%', status: 'warn', note: 'ICE · #11 raw' }],
+
+  img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80',
+  imgLabel: 'GRAIN TERMINAL',
+  description: 'Grains and softs carry the weight of the calendar — harvests, monsoons, and crop reports. The agriculture desk studies the seasonal basis from the Corn Belt to the Black Sea and the Brazilian interior.'
+},
+{
+  cat: 'FREIGHT', sub: 'Dry &amp; wet tonnage',
+  items: [
+  { sym: 'BDI', name: 'Baltic Dry Index', unit: 'index', price: '1,842', chg: '+1.12%', status: 'good', note: 'BDI · composite dry bulk' },
+  { sym: 'C5', name: 'Capesize C5', unit: '$/mt', price: '9.85', chg: '+0.64%', status: 'good', note: 'West Australia → Qingdao' },
+  { sym: 'TD3', name: 'VLCC TD3C', unit: 'WS', price: '58.40', chg: '−0.82%', status: 'warn', note: 'Middle East Gulf → China' },
+  { sym: 'TC2', name: 'MR TC2', unit: 'WS', price: '182.0', chg: '+0.24%', status: 'good', note: 'Rotterdam → NY Harbor' }],
+
+  img: 'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=1400&q=80',
+  imgLabel: 'VLCC AT SEA',
+  description: 'Freight is the price of moving a cargo — always, in the end, a price of time. We track the Baltic indices, the timecharter structure, and the specific voyage arithmetic that turns a ton-mile into a profit.'
+}];
+
+
+function PriceRow({ item }) {
+  const up = item.chg.startsWith('+');
+  return (
+    <tr style={{ borderBottom: '1px solid #ECE8DF' }}>
+      <td style={{ padding: '14px 0', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#C49A3E', letterSpacing: 1 }}>{item.sym}</td>
+      <td style={{ padding: '14px 0' }}>
+        <div style={{ fontWeight: 500, fontSize: 15, color: '#132531' }}>{item.name}</div>
+        <div style={{ fontSize: 12, color: '#8F8F8F', marginTop: 2 }}>{item.note}</div>
+      </td>
+      <td style={{ padding: '14px 0', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{item.unit}</td>
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 15, color: '#132531', fontWeight: 500 }}>{item.price}</td>
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: up ? '#2E6B3E' : '#C8321E' }}>{item.chg}</td>
+    </tr>);
+
+}
+
+function CommoditiesPage({ onNav }) {
+  const [active, setActive] = useCommState('ENERGY');
+  const cat = COMMODITIES.find((c) => c.cat === active);
+
+  return (
+    <>
+      {/* HERO — darker, inset, with market ticker feel */}
+      <section style={{ position: 'relative', minHeight: 560, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="commodities" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img src="https://images.unsplash.com/photo-1605152276897-4f618f831968?w=2000&q=80"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(65%) brightness(0.4)' }} alt="" />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.75) 0%, rgba(6,15,22,0.65) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 80px' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Markets we trade</Label>
+          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 900, textWrap: 'balance' }}>
+            Every commodity is <span style={{ fontStyle: 'italic', fontFamily: 'Fraunces, serif', fontWeight: 400 }}>a cargo</span>, a counterparty, and a calendar.
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.75)', marginTop: 24, maxWidth: 540 }}>
+            The club runs four desks, each shadowing a corner of the physical market. Members rotate between desks across their first two semesters and specialize in their third.
+          </p>
+        </div>
+      </section>
+
+      {/* TICKER STRIP */}
+      <section style={{ background: '#181818', color: '#fff', padding: '18px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap', animation: 'ticker 60s linear infinite' }}>
+          {[...COMMODITIES.flatMap((c) => c.items), ...COMMODITIES.flatMap((c) => c.items)].map((it, i) => {
+            const up = it.chg.startsWith('+');
+            return (
+              <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', color: '#C49A3E', letterSpacing: 1 }}>{it.sym}</span>
+                <span style={{ color: '#BFBFBF' }}>{it.name}</span>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace' }}>{it.price}</span>
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', color: up ? '#6ED08B' : '#E85E4A' }}>{it.chg}</span>
+              </div>);
+
+          })}
+        </div>
+        <style>{`@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+      </section>
+
+      {/* DESK SELECTOR + DETAIL */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <Label>/ The four desks</Label>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Select a desk.
+              </h2>
+            </div>
+            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Prices · indicative · refreshed weekly
+            </div>
+          </div>
+
+          {/* tab bar */}
+          <div style={{ display: 'flex', borderTop: '1px solid #132531', borderBottom: '1px solid #D8D4CC' }}>
+            {COMMODITIES.map((c) =>
+            <button key={c.cat}
+            onClick={() => setActive(c.cat)}
+            style={{
+              flex: 1, padding: '22px 16px', background: c.cat === active ? '#132531' : 'transparent',
+              color: c.cat === active ? '#fff' : '#132531',
+              border: 'none', borderRight: '1px solid #D8D4CC', cursor: 'pointer',
+              textAlign: 'left', transition: 'all 220ms'
+            }}>
+                <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: c.cat === active ? '#C49A3E' : '#6B6B6B' }}>
+                  Desk 0{COMMODITIES.indexOf(c) + 1}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 500, marginTop: 6 }}>{c.cat}</div>
+              </button>
+            )}
+          </div>
+
+          {/* detail: grid of image + description, then price table */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
+            <EditorialImage src={cat.img} aspect="auto" style={{ height: '100%', minHeight: 380 }} />
+            <div style={{ padding: '40px 40px 32px' }}>
+              <Label style={{ color: '#C49A3E' }}>DESK · {cat.cat}</Label>
+              <h3 style={{ fontSize: 26, fontWeight: 500, color: '#132531', marginTop: 12, lineHeight: 1.25, letterSpacing: '-0.01em' }}
+              dangerouslySetInnerHTML={{ __html: cat.sub }} />
+              <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 16 }}>{cat.description}</p>
+              <div style={{ height: 1, background: '#ECE8DF', margin: '24px 0' }} />
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #132531' }}>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Sym</th>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Instrument</th>
+                    <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Unit</th>
+                    <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Last</th>
+                    <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Chg</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cat.items.map((it) => <PriceRow key={it.sym} item={it} />)}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOUR-UP LARGE CARDS — alternate deep look at each market */}
+      <section style={{ background: '#132531', color: '#fff', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48 }}>
+            <div>
+              <Label style={{ color: '#C49A3E' }}>/ Coverage</Label>
+              <h2 style={{ fontSize: 36, fontWeight: 400, marginTop: 14, lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
+                Each desk files a weekly note.
+              </h2>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'rgba(255,255,255,0.08)' }}>
+            {COMMODITIES.map((c, i) =>
+            <div key={c.cat} style={{ background: '#132531', padding: '36px 36px 32px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#C49A3E', letterSpacing: 1 }}>— 0{i + 1}</div>
+                    <h3 style={{ fontSize: 26, fontWeight: 500, marginTop: 8, letterSpacing: '-0.01em' }}>{c.cat}</h3>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', marginTop: 2 }} dangerouslySetInnerHTML={{ __html: c.sub }} />
+                  </div>
+                  <Chip variant="brass">{c.items.length} instruments</Chip>
+                </div>
+                <EditorialImage src={c.img} aspect="16 / 8" grayscale={true} />
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65 }}>{c.description}</p>
+                <button onClick={() => setActive(c.cat)} style={{
+                alignSelf: 'flex-start', background: 'transparent', color: '#C49A3E',
+                border: 'none', padding: 0, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                borderBottom: '1px solid #C49A3E', paddingBottom: 2
+              }}>
+                  Open desk <ArrowIcon />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* PLACEMENT MAP TEASER — echoes Novarc map section */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 48, alignItems: 'center' }}>
+          <div>
+            <Label>/ Where our alumni trade</Label>
+            <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 14, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              From Bloomington to the trading capitals.
+            </h2>
+            <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 18 }}>
+              Our alumni sit at major trading houses, charterers, and investment banks across four continents — an informal register that makes each new cohort richer than the last.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 18, marginTop: 32 }}>
+              {[
+              ['14', 'Houston'], ['9', 'London'], ['6', 'Singapore'], ['5', 'Chicago'], ['4', 'Geneva'], ['3', 'New York']].
+              map(([n, city]) =>
+              <div key={city} style={{ borderTop: '1px solid #D8D4CC', paddingTop: 12 }}>
+                  <div style={{ fontSize: 28, fontWeight: 400, color: '#132531', letterSpacing: '-0.02em' }}>{n}</div>
+                  <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', marginTop: 4 }}>{city}</div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div style={{ background: '#132531', padding: 40, color: '#fff', minHeight: 420, position: 'relative', overflow: 'hidden' }}>
+            {/* Stylized map dots */}
+            <svg viewBox="0 0 500 300" style={{ width: '100%', height: 'auto' }}>
+              <rect x="0" y="0" width="500" height="300" fill="#132531" />
+              {/* Continents as simple abstract shapes */}
+              <path d="M60 90 Q80 70 120 75 T190 95 Q200 120 180 140 T130 155 Q90 150 70 130 Z" fill="#1E3A4C" />
+              <path d="M210 100 Q240 85 275 95 T310 130 Q305 160 285 170 T240 170 Q215 155 210 135 Z" fill="#1E3A4C" />
+              <path d="M320 110 Q360 95 395 110 T430 140 Q425 175 400 180 T350 175 Q325 155 320 135 Z" fill="#1E3A4C" />
+              <path d="M240 190 Q260 180 280 195 T285 225 Q275 245 260 245 T240 225 Z" fill="#1E3A4C" />
+              {/* Active city dots */}
+              {[
+              [100, 115, 'HOUSTON'],
+              [225, 100, 'NEW YORK'],
+              [270, 95, 'LONDON'],
+              [295, 110, 'GENEVA'],
+              [410, 150, 'SINGAPORE'],
+              [260, 215, 'SAO PAULO'],
+              [170, 110, 'CHICAGO']].
+              map(([x, y, name], i) =>
+              <g key={i}>
+                  <circle cx={x} cy={y} r="12" fill="#C49A3E" opacity="0.15" />
+                  <circle cx={x} cy={y} r="5" fill="#C49A3E" />
+                  <circle cx={x} cy={y} r="2" fill="#132531" />
+                  <text x={x + 10} y={y + 3} fill="#C49A3E" fontSize="8" fontFamily="Inter, sans-serif" letterSpacing="1">{name}</text>
+                </g>
+              )}
+              {/* Bloomington origin */}
+              <circle cx="175" cy="118" r="4" fill="#C8321E" />
+            </svg>
+            <div style={{ position: 'absolute', left: 40, bottom: 32, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>
+              32 placements · 2019–26
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { CommoditiesPage });
+
+
+// ======== pages/NewsletterPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useNewsState } = React;
+
+const ISSUES = [
+{
+  no: 'Vol. VII · No. 14', date: '20 Mar 2026', cat: 'THE WEEKLY BULLETIN',
+  title: 'A VLCC fixture confirmed at premium on the Piraeus roads.',
+  lede: 'Members will note the Thalassa I reporting at Ras Tanura loadings with a firm sub-contract — an early sign that Q2 demand for Middle East crude may be firmer than the forward curve implies.',
+  img: 'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=1400&q=80',
+  imgLabel: 'VLCC AT SEA',
+  author: 'From the Secretariat', tag: 'FIXTURES'
+},
+{
+  no: 'Vol. VII · No. 13', date: '13 Mar 2026', cat: 'VIEWPOINT',
+  title: "On the quiet reopening of the Bosporus and what the cargo books will say next.",
+  lede: "Three days of closed straits at Istanbul would cost the Black Sea grain complex more than an advisory; the club's grain desk walks through the arithmetic in this week's note.",
+  img: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?w=1400&q=80',
+  imgLabel: 'BOSPORUS AT DAWN',
+  author: 'E. Novak, VP Markets', tag: 'VIEWPOINT'
+},
+{
+  no: 'Vol. VII · No. 12', date: '06 Mar 2026', cat: 'THE WEEKLY BULLETIN',
+  title: 'Spring dinner returns to the Long Room after four seasons away.',
+  lede: "The President will host members at the Indiana Memorial Union on 18 April. A printed ledger of the cohort's placements will be circulated.",
+  img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80',
+  imgLabel: "MEMBERS' DINNER",
+  author: 'The President', tag: 'THE CLUB'
+}];
+
+
+const PAST_ISSUES = [
+{ no: 'No. 11', date: '27 Feb 2026', title: 'Copper warehouse queues at Johor and the LME carry.', cat: 'METALS' },
+{ no: 'No. 10', date: '20 Feb 2026', title: 'A soybean season in two hemispheres.', cat: 'AGRICULTURE' },
+{ no: 'No. 09', date: '13 Feb 2026', title: 'Diesel crack spreads and the refinery calendar.', cat: 'ENERGY' },
+{ no: 'No. 08', date: '06 Feb 2026', title: "On reading an aging sister's bill of lading.", cat: 'VIEWPOINT' },
+{ no: 'No. 07', date: '30 Jan 2026', title: 'The Baltic Dry closes the month above 1,800.', cat: 'FREIGHT' },
+{ no: 'No. 06', date: '23 Jan 2026', title: 'Arabica at two-year highs — the Brazilian basis.', cat: 'AGRICULTURE' }];
+
+
+function NewsletterPage({ onNav }) {
+  const [email, setEmail] = useNewsState('');
+  const [sent, setSent] = useNewsState(false);
+  const [filter, setFilter] = useNewsState('ALL');
+
+  const lead = ISSUES[0];
+  const rest = ISSUES.slice(1);
+
+  return (
+    <>
+      {/* HERO — masthead treatment */}
+      <section style={{ background: '#F8F7F3', paddingBottom: 40 }}>
+        <Header current="newsletter" onNav={onNav} tone="light" />
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 40px 56px', textAlign: 'center' }}>
+          <Label style={{ marginBottom: 24 }}>/ The weekly bulletin · published since 2019</Label>
+          <h1 style={{
+            fontFamily: 'Fraunces, Times New Roman, serif',
+            fontSize: 92, fontWeight: 400, color: '#132531',
+            lineHeight: 0.95, letterSpacing: '-0.03em',
+            margin: 0
+          }}>
+            The Dispatch
+          </h1>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 18, marginTop: 22 }}>
+            <div style={{ width: 80, height: 1, background: '#132531' }} />
+            <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#6B6B6B' }}>
+              Vol. VII · Issue 14 · Friday 20 Mar 2026
+            </div>
+            <div style={{ width: 80, height: 1, background: '#132531' }} />
+          </div>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: '#4A4A4A', marginTop: 32, maxWidth: 620, margin: '32px auto 0' }}>
+            A Friday-morning note from the Secretariat. Fixtures, admissions, and a single editorial observation from the desks. No advertisements. Members and candidates only.
+          </p>
+        </div>
+      </section>
+
+      {/* LEAD ISSUE — big editorial treatment */}
+      <section style={{ background: '#F8F7F3', padding: '0 40px 96px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ height: 1, background: '#132531', marginBottom: 24 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+            <span>This Friday · Lead article</span>
+            <span>{lead.no} · {lead.date}</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 56, alignItems: 'center' }}>
+            <EditorialImage src={lead.img} aspect="4 / 3" />
+            <div>
+              <Chip variant="solid" style={{ marginBottom: 22 }}>{lead.tag}</Chip>
+              <h2 style={{
+                fontFamily: 'Fraunces, serif',
+                fontSize: 44, fontWeight: 400, color: '#132531',
+                lineHeight: 1.1, letterSpacing: '-0.01em', textWrap: 'balance'
+              }}>
+                {lead.title}
+              </h2>
+              <p style={{ fontSize: 16, lineHeight: 1.7, color: '#4A4A4A', marginTop: 20, textWrap: 'pretty' }}>
+                {lead.lede}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 28 }}>
+                <BrassRule />
+                <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{lead.author}</span>
+              </div>
+              <div style={{ marginTop: 36 }}>
+                <Button variant="primary">Read the entry <ArrowIcon /></Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SUBSCRIBE — dark band, centered, high ceremony */}
+      <section style={{ background: '#060F16', color: '#fff', padding: '96px 40px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
+          <img src="https://images.unsplash.com/photo-1494412651409-8dd6e94a9db2?w=2000&q=80"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) brightness(0.5)' }} alt="" />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Subscribe</Label>
+          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+            <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Friday morning,</span> a short note<br />from the Secretariat.
+          </h2>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, marginTop: 22, maxWidth: 520, margin: '22px auto 0' }}>
+            One issue, each Friday, before morning markets. No advertisements, no trackers, one-click unsubscribe.
+          </p>
+          {!sent ?
+          <form onSubmit={(e) => {e.preventDefault();if (email) setSent(true);}}
+          style={{ display: 'flex', gap: 10, marginTop: 36, maxWidth: 480, margin: '36px auto 0' }}>
+              <input
+              value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@indiana.edu"
+              style={{
+                flex: 1, background: 'transparent', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.35)', borderRadius: 2, padding: '14px 16px',
+                fontSize: 15, outline: 'none'
+              }} />
+            
+              <button type="submit" className="btn btn--signal">Subscribe <ArrowIcon /></button>
+            </form> :
+
+          <div style={{ marginTop: 36, maxWidth: 480, margin: '36px auto 0', padding: '14px 18px', border: '1px solid #2E6B3E', color: '#A6D5B2', fontSize: 14, borderRadius: 2 }}>
+              Confirmed. A note will follow from the Secretariat.
+            </div>
+          }
+          <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F', marginTop: 20 }}>
+            Never shared · Unsubscribe in one click · IU email preferred
+          </div>
+        </div>
+      </section>
+
+      {/* RECENT ISSUES */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+            <div>
+              <Label>/ Recent issues</Label>
+              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                From the Secretariat and the membership.
+              </h2>
+            </div>
+            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>All issues →</a>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+            {rest.map((d) =>
+            <article key={d.no} style={{ background: '#fff', display: 'grid', gridTemplateColumns: '1fr 1fr', border: '1px solid #ECE8DF' }}>
+                <EditorialImage src={d.img} aspect="auto" style={{ height: '100%' }} />
+                <div style={{ padding: '28px 28px 24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <Chip variant="outline">{d.tag}</Chip>
+                    <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>{d.date}</span>
+                  </div>
+                  <h3 style={{ fontSize: 18, fontWeight: 500, lineHeight: 1.3, color: '#132531', textWrap: 'pretty' }}>{d.title}</h3>
+                  <p style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.6, marginTop: 10 }}>{d.lede.split('.')[0]}.</p>
+                  <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <BrassRule width={24} />
+                    <span style={{ fontSize: 12, color: '#132531', letterSpacing: 0.5, fontWeight: 500 }}>Read the entry</span>
+                  </div>
+                </div>
+              </article>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ARCHIVE TABLE */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+            <div>
+              <Label>/ The archive</Label>
+              <h2 style={{ fontSize: 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Retained in perpetuity.
+              </h2>
+            </div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['ALL', 'ENERGY', 'METALS', 'AGRICULTURE', 'FREIGHT', 'VIEWPOINT'].map((t) =>
+              <button key={t}
+              onClick={() => setFilter(t)}
+              className={t === filter ? 'btn btn--primary btn--micro' : 'btn btn--ghost-dark btn--micro'}
+              style={{
+                border: t === filter ? '1px solid #132531' : '1px solid #D8D4CC',
+                background: t === filter ? '#132531' : 'transparent',
+                color: t === filter ? '#fff' : '#132531'
+              }}>
+                  {t}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid #132531' }}>
+            {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).map((iss, i) =>
+            <div key={iss.no} style={{
+              display: 'grid', gridTemplateColumns: '110px 110px 1fr 140px 40px',
+              padding: '20px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center',
+              cursor: 'pointer', transition: 'background 220ms'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{iss.no}</div>
+                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#132531' }}>{iss.date}</div>
+                <div style={{ fontSize: 16, fontWeight: 500, color: '#132531' }}>{iss.title}</div>
+                <div><Chip variant="outline">{iss.cat}</Chip></div>
+                <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
+              </div>
+            )}
+          </div>
+          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>
+              Showing {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).length} of 142 issues
+            </span>
+            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>Open full archive →</a>
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { NewsletterPage });
+
+
+// ======== pages/MembershipPage.jsx ========
+/* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
+const { useState: useMemState } = React;
+
+function MembershipPage({ onNav }) {
+  const [step, setStep] = useMemState(1);
+  const [form, setForm] = useMemState({ name: '', email: '', year: '', major: '', sponsor: '', interest: [] });
+  const [tier, setTier] = useMemState('member');
+
+  const toggleInterest = (i) => {
+    setForm((f) => ({
+      ...f,
+      interest: f.interest.includes(i) ? f.interest.filter((x) => x !== i) : [...f.interest, i]
+    }));
+  };
+
+  return (
+    <>
+      {/* HERO */}
+      <section style={{ position: 'relative', minHeight: 540, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="membership" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=2000&q=80"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(60%) brightness(0.45)' }} alt="" />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.7) 0%, rgba(6,15,22,0.55) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 90px' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Admissions · by proposal</Label>
+          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance' }}>
+            Candidates are proposed<br />by a member in good standing.
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 24, maxWidth: 520 }}>
+            The Admissions Committee convenes at the start of each semester. A proposal must be seconded and attested; the decision is final.
+          </p>
+        </div>
+      </section>
+
+      {/* TIERS */}
+      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <Label style={{ marginBottom: 16 }}>/ Three registers</Label>
+            <h2 style={{ fontSize: 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+              Each member holds one seat, in one register.
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC', background: '#fff' }}>
+            {[
+            { id: 'associate', cat: 'Associate', dues: '$25', term: 'per semester',
+              desc: 'Open to first- and second-year Kelley students in good standing. Attends weekly meetings, receives the Dispatch, and may observe the Register.',
+              rights: ['Weekly meeting', 'The Dispatch', 'Guest principal sessions', 'Observer at the Register']
+            },
+            { id: 'member', cat: 'Member', dues: '$75', term: 'per semester', featured: true,
+              desc: 'Juniors, seniors, and graduate students. Admitted by proposal and seconding. Rotates between desks, contributes to the Register, eligible for officer elections.',
+              rights: ['Full floor privileges', 'Desk rotation', 'Contributes to the Register', 'Eligible for elections', 'Placement network', 'Spring dinner']
+            },
+            { id: 'alumnus', cat: 'Alumnus', dues: '$100', term: 'per annum',
+              desc: 'Admitted upon graduation. Retains placement in the Register, access to the archive, and the privilege of proposing candidates for admission.',
+              rights: ['Lifetime Register entry', 'Archive access', 'Proposal privileges', 'Annual yearbook']
+            }].
+            map((t) =>
+            <div key={t.id} style={{
+              padding: '44px 36px 40px',
+              background: t.featured ? '#132531' : '#fff',
+              color: t.featured ? '#fff' : '#132531',
+              borderRight: '1px solid ' + (t.featured ? 'transparent' : '#D8D4CC'),
+              position: 'relative'
+            }}>
+                {t.featured &&
+              <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: '#C49A3E'
+              }} />
+              }
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: t.featured ? '#C49A3E' : '#6B6B6B' }}>
+                      Register
+                    </div>
+                    <h3 style={{ fontSize: 30, fontWeight: 500, marginTop: 8, letterSpacing: '-0.01em' }}>{t.cat}</h3>
+                  </div>
+                  {t.featured && <Chip variant="brass">Most common</Chip>}
+                </div>
+                <div style={{ marginTop: 24, display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <span style={{ fontSize: 44, fontWeight: 400, letterSpacing: '-0.02em' }}>{t.dues}</span>
+                  <span style={{ fontSize: 13, color: t.featured ? 'rgba(255,255,255,0.6)' : '#6B6B6B' }}>{t.term}</span>
+                </div>
+                <p style={{ fontSize: 13, lineHeight: 1.65, marginTop: 18, color: t.featured ? 'rgba(255,255,255,0.75)' : '#4A4A4A' }}>
+                  {t.desc}
+                </p>
+                <div style={{ height: 1, background: t.featured ? 'rgba(255,255,255,0.12)' : '#ECE8DF', margin: '24px 0' }} />
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {t.rights.map((r) =>
+                <li key={r} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13 }}>
+                      <span style={{ color: t.featured ? '#C49A3E' : '#C8321E', marginTop: 1 }}>—</span>
+                      <span style={{ color: t.featured ? 'rgba(255,255,255,0.85)' : '#132531' }}>{r}</span>
+                    </li>
+                )}
+                </ul>
+                <div style={{ marginTop: 32 }}>
+                  <button onClick={() => {setTier(t.id);document.getElementById('proposal-form')?.scrollIntoView({ block: 'start', behavior: 'smooth' });}}
+                className={t.featured ? 'btn btn--signal' : 'btn btn--ghost-dark'}
+                style={{ width: '100%' }}>
+                    Select {t.cat} <ArrowIcon />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* PROPOSAL PROCESS — 4 step horizontal */}
+      <section style={{ background: '#132531', color: '#fff', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 14 }}>/ The proposal</Label>
+          <h2 style={{ fontSize: 36, fontWeight: 400, lineHeight: 1.2, maxWidth: 680, letterSpacing: '-0.01em' }}>
+            Four steps, one sitting of the Committee.
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, marginTop: 56, background: 'rgba(255,255,255,0.1)' }}>
+            {[
+            { n: '01', t: 'Proposal', d: 'A candidate submits interest. A current member proposes them in confidence.' },
+            { n: '02', t: 'Seconding', d: 'A second member attests to standing and suitability for the floor.' },
+            { n: '03', t: 'Committee', d: 'The Admissions Committee convenes within six weeks of receipt.' },
+            { n: '04', t: 'Admission', d: 'A seat in the Register upon acceptance; dues collected the Friday following.' }].
+            map((s) =>
+            <div key={s.n} style={{ background: '#132531', padding: '36px 30px' }}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: '#C49A3E', letterSpacing: 1 }}>— {s.n}</div>
+                <h3 style={{ fontSize: 22, fontWeight: 500, marginTop: 14, letterSpacing: '-0.01em' }}>{s.t}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 12 }}>{s.d}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* PROPOSAL FORM */}
+      <section id="proposal-form" style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 64, alignItems: 'start' }}>
+          <div>
+            <Label>/ Submit a proposal</Label>
+            <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 14, lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+              Begin your entry in the Register.
+            </h2>
+            <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 18 }}>
+              Complete the form opposite. If you do not yet have a proposing member, leave the field blank — the Secretariat will match candidates from the general interest queue at the start of each semester.
+            </p>
+            <div style={{ marginTop: 32, padding: 24, background: '#132531', color: '#fff' }}>
+              <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 10 }}>Next committee sitting</div>
+              <div style={{ fontSize: 22, fontWeight: 500 }}>Friday 10 April 2026</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 6 }}>Hodge Hall 2083 · 7:00 PM · dress of the floor</div>
+            </div>
+          </div>
+
+          <aside style={{ background: '#fff', padding: 40, border: '1px solid #D8D4CC' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Label>PROPOSAL · {step} of 3</Label>
+              <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>
+                {tier.charAt(0).toUpperCase() + tier.slice(1)} register
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 4, marginTop: 14, marginBottom: 28 }}>
+              {[1, 2, 3].map((i) =>
+              <div key={i} style={{ flex: 1, height: 2, background: i <= step ? '#C8321E' : '#ECE8DF', transition: 'background 220ms' }} />
+              )}
+            </div>
+
+            {step === 1 &&
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <label>
+                  <Label>FULL NAME</Label>
+                  <input className="input" placeholder="e.g. A. N. Demetriou" value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ marginTop: 6 }} />
+                </label>
+                <label>
+                  <Label>INDIANA EMAIL</Label>
+                  <input className="input" placeholder="name@indiana.edu" value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })} style={{ marginTop: 6 }} />
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 14 }}>
+                  <label>
+                    <Label>CLASS</Label>
+                    <select className="input" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} style={{ marginTop: 6 }}>
+                      <option value="">—</option>
+                      <option>Class of 2027</option>
+                      <option>Class of 2028</option>
+                      <option>Class of 2029</option>
+                      <option>Graduate</option>
+                    </select>
+                  </label>
+                  <label>
+                    <Label>MAJOR / PROGRAM</Label>
+                    <input className="input" placeholder="e.g. Finance" value={form.major}
+                  onChange={(e) => setForm({ ...form, major: e.target.value })} style={{ marginTop: 6 }} />
+                  </label>
+                </div>
+              </div>
+            }
+
+            {step === 2 &&
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <label>
+                  <Label>PROPOSING MEMBER (optional)</Label>
+                  <input className="input" placeholder="Member no. or name" value={form.sponsor}
+                onChange={(e) => setForm({ ...form, sponsor: e.target.value })} style={{ marginTop: 6 }} />
+                  <div style={{ fontSize: 12, color: '#8F8F8F', marginTop: 6 }}>
+                    Leave blank if you do not know a current member.
+                  </div>
+                </label>
+                <div>
+                  <Label>DESK INTEREST · SELECT ANY</Label>
+                  <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {['Energy', 'Metals', 'Agriculture', 'Freight', 'Softs', 'LNG', 'Dry bulk', 'Tankers'].map((i) =>
+                  <button key={i} type="button" onClick={() => toggleInterest(i)}
+                  style={{
+                    padding: '6px 12px', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase',
+                    border: '1px solid ' + (form.interest.includes(i) ? '#132531' : '#D8D4CC'),
+                    background: form.interest.includes(i) ? '#132531' : 'transparent',
+                    color: form.interest.includes(i) ? '#fff' : '#132531',
+                    cursor: 'pointer', borderRadius: 2, transition: 'all 220ms'
+                  }}>
+                        {i}
+                      </button>
+                  )}
+                  </div>
+                </div>
+              </div>
+            }
+
+            {step === 3 &&
+            <div>
+                <div style={{ fontSize: 15, color: '#132531', lineHeight: 1.7 }}>
+                  Please review your proposal. Upon submission, the Secretariat will seal the record and deliver it to the Committee before the next sitting.
+                </div>
+                <div style={{ marginTop: 22, padding: 20, background: '#F1EEE6', borderLeft: '2px solid #C49A3E' }}>
+                  <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', marginBottom: 8 }}>Proposal record</div>
+                  <div style={{ fontSize: 16, fontWeight: 600, color: '#132531' }}>{form.name || '—'}</div>
+                  <div style={{ fontSize: 13, color: '#4A4A4A', marginTop: 4 }}>{form.email || '—'}</div>
+                  <div style={{ fontSize: 13, color: '#4A4A4A', marginTop: 12 }}>
+                    {form.year || '—'} · {form.major || '—'}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#4A4A4A', marginTop: 4 }}>
+                    Proposed by: {form.sponsor || 'General interest queue'}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#4A4A4A', marginTop: 4 }}>
+                    Desks: {form.interest.join(' · ') || '—'}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#4A4A4A', marginTop: 4 }}>
+                    Register: {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 32 }}>
+              <button className="btn btn--ghost-dark btn--sm" onClick={() => setStep(Math.max(1, step - 1))}
+              disabled={step === 1} style={{ opacity: step === 1 ? 0.3 : 1 }}>
+                ← Back
+              </button>
+              {step < 3 ?
+              <Button variant="primary" onClick={() => setStep(step + 1)}>Continue <ArrowIcon /></Button> :
+              <Button variant="signal" onClick={() => alert('Proposal sealed. A note will follow from the Secretariat.')}>
+                    Seal &amp; submit <ArrowIcon />
+                  </Button>}
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto' }}>
+          <Label style={{ marginBottom: 14 }}>/ House rules</Label>
+          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+            Questions commonly put to the Secretariat.
+          </h2>
+
+          <div style={{ marginTop: 40, borderTop: '1px solid #132531' }}>
+            {[
+            ['Must I be a finance major to be admitted?', "No. The club draws from across the Kelley School and the university. Members have come from economics, international business, analytics, supply chain, and the liberal arts. What is required is an interest in physical markets and the willingness to study them seriously."],
+            ['How many hours each week?', 'The weekly meeting runs ninety minutes. Desk commitments add between two and four hours, depending on the week and the publishing calendar of the Dispatch.'],
+            ['Are dues refundable?', 'Dues are collected on the Friday following admission and are non-refundable. A member may resign at any time, in writing, to the Secretariat.'],
+            ['Can alumni continue to participate?', 'Yes. Alumni retain their entry in the Register, access to the archive, and the privilege of proposing candidates. Many return as guest principals.'],
+            ['Is the club affiliated with the Kelley School?', 'The club is a Registered Student Organization at Indiana University. It is independent of any academic department; its affairs are conducted by the elected officers.']].
+            map(([q, a], i) =>
+            <details key={i} style={{ borderBottom: '1px solid #ECE8DF' }}>
+                <summary style={{
+                listStyle: 'none', cursor: 'pointer', padding: '24px 0',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 32
+              }}>
+                  <span style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{q}</span>
+                  <span style={{ fontSize: 18, color: '#C49A3E', fontWeight: 300 }}>+</span>
+                </summary>
+                <div style={{ padding: '0 0 24px', fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, maxWidth: 720 }}>
+                  {a}
+                </div>
+              </details>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
+Object.assign(window, { MembershipPage });
+
+
+
+const { useState, useEffect } = React;
+function App() {
+  const [page, setPage] = useState(() => localStorage.getItem('ctsc-iu-page') || 'about');
+  useEffect(() => {
+    localStorage.setItem('ctsc-iu-page', page);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [page]);
+
+  const Page = window[
+  { about: 'AboutPage', commodities: 'CommoditiesPage', newsletter: 'NewsletterPage', membership: 'MembershipPage' }[page]] ||
+  window.AboutPage;
+  if (!Page) return <div style={{ padding: 40, color: '#132531' }}>Loading…</div>;
+  return <div data-screen-label={`CTSC · ${page}`}><Page onNav={setPage} /></div>;
+}
+function boot() {
+  if (!window.AboutPage || !window.CommoditiesPage || !window.NewsletterPage || !window.MembershipPage || !window.Header) {
+    return setTimeout(boot, 50);
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+}
+boot();
+</script>
+</body>
+</html>

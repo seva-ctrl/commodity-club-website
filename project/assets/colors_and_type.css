@@ -1,0 +1,340 @@
+/* =========================================================
+   Commodity Trading & Shipping Club — Design System
+   Typography + Color CSS Variables
+   Inspired by Ferrari's editorial chiaroscuro, adapted for
+   a maritime commodities club aesthetic.
+   ========================================================= */
+
+/* ---------- Fonts ----------
+   FerrariSans is proprietary and cannot be redistributed.
+   Substitution: Inter (for UI/body) and Söhne-like stack
+   via Inter for headings. For the editorial uppercase "Body-Font"
+   role we use a wide-tracked Inter at lighter weights.
+   Flagged in README — user should provide licensed files if
+   they wish to use their own proprietary fonts.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+
+:root {
+  /* ============ COLORS ============ */
+
+  /* --- Brand core (derived from logo) --- */
+  --c-navy-ink:       #132531;  /* Primary brand navy — logo hull color */
+  --c-navy-deep:      #0B1A24;  /* Deeper navy for hover/pressed states */
+  --c-navy-abyssal:   #060F16;  /* Near-black navy — dark cinematic surface */
+  --c-navy-tide:      #1E3A4C;  /* Lifted navy for secondary surfaces */
+
+  /* --- Accent / CTA (maritime signal red — lifeboat/flare) --- */
+  --c-signal:         #C8321E;  /* Primary CTA — used sparingly */
+  --c-signal-deep:    #A02614;  /* Hover/pressed */
+  --c-signal-darker:  #7E1C0D;  /* Active */
+
+  /* --- Heritage accent (brass/gold — nautical instruments) --- */
+  --c-brass:          #C49A3E;  /* Heritage accent — trophies, markers */
+  --c-brass-deep:     #8E6E26;
+
+  /* --- Surfaces --- */
+  --c-ivory:          #F8F7F3;  /* Primary light surface — matches logo bg */
+  --c-ivory-warm:     #F1EEE6;  /* Warmer ivory for alternate panels */
+  --c-paper:          #FFFFFF;  /* Pure white for editorial content */
+  --c-surface-dark:   #181818;  /* Near-black primary text / dark secondary surface */
+  --c-void:           #000000;  /* Absolute black for hero/cinematic */
+
+  /* --- Neutrals (warm-shifted for maritime feel) --- */
+  --c-ink-900:        #121212;
+  --c-ink-800:        #1C1C1C;
+  --c-ink-700:        #2E2E2E;
+  --c-ink-600:        #4A4A4A;
+  --c-ink-500:        #6B6B6B;  /* body text secondary */
+  --c-ink-400:        #8F8F8F;  /* tertiary text */
+  --c-ink-300:        #BFBFBF;  /* disabled, placeholders */
+  --c-ink-200:        #D8D4CC;  /* warm borders on ivory */
+  --c-ink-100:        #ECE8DF;  /* subtle dividers on ivory */
+
+  /* --- Semantic (accessible) --- */
+  --c-success:        #2E6B3E;  /* Confirmed trade — muted seafaring green */
+  --c-warning:        #D89A2B;  /* Advisory — brass/amber family */
+  --c-danger:         #C8321E;  /* Same as signal — single red */
+  --c-info:           #3A6B8C;  /* Chart-ink blue */
+
+  /* --- Overlays --- */
+  --c-overlay-dark:   hsla(205, 44%, 6%, 0.82);
+  --c-overlay-light:  hsla(40,  20%, 96%, 0.88);
+
+  /* ============ TYPOGRAPHY ============ */
+  --ff-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-display: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ff-editorial: "Fraunces", "Times New Roman", Georgia, serif; /* optional editorial headline voice */
+  --ff-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* Sizes — maps Ferrari spec */
+  --fs-display:   2.75rem;   /* 44px — larger hero moments */
+  --fs-title:     1.625rem;  /* 26px — section titles */
+  --fs-card:      1.5rem;    /* 24px — card headings */
+  --fs-sub:       1.125rem;  /* 18px — subheadings */
+  --fs-ui:        1rem;      /* 16px */
+  --fs-button:    1rem;      /* 16px — with wide tracking */
+  --fs-button-sm: 0.9rem;    /* 14.4px */
+  --fs-nav:       0.8125rem; /* 13px */
+  --fs-caption:   0.8125rem; /* 13px */
+  --fs-micro-btn: 0.75rem;   /* 12px */
+  --fs-label:     0.75rem;   /* 12px — uppercase */
+  --fs-micro:     0.6875rem; /* 11px */
+
+  /* Line heights */
+  --lh-tight:   1.00;
+  --lh-snug:    1.20;
+  --lh-normal:  1.30;
+  --lh-base:    1.40;
+  --lh-relaxed: 1.50;
+
+  /* Tracking */
+  --tr-tight:  normal;
+  --tr-nav:    0.13px;
+  --tr-ui:     0.08px;
+  --tr-caption:0.195px;
+  --tr-label:  1px;         /* uppercase labels */
+  --tr-button: 1.28px;      /* button tracking */
+  --tr-micro:  0.96px;
+
+  /* ============ SPACING (8px base) ============ */
+  --sp-1:  1px;
+  --sp-2:  2px;
+  --sp-4:  4px;
+  --sp-6:  6px;
+  --sp-8:  8px;
+  --sp-10: 10px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-40: 40px;
+  --sp-56: 56px;
+  --sp-80: 80px;
+  --sp-120:120px;
+
+  /* ============ RADII ============ */
+  --r-hair: 1px;
+  --r-xs:   2px;    /* default — razor precision */
+  --r-sm:   4px;
+  --r-md:   8px;    /* modals */
+  --r-pill: 999px;
+  --r-full: 50%;
+
+  /* ============ ELEVATION ============ */
+  --shadow-0: none;
+  --shadow-1: rgba(19, 37, 49, 0.12) 1px 1px 1px 0px;
+  --shadow-2: rgba(19, 37, 49, 0.18) 0 2px 6px 0px;
+  --shadow-card: rgba(19, 37, 49, 0.08) 0 1px 2px 0, rgba(19, 37, 49, 0.06) 0 4px 12px 0;
+
+  /* ============ BORDERS ============ */
+  --bd-hair:  1px solid var(--c-ink-200);
+  --bd-rule:  1px solid var(--c-ink-300);
+  --bd-ink:   1px solid var(--c-navy-ink);
+  --bd-white: 1px solid var(--c-paper);
+
+  /* ============ MOTION ============ */
+  --ease-std:  cubic-bezier(.2, .0, .0, 1);
+  --ease-out:  cubic-bezier(.16, 1, .3, 1);
+  --dur-fast:  120ms;
+  --dur-base:  220ms;
+  --dur-slow:  420ms;
+}
+
+/* =========================================================
+   SEMANTIC TYPE ROLES
+   ========================================================= */
+
+html { font-family: var(--ff-sans); color: var(--c-surface-dark); background: var(--c-ivory); }
+body { margin: 0; }
+
+h1, .h1 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: normal;
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-card);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-sub);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-base);
+  letter-spacing: var(--tr-ui);
+  color: var(--c-navy-ink);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--c-surface-dark);
+  margin: 0;
+}
+
+.body-bold { font-weight: var(--fw-bold); line-height: var(--lh-normal); }
+
+.caption {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--tr-caption);
+  color: var(--c-ink-500);
+}
+
+/* Uppercase editorial label — the "Body-Font" role */
+.label, .label-upper {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-regular);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.label-micro {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-micro);
+  line-height: 1.27;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-ink-500);
+}
+
+.nav-link {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-nav);
+  font-weight: var(--fw-semi);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-nav);
+  color: var(--c-paper);
+  text-decoration: none;
+}
+.nav-link:hover { color: var(--c-brass); }
+
+/* =========================================================
+   CORE COMPONENT PRIMITIVES
+   ========================================================= */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-8);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-button);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--tr-button);
+  padding: var(--sp-12) var(--sp-20);
+  border-radius: var(--r-xs);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-std),
+              color var(--dur-base) var(--ease-std),
+              border-color var(--dur-base) var(--ease-std);
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--c-paper);
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--primary:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--signal {
+  background: var(--c-signal);
+  color: var(--c-paper);
+  border-color: var(--c-signal);
+}
+.btn--signal:hover { background: var(--c-signal-deep); border-color: var(--c-signal-deep); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--c-paper);
+  border-color: var(--c-paper);
+}
+.btn--ghost:hover { background: var(--c-paper); color: var(--c-navy-ink); }
+
+.btn--ghost-dark {
+  background: transparent;
+  color: var(--c-navy-ink);
+  border-color: var(--c-navy-ink);
+}
+.btn--ghost-dark:hover { background: var(--c-navy-ink); color: var(--c-paper); }
+
+.btn--sm { font-size: var(--fs-button-sm); font-weight: var(--fw-bold); padding: var(--sp-8) var(--sp-16); letter-spacing: normal; }
+.btn--micro { font-size: var(--fs-micro-btn); font-weight: var(--fw-bold); padding: var(--sp-6) var(--sp-12); letter-spacing: var(--tr-micro); }
+
+/* Text link */
+.link {
+  color: var(--c-navy-ink);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: color var(--dur-base) var(--ease-std);
+}
+.link:hover { color: var(--c-signal); }
+
+/* Inputs */
+.input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--c-ink-300);
+  border-radius: var(--r-xs);
+  padding: var(--sp-12) var(--sp-16);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-ui);
+  color: var(--c-surface-dark);
+  transition: border-color var(--dur-base) var(--ease-std);
+}
+.input::placeholder { color: var(--c-ink-400); }
+.input:focus { outline: none; border-color: var(--c-navy-ink); }
+
+/* Card */
+.card {
+  background: var(--c-paper);
+  border: none;
+  border-radius: 0;
+}
+
+/* Section rhythm */
+.section--dark  { background: var(--c-void); color: var(--c-paper); }
+.section--navy  { background: var(--c-navy-ink); color: var(--c-paper); }
+.section--ivory { background: var(--c-ivory); color: var(--c-surface-dark); }
+.section--paper { background: var(--c-paper); color: var(--c-surface-dark); }
+
+/* Divider rule */
+.rule { height: 1px; background: var(--c-ink-200); border: 0; }
+.rule--dark { background: rgba(255,255,255,0.16); }
