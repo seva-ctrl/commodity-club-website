@@ -1568,12 +1568,9 @@ function SiteLock({ onUnlock }) {
   };
   return (
     <div style={{ minHeight: '100vh', background: '#060F16', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-      <img src="data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" alt="CTSC" style={{ height: 72, marginBottom: 40 }} />
+      <img src="club_logo_clear.png" alt="CTSC" style={{ height: 140, marginBottom: 40 }} />
       <div style={{ width: '100%', maxWidth: 380 }}>
-        <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 14, textAlign: 'center' }}>Members only</div>
-        <h1 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', textAlign: 'center', marginBottom: 32 }}>
-          Commodity Trading<br />&amp; Shipping Club
-        </h1>
+        <div style={{ fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 32, textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic' }}>Members Only</div>
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input
             type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
