@@ -1568,7 +1568,7 @@ function MembershipPage({ onNav }) {
               </label>
               <label>
                 <Label>EMAIL</Label>
-                <input className="input" type="email" placeholder="name@indiana.edu" value={form.email}
+                <input className="input" type="email" placeholder="email@iu.edu" value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })} style={{ marginTop: 6 }} required />
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.4fr', gap: 14 }}>
@@ -1849,9 +1849,8 @@ function NewsletterGate({ onNav }) {
 Object.assign(window, { NewsletterGate });
 
 function App() {
-  const [page, setPage] = useState(() => localStorage.getItem('ctsc-iu-page') || 'about');
+  const [page, setPage] = useState('about');
   useEffect(() => {
-    localStorage.setItem('ctsc-iu-page', page);
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [page]);
 
