@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Commodity Trading &amp; Shipping Club · Indiana University</title>
-<meta name="viewport" content="width=1280">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* =========================================================
    Commodity Trading & Shipping Club — Design System
@@ -446,7 +446,17 @@ function ArrowIcon({ size = 12, style }) {
 
 }
 
-Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon });
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = React.useState(() => window.innerWidth < breakpoint);
+  React.useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon, useIsMobile });
 
 
 // ======== components/Chrome.jsx ========
@@ -456,8 +466,9 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
   const dark = tone === 'dark';
   const bg = dark ? 'transparent' : '#F8F7F3';
   const fg = dark ? '#fff' : '#132531';
-  const sub = dark ? 'rgba(255,255,255,0.65)' : '#6B6B6B';
   const rule = dark ? 'rgba(255,255,255,0.12)' : '#D8D4CC';
+  const isMobile = useIsMobile();
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const links = [
   { id: 'about', label: 'About' },
@@ -465,51 +476,74 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
   { id: 'newsletter', label: 'Newsletter' },
   { id: 'membership', label: 'Membership' }];
 
+  const nav = (id) => { onNav?.(id); setMenuOpen(false); };
 
   return (
     <header style={{
-      background: bg, color: fg, padding: '22px 40px',
+      background: menuOpen ? (dark ? '#060F16' : '#F8F7F3') : bg,
+      color: fg, padding: isMobile ? '16px 20px' : '22px 40px',
       borderBottom: `1px solid ${rule}`,
       position: dark ? 'absolute' : 'relative',
       top: 0, left: 0, right: 0, zIndex: 20
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, maxWidth: 1360, margin: '0 auto' }}>
-        <a href="#about" onClick={(e) => {e.preventDefault();onNav?.('about');}} style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none', color: fg, cursor: 'pointer' }}>
-          <div role="img" aria-label="CTSC ship" style={{ width: 163, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '228px 228px', backgroundPosition: '-38px -59px', backgroundRepeat: 'no-repeat' }} />
-          <div role="img" aria-label="Commodity Trading & Shipping Club" style={{ width: 149, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '206px 206px', backgroundPosition: '-32px -108px', backgroundRepeat: 'no-repeat' }} />
+        <a href="#about" onClick={(e) => {e.preventDefault();nav('about');}} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: fg, cursor: 'pointer' }}>
+          <div role="img" aria-label="CTSC ship" style={{ width: isMobile ? 110 : 163, height: isMobile ? 35 : 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: isMobile ? '154px 154px' : '228px 228px', backgroundPosition: isMobile ? '-26px -40px' : '-38px -59px', backgroundRepeat: 'no-repeat' }} />
+          {!isMobile && <div role="img" aria-label="Commodity Trading & Shipping Club" style={{ width: 149, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '206px 206px', backgroundPosition: '-32px -108px', backgroundRepeat: 'no-repeat' }} />}
         </a>
-        <nav style={{ display: 'flex', gap: 36 }}>
-          {links.map((l) =>
-          <a key={l.id}
-          onClick={(e) => {e.preventDefault();onNav?.(l.id);}}
-          href={`#${l.id}`}
-          style={{
-            fontSize: 13, fontWeight: 500, letterSpacing: '0.04em',
-            color: current === l.id ? dark ? '#C49A3E' : '#C8321E' : fg,
-            textDecoration: 'none', cursor: 'pointer',
-            paddingBottom: 4,
-            borderBottom: current === l.id ? `1px solid ${dark ? '#C49A3E' : '#C8321E'}` : '1px solid transparent',
-            transition: 'color 220ms, border-color 220ms'
-          }}>
-              {l.label}
-            </a>
-          )}
-        </nav>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
-            BeInvolved <ArrowIcon />
-          </Button>
-        </div>
+        {isMobile ? (
+          <button onClick={() => setMenuOpen((o) => !o)} style={{ background: 'none', border: 'none', color: fg, cursor: 'pointer', padding: 4, display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span style={{ display: 'block', width: 22, height: 1.5, background: 'currentColor', transition: 'transform 220ms', transform: menuOpen ? 'rotate(45deg) translate(4px, 4px)' : 'none' }} />
+            <span style={{ display: 'block', width: 22, height: 1.5, background: 'currentColor', opacity: menuOpen ? 0 : 1, transition: 'opacity 220ms' }} />
+            <span style={{ display: 'block', width: 22, height: 1.5, background: 'currentColor', transition: 'transform 220ms', transform: menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none' }} />
+          </button>
+        ) : (
+          <>
+            <nav style={{ display: 'flex', gap: 36 }}>
+              {links.map((l) =>
+              <a key={l.id} onClick={(e) => {e.preventDefault();nav(l.id);}} href={`#${l.id}`}
+              style={{
+                fontSize: 13, fontWeight: 500, letterSpacing: '0.04em',
+                color: current === l.id ? dark ? '#C49A3E' : '#C8321E' : fg,
+                textDecoration: 'none', cursor: 'pointer', paddingBottom: 4,
+                borderBottom: current === l.id ? `1px solid ${dark ? '#C49A3E' : '#C8321E'}` : '1px solid transparent',
+                transition: 'color 220ms, border-color 220ms'
+              }}>{l.label}</a>
+              )}
+            </nav>
+            <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
+              BeInvolved <ArrowIcon />
+            </Button>
+          </>
+        )}
       </div>
+      {isMobile && menuOpen && (
+        <nav style={{ paddingTop: 24, paddingBottom: 16, display: 'flex', flexDirection: 'column', gap: 0, borderTop: `1px solid ${rule}`, marginTop: 16 }}>
+          {links.map((l) =>
+          <a key={l.id} onClick={(e) => {e.preventDefault();nav(l.id);}} href={`#${l.id}`}
+          style={{
+            fontSize: 16, fontWeight: 500, color: current === l.id ? '#C49A3E' : fg,
+            textDecoration: 'none', cursor: 'pointer', padding: '14px 0',
+            borderBottom: `1px solid ${rule}`
+          }}>{l.label}</a>
+          )}
+          <div style={{ marginTop: 20 }}>
+            <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
+              BeInvolved <ArrowIcon />
+            </Button>
+          </div>
+        </nav>
+      )}
     </header>);
 
 }
 
 function Footer({ onNav, onLock }) {
+  const isMobile = useIsMobile();
   return (
-    <footer style={{ background: '#060F16', color: '#BFBFBF', padding: '64px 40px 28px' }}>
+    <footer style={{ background: '#060F16', color: '#BFBFBF', padding: isMobile ? '48px 20px 24px' : '64px 40px 28px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr 1fr', gap: isMobile ? 36 : 48 }}>
           <div>
             <div role="img" aria-label="CTSC ship" style={{ width: 163, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '228px 228px', backgroundPosition: '-38px -59px', backgroundRepeat: 'no-repeat', filter: 'brightness(0) invert(1)' }} />
             <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginTop: 18, color: '#8F8F8F', lineHeight: 1.9 }}>
@@ -545,9 +579,9 @@ function Footer({ onNav, onLock }) {
         <div style={{ marginBottom: 16, fontSize: 12, color: '#8F8F8F' }}>
           <a href="mailto:commoditytradingshippingclub@gmail.com" style={{ color: '#8F8F8F', textDecoration: 'none' }}>commoditytradingshippingclub@gmail.com</a>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 12 : 0, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
           <span>2025–2026 COMMODITY TRADING &amp; SHIPPING CLUB · INDIANA UNIVERSITY</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 12 : 32 }}>
             <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
             {onLock && (
               <button onClick={onLock}
@@ -572,10 +606,11 @@ Object.assign(window, { Header, Footer });
 const { useState: useAboutState } = React;
 
 function AboutPage({ onNav }) {
+  const isMobile = useIsMobile();
   return (
     <>
       {/* HERO — full-bleed editorial photograph, inspired by Novarc structure */}
-      <section style={{ position: 'relative', minHeight: '88vh', background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', minHeight: isMobile ? '70vh' : '88vh', background: '#060F16', color: '#fff', overflow: 'hidden' }}>
         <Header current="about" onNav={onNav} tone="dark" />
         <div style={{ position: 'absolute', inset: 0 }}>
           <img
@@ -583,25 +618,25 @@ function AboutPage({ onNav }) {
             alt=""
             style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(15%) brightness(0.88) contrast(1.05)' }}
             onError={(e) => {e.target.src = 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=2000&q=80';}} />
-          
+
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.55) 0%, rgba(6,15,22,0.35) 40%, rgba(6,15,22,0.85) 100%)' }} />
         </div>
-        <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: '180px 40px 100px' }}>
+        <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: isMobile ? '120px 20px 60px' : '180px 40px 100px' }}>
           <Label style={{ color: '#C49A3E', marginBottom: 22 }}>INDIANA UNIVERSITY · KELLEY SCHOOL OF BUSINESS · EST. 2025</Label>
-          <h1 style={{ fontSize: 72, fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, textWrap: 'balance', color: '#F8F7F3' }}>
+          <h1 style={{ fontSize: isMobile ? 40 : 72, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, textWrap: 'balance', color: '#F8F7F3' }}>
             An association of students<br />in commodity trading<br />&amp; shipping.
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University offering students insight into the physical commodity market from crude oil and refined products to natural gas, and freight.
 
           </p>
-          <div style={{ display: 'flex', gap: 14, marginTop: 36 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 36 }}>
             <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
             <Button variant="ghost" onClick={() => onNav?.('commodities')}>Product Groups</Button>
           </div>
         </div>
 
         {/* Floating stat card bottom right, Novarc style */}
-        <div style={{
+        {!isMobile && <div style={{
           position: 'absolute', right: 40, bottom: 56,
           background: 'rgba(19, 37, 49, 0.88)', backdropFilter: 'blur(8px)',
           border: '1px solid rgba(255,255,255,0.1)',
@@ -616,23 +651,23 @@ function AboutPage({ onNav }) {
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginTop: 5 }}>
             Founded in 2025.
           </div>
-        </div>
+        </div>}
       </section>
 
       {/* EDITORIAL MISSION — signal red panel */}
-      <section style={{ background: '#C8321E', padding: '64px 40px' }}>
+      <section style={{ background: '#C8321E', padding: isMobile ? '48px 20px' : '64px 40px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 42, fontWeight: 400, color: '#F8F7F3', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
+          <h2 style={{ fontSize: isMobile ? 26 : 42, fontWeight: 400, color: '#F8F7F3', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
             <span style={{ fontWeight: 700 }}>Our mission is simple:</span> To develop the next generation of IU energy trading professionals.
           </h2>
         </div>
       </section>
 
       {/* PRINCIPLES — 3 pillars on navy */}
-      <section style={{ background: '#132531', color: '#fff', padding: '48px 40px' }}>
+      <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '40px 20px' : '48px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <h2 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', marginBottom: 32 }}>What we do</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.1)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.1)' }}>
             {[
             { n: '01', t: 'Weekly Discussions', d: 'Members meet weekly to discuss current events across energy, commodities, and markets. Guest speakers from industry are invited throughout the semester to share their experience firsthand.' },
             { n: '02', t: 'Trading Simulations & Games', d: 'Members compete in commodity and energy trading simulations, applying market knowledge to live case scenarios. Past competitions have included intercollegiate trading challenges and internal desk exercises.' },
@@ -649,12 +684,12 @@ function AboutPage({ onNav }) {
       </section>
 
       {/* WHAT WE DO — paper panel with dark accent card */}
-      <section style={{ background: '#F8F7F3', padding: '48px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '40px 20px' : '48px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
             2026 Inaugural Houston Trip
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 24, marginTop: 32, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr', gap: 24, marginTop: 32, alignItems: 'stretch' }}>
             <div style={{ overflow: 'hidden', background: '#132531', display: 'flex' }}>
               <img src="houston_trip.JPG" alt="2026 Inaugural Houston Trip"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -684,21 +719,21 @@ function AboutPage({ onNav }) {
       </section>
 
       {/* STATS BAND — editorial metrics like Novarc */}
-      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+      <section style={{ background: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            <h2 style={{ fontSize: 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? 40 : 64 }}>
+            <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
               Fastest growing career path at Kelley<br />Backed by a strong alumni network
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
             {[
             { n: '50+', l: 'Active members', d: 'Across all undergraduate grade levels.' },
             { n: '4', l: 'Placements since 2025', d: 'Members placing in oil majors, midstream energy, and trading houses in Houston.' },
             { n: '10+', l: 'Firms with IU alumni', d: 'Kelley has many alumni in the Houston area and the network is constantly growing.' }].
             map((s, i) =>
-            <div key={s.l} style={{ padding: '44px 36px', borderRight: i < 2 ? '1px solid #D8D4CC' : 'none' }}>
+            <div key={s.l} style={{ padding: '36px 28px', borderRight: !isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', borderBottom: isMobile && i < 2 ? '1px solid #D8D4CC' : 'none' }}>
                 <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}>{s.n}</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
                 <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
@@ -709,17 +744,13 @@ function AboutPage({ onNav }) {
       </section>
 
       {/* LEADERSHIP TABLE */}
-      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '56px 20px' : '96px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-            <div>
-              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-                Leadership Team
-              </h2>
-            </div>
-            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
-              Founded · 2025
-            </div>
+            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              Leadership Team
+            </h2>
+            {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Founded · 2025</div>}
           </div>
           <div style={{ borderTop: '1px solid #132531' }}>
             {[
@@ -729,6 +760,16 @@ function AboutPage({ onNav }) {
             ['Internal Social', 'Landon Johnson', 'Finance · Class of 2028', ''],
             ['External Social', 'Seva Ulyanov', 'Finance · Class of 2029', '']].
             map(([role, name, detail, company], i) =>
+            isMobile ? (
+              <div key={role + name} style={{ padding: '18px 0', borderBottom: '1px solid #ECE8DF' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
+                  <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
+                </div>
+                <div style={{ fontSize: 17, fontWeight: 500, color: '#132531', marginTop: 4 }}>{name}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>{detail}{company ? ` · ${company}` : ''}</div>
+              </div>
+            ) : (
             <div key={role + name} style={{
               display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 1.2fr 40px',
               padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center'
@@ -740,7 +781,7 @@ function AboutPage({ onNav }) {
                 <div style={{ fontSize: 13, color: '#6B6B6B' }}>{company}</div>
                 <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
               </div>
-            )}
+            ))}
           </div>
           <p style={{ fontSize: 13, color: '#6B6B6B', marginTop: 28, lineHeight: 1.65 }}>
             Have a question for the team? Reach out at{' '}
@@ -752,17 +793,16 @@ function AboutPage({ onNav }) {
       </section>
 
       {/* FULL-BLEED CTA */}
-      <section style={{ position: 'relative', minHeight: 460, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', minHeight: isMobile ? 320 : 460, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0 }}>
           <img
             src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=2000&q=80"
             style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(55%) brightness(0.55)' }}
             alt="" />
-          
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(6,15,22,0.85) 0%, rgba(6,15,22,0.35) 100%)' }} />
         </div>
-        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '120px 40px' }}>
-          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em', color: '#F8F7F3' }}>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '80px 20px' : '120px 40px' }}>
+          <h2 style={{ fontSize: isMobile ? 30 : 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em', color: '#F8F7F3' }}>
             Interested in the field?
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, maxWidth: 460, marginTop: 22 }}>
@@ -911,19 +951,20 @@ function GasHubDiagram() {
 function CommoditiesPage({ onNav }) {
   const [active, setActive] = useCommState('CRUDE & REFINED');
   const cat = COMMODITIES.find((c) => c.cat === active) || COMMODITIES[0];
+  const isMobile = useIsMobile();
 
   return (
     <>
       {/* HERO — darker, inset, with market ticker feel */}
-      <section style={{ position: 'relative', minHeight: 560, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', minHeight: isMobile ? 380 : 560, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
         <Header current="commodities" onNav={onNav} tone="dark" />
         <div style={{ position: 'absolute', inset: 0 }}>
           <img src="Trading_floor.jpeg"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(20%) brightness(0.55) saturate(1)' }} alt="" />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.65) 0%, rgba(6,15,22,0.55) 100%)' }} />
         </div>
-        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 80px' }}>
-          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.88)' }}>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '100px 20px 48px' : '170px 40px 80px' }}>
+          <h1 style={{ fontSize: isMobile ? 38 : 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.88)' }}>
             Product Groups
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.7)', marginTop: 24, maxWidth: 500 }}>
@@ -951,39 +992,36 @@ function CommoditiesPage({ onNav }) {
       </section>
 
       {/* DESK SELECTOR + DETAIL */}
-      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '96px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-            <div>
-              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-                Select a product.
-              </h2>
-            </div>
-            <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
-              Prices · indicative · refreshed weekly
-            </div>
+            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              Select a product.
+            </h2>
+            {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Prices · indicative · refreshed weekly</div>}
           </div>
 
           {/* tab bar */}
-          <div style={{ display: 'flex', borderTop: '1px solid #132531', borderBottom: '1px solid #D8D4CC' }}>
+          <div style={{ display: 'flex', borderTop: '1px solid #132531', borderBottom: '1px solid #D8D4CC', overflowX: isMobile ? 'auto' : 'visible' }}>
             {COMMODITIES.map((c) =>
             <button key={c.cat}
             onClick={() => setActive(c.cat)}
             style={{
-              flex: 1, padding: '22px 16px', background: c.cat === active ? '#132531' : 'transparent',
+              flex: isMobile ? '0 0 auto' : 1, padding: isMobile ? '14px 14px' : '22px 16px',
+              background: c.cat === active ? '#132531' : 'transparent',
               color: c.cat === active ? '#fff' : '#132531',
               border: 'none', borderRight: '1px solid #D8D4CC', cursor: 'pointer',
-              textAlign: 'left', transition: 'all 220ms'
+              textAlign: 'left', transition: 'all 220ms', whiteSpace: 'nowrap'
             }}>
-                <div style={{ fontSize: 15, fontWeight: 500, marginTop: 6 }}>{c.cat}</div>
+                <div style={{ fontSize: isMobile ? 12 : 15, fontWeight: 500, marginTop: isMobile ? 0 : 6 }}>{c.cat}</div>
               </button>
             )}
           </div>
 
           {/* detail: grid of image + description, then price table or hub diagram */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
-            <EditorialImage src={cat.img} aspect="auto" style={{ height: '100%', minHeight: 380 }} />
-            <div style={{ padding: '40px 40px 32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
+            {!isMobile && <EditorialImage src={cat.img} aspect="auto" style={{ height: '100%', minHeight: 380 }} />}
+            <div style={{ padding: isMobile ? '24px 20px 24px' : '40px 40px 32px' }}>
               <Label style={{ color: '#C49A3E' }}>{cat.cat}</Label>
               <h3 style={{ fontSize: 26, fontWeight: 500, color: '#132531', marginTop: 12, lineHeight: 1.25, letterSpacing: '-0.01em' }}
               dangerouslySetInnerHTML={{ __html: cat.sub }} />
@@ -1010,7 +1048,7 @@ function CommoditiesPage({ onNav }) {
       </section>
 
       {/* MARKET OVERVIEW — four detailed cards */}
-      <section style={{ background: '#132531', color: '#fff', padding: '80px 40px' }}>
+      <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <h2 style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', marginBottom: 48 }}>
             Market overviews
@@ -1084,10 +1122,10 @@ function CommoditiesPage({ onNav }) {
       </section>
 
       {/* NEWS SOURCES */}
-      <section style={{ background: '#F8F7F3', padding: '80px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ marginBottom: 48 }}>
-            <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', margin: 0 }}>
+          <div style={{ marginBottom: isMobile ? 32 : 48 }}>
+            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', margin: 0 }}>
               News &amp; Data Sources
             </h2>
             <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 12, maxWidth: 560 }}>
@@ -1095,7 +1133,7 @@ function CommoditiesPage({ onNav }) {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 40 }}>
 
             {/* FREE */}
             <div>
@@ -1218,6 +1256,7 @@ function NewsletterPage({ onNav, onLock }) {
   const [email, setEmail] = useNewsState('');
   const [sent, setSent] = useNewsState(false);
   const [filter, setFilter] = useNewsState('ALL');
+  const isMobile = useIsMobile();
 
   const lead = ISSUES[0];
   const rest = ISSUES.slice(1);
@@ -1227,11 +1266,11 @@ function NewsletterPage({ onNav, onLock }) {
       {/* HERO — masthead treatment */}
       <section style={{ background: '#F8F7F3', paddingBottom: 40 }}>
         <Header current="newsletter" onNav={onNav} tone="light" />
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 40px 56px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '48px 20px 36px' : '72px 40px 56px', textAlign: 'center' }}>
           <Label style={{ marginBottom: 24 }}>/ The weekly bulletin · published since 2019</Label>
           <h1 style={{
             fontFamily: 'Fraunces, Times New Roman, serif',
-            fontSize: 92, fontWeight: 400, color: '#132531',
+            fontSize: isMobile ? 52 : 92, fontWeight: 400, color: '#132531',
             lineHeight: 0.95, letterSpacing: '-0.03em',
             margin: 0
           }}>
@@ -1251,14 +1290,14 @@ function NewsletterPage({ onNav, onLock }) {
       </section>
 
       {/* LEAD ISSUE — big editorial treatment */}
-      <section style={{ background: '#F8F7F3', padding: '0 40px 96px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '0 20px 56px' : '0 40px 96px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ height: 1, background: '#132531', marginBottom: 24 }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 32, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
             <span>This Friday · Lead article</span>
             <span>{lead.no} · {lead.date}</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 56, alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.25fr 1fr', gap: isMobile ? 24 : 56, alignItems: 'center' }}>
             <EditorialImage src={lead.img} aspect="4 / 3" />
             <div>
               <Chip variant="solid" style={{ marginBottom: 22 }}>{lead.tag}</Chip>
@@ -1285,14 +1324,14 @@ function NewsletterPage({ onNav, onLock }) {
       </section>
 
       {/* SUBSCRIBE — dark band, centered, high ceremony */}
-      <section style={{ background: '#060F16', color: '#fff', padding: '96px 40px', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ background: '#060F16', color: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
           <img src="https://images.unsplash.com/photo-1494412651409-8dd6e94a9db2?w=2000&q=80"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) brightness(0.5)' }} alt="" />
         </div>
         <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
           <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Subscribe</Label>
-          <h2 style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'balance' }}>
+          <h2 style={{ fontSize: isMobile ? 30 : 44, fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'balance' }}>
             <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Friday morning,</span> a short note<br />from the Secretariat.
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, marginTop: 22, maxWidth: 520, margin: '22px auto 0' }}>
@@ -1300,7 +1339,7 @@ function NewsletterPage({ onNav, onLock }) {
           </p>
           {!sent ?
           <form onSubmit={(e) => {e.preventDefault();if (email) setSent(true);}}
-          style={{ display: 'flex', gap: 10, marginTop: 36, maxWidth: 480, margin: '36px auto 0' }}>
+          style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 10, marginTop: 36, maxWidth: 480, margin: '36px auto 0' }}>
               <input
               value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="name@indiana.edu"
@@ -1324,21 +1363,21 @@ function NewsletterPage({ onNav, onLock }) {
       </section>
 
       {/* RECENT ISSUES */}
-      <section style={{ background: '#F8F7F3', padding: '96px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '96px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
             <div>
               <Label>/ Recent issues</Label>
-              <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              <h2 style={{ fontSize: isMobile ? 26 : 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
                 From the Secretariat and the membership.
               </h2>
             </div>
-            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>All issues →</a>
+            {!isMobile && <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>All issues →</a>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 24 }}>
             {rest.map((d) =>
-            <article key={d.no} style={{ background: '#fff', display: 'grid', gridTemplateColumns: '1fr 1fr', border: '1px solid #ECE8DF' }}>
+            <article key={d.no} style={{ background: '#fff', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', border: '1px solid #ECE8DF' }}>
                 <EditorialImage src={d.img} aspect="auto" style={{ height: '100%' }} />
                 <div style={{ padding: '28px 28px 24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -1359,16 +1398,16 @@ function NewsletterPage({ onNav, onLock }) {
       </section>
 
       {/* ARCHIVE TABLE */}
-      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+      <section style={{ background: '#fff', padding: isMobile ? '48px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', gap: isMobile ? 20 : 0, marginBottom: 32 }}>
             <div>
               <Label>/ The archive</Label>
-              <h2 style={{ fontSize: 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              <h2 style={{ fontSize: isMobile ? 26 : 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
                 Retained in perpetuity.
               </h2>
             </div>
-            <div style={{ display: 'flex', gap: 4 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {['ALL', 'ENERGY', 'METALS', 'AGRICULTURE', 'FREIGHT', 'VIEWPOINT'].map((t) =>
               <button key={t}
               onClick={() => setFilter(t)}
@@ -1386,6 +1425,15 @@ function NewsletterPage({ onNav, onLock }) {
 
           <div style={{ borderTop: '1px solid #132531' }}>
             {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).map((iss, i) =>
+            isMobile ? (
+              <div key={iss.no} style={{ padding: '16px 0', borderBottom: '1px solid #ECE8DF', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <Chip variant="outline">{iss.cat}</Chip>
+                  <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{iss.date}</span>
+                </div>
+                <div style={{ fontSize: 15, fontWeight: 500, color: '#132531', lineHeight: 1.35 }}>{iss.title}</div>
+              </div>
+            ) : (
             <div key={iss.no} style={{
               display: 'grid', gridTemplateColumns: '110px 110px 1fr 140px 40px',
               padding: '20px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center',
@@ -1399,7 +1447,7 @@ function NewsletterPage({ onNav, onLock }) {
                 <div><Chip variant="outline">{iss.cat}</Chip></div>
                 <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
               </div>
-            )}
+            ))}
           </div>
           <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>
@@ -1425,6 +1473,7 @@ const { useState: useMemState } = React;
 function MembershipPage({ onNav }) {
   const [form, setForm] = useMemState({ name: '', email: '', year: '', major: '', interest: [] });
   const [submitted, setSubmitted] = useMemState(false);
+  const isMobile = useIsMobile();
 
   const toggleInterest = (i) => {
     setForm((f) => ({
@@ -1436,25 +1485,25 @@ function MembershipPage({ onNav }) {
   return (
     <>
       {/* HERO */}
-      <section style={{ position: 'relative', minHeight: 540, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', minHeight: isMobile ? 360 : 540, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
         <Header current="membership" onNav={onNav} tone="dark" />
         <div style={{ position: 'absolute', inset: 0 }}>
           <img src="LNG_Tanker.jpeg"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.6) saturate(1)' }} alt="" />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.5) 0%, rgba(6,15,22,0.5) 100%)' }} />
         </div>
-        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: 400, justifyContent: 'space-between' }}>
-          <h1 style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.72)' }}>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '110px 20px 40px' : '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: isMobile ? 280 : 400, justifyContent: 'space-between' }}>
+          <h1 style={{ fontSize: isMobile ? 36 : 64, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.72)' }}>
             Membership is by admission only.
           </h1>
-          <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340 }}>
+          <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340, marginTop: isMobile ? 20 : 0 }}>
             Your application will be reviewed by the leadership team. Join the mailing list below to stay up to date with news, events, and announcements.
           </p>
         </div>
       </section>
 
       {/* JOIN FORM */}
-      <section style={{ background: '#F8F7F3', padding: '80px 40px' }}>
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textAlign: 'center', marginBottom: 40 }}>
             Join the mailing list
@@ -1476,7 +1525,7 @@ function MembershipPage({ onNav }) {
                 <input className="input" type="email" placeholder="name@indiana.edu" value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })} style={{ marginTop: 6 }} required />
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.4fr', gap: 14 }}>
                 <label>
                   <Label>CLASS</Label>
                   <select className="input" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} style={{ marginTop: 6 }}>
@@ -1518,7 +1567,7 @@ function MembershipPage({ onNav }) {
       </section>
 
       {/* FAQ */}
-      <section style={{ background: '#fff', padding: '96px 40px', borderTop: '1px solid #ECE8DF' }}>
+      <section style={{ background: '#fff', padding: isMobile ? '48px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <h2 style={{ fontSize: 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
             FAQ
@@ -1596,6 +1645,7 @@ function NewsletterGate({ onNav }) {
   const [unlocked, setUnlocked] = useState(false);
   const [err, setErr] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const isMobile = useIsMobile();
 
   if (unlocked) return <NewsletterPage onNav={onNav} onLock={() => setUnlocked(false)} />;
 
@@ -1608,8 +1658,8 @@ function NewsletterGate({ onNav }) {
   return (
     <>
       <Header current="newsletter" onNav={onNav} tone="light" />
-      <section style={{ minHeight: '80vh', background: '#F8F7F3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: 'Fraunces, Times New Roman, serif', fontSize: 72, fontWeight: 400, color: '#132531', lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
+      <section style={{ minHeight: '80vh', background: '#F8F7F3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '60px 20px' : '80px 40px', textAlign: 'center' }}>
+        <h1 style={{ fontFamily: 'Fraunces, Times New Roman, serif', fontSize: isMobile ? 48 : 72, fontWeight: 400, color: '#132531', lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
           Coming Soon
         </h1>
         <div style={{ marginTop: 36 }}>
