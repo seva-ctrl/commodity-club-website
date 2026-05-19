@@ -514,6 +514,9 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
             <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
               BeInvolved <ArrowIcon />
             </Button>
+            <Button variant="signal" size="sm" as="a" href="https://www.linkedin.com/company/commodity-trading-and-shipping-club/posts/?feedView=all" target="_blank" rel="noopener noreferrer" style={{ background: '#0A66C2', borderColor: '#0A66C2' }}>
+              LinkedIn <ArrowIcon />
+            </Button>
           </>
         )}
       </div>
@@ -527,9 +530,12 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
             borderBottom: `1px solid ${rule}`
           }}>{l.label}</a>
           )}
-          <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
               BeInvolved <ArrowIcon />
+            </Button>
+            <Button variant="signal" size="sm" as="a" href="https://www.linkedin.com/company/commodity-trading-and-shipping-club/posts/?feedView=all" target="_blank" rel="noopener noreferrer" style={{ background: '#0A66C2', borderColor: '#0A66C2' }}>
+              LinkedIn <ArrowIcon />
             </Button>
           </div>
         </nav>
