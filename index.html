@@ -505,13 +505,13 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
 
 }
 
-function Footer({ onNav }) {
+function Footer({ onNav, onLock }) {
   return (
     <footer style={{ background: '#060F16', color: '#BFBFBF', padding: '64px 40px 28px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48 }}>
           <div>
-            <img src="data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20120%22%20role%3D%22img%22%20aria-label%3D%22CTSC%20mark%20inverse%22%3E%0A%20%20%3Cg%20fill%3D%22%23F8F7F3%22%20transform%3D%22translate(0%2C10)%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M10%2078%20L250%2078%20L232%20100%20L28%20100%20Z%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2260%22%20width%3D%22210%22%20height%3D%2218%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2222%22%20y%3D%2250%22%20width%3D%2238%22%20height%3D%2210%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2230%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22172%22%20y%3D%2214%22%20width%3D%2226%22%20height%3D%2216%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%22205%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22110%22%20cy%3D%2252%22%20r%3D%2210%22%3E%3C%2Fcircle%3E%0A%20%20%20%20%3Crect%20x%3D%2278%22%20y%3D%2222%22%20width%3D%223%22%20height%3D%2238%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%2266%22%20y%3D%2230%22%20width%3D%2227%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%22108%22%20width%3D%22260%22%20height%3D%222%22%3E%3C%2Frect%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" alt="CTSC" style={{ height: 64 }} />
+            <div role="img" aria-label="CTSC ship" style={{ width: 163, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '228px 228px', backgroundPosition: '-38px -59px', backgroundRepeat: 'no-repeat', filter: 'brightness(0) invert(1)' }} />
             <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginTop: 18, color: '#8F8F8F', lineHeight: 1.9 }}>
               COMMODITY TRADING<br />&amp; SHIPPING CLUB<br />INDIANA UNIVERSITY · EST. 2019
             </div>
@@ -549,12 +549,14 @@ function Footer({ onNav }) {
           <span>2025–2026 COMMODITY TRADING &amp; SHIPPING CLUB · INDIANA UNIVERSITY</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
-            <button onClick={() => { localStorage.removeItem('ctsc-unlocked'); window.location.reload(); }}
-              style={{ background: 'transparent', border: '1px solid #4A4A4A', color: '#6B6B6B', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', padding: '6px 12px', cursor: 'pointer', borderRadius: 2, transition: 'all 220ms' }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8321E'; e.currentTarget.style.color = '#C8321E'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#4A4A4A'; e.currentTarget.style.color = '#6B6B6B'; }}>
-              Log out
-            </button>
+            {onLock && (
+              <button onClick={onLock}
+                style={{ background: 'transparent', border: '1px solid #4A4A4A', color: '#6B6B6B', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', padding: '6px 12px', cursor: 'pointer', borderRadius: 2, transition: 'all 220ms' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8321E'; e.currentTarget.style.color = '#C8321E'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#4A4A4A'; e.currentTarget.style.color = '#6B6B6B'; }}>
+                Lock Newsletter
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1212,7 +1214,7 @@ const PAST_ISSUES = [
 { no: 'No. 06', date: '23 Jan 2026', title: 'Arabica at two-year highs — the Brazilian basis.', cat: 'AGRICULTURE' }];
 
 
-function NewsletterPage({ onNav }) {
+function NewsletterPage({ onNav, onLock }) {
   const [email, setEmail] = useNewsState('');
   const [sent, setSent] = useNewsState(false);
   const [filter, setFilter] = useNewsState('ALL');
@@ -1408,7 +1410,7 @@ function NewsletterPage({ onNav }) {
         </div>
       </section>
 
-      <Footer onNav={onNav} />
+      <Footer onNav={onNav} onLock={onLock} />
     </>);
 
 }
@@ -1595,7 +1597,7 @@ function NewsletterGate({ onNav }) {
   const [err, setErr] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  if (unlocked) return <NewsletterPage onNav={onNav} />;
+  if (unlocked) return <NewsletterPage onNav={onNav} onLock={() => setUnlocked(false)} />;
 
   const submit = (e) => {
     e.preventDefault();
@@ -1633,16 +1635,11 @@ function NewsletterGate({ onNav }) {
 Object.assign(window, { NewsletterGate });
 
 function App() {
-  const [siteUnlocked, setSiteUnlocked] = useState(() => localStorage.getItem('ctsc-unlocked') === '1');
   const [page, setPage] = useState(() => localStorage.getItem('ctsc-iu-page') || 'about');
   useEffect(() => {
     localStorage.setItem('ctsc-iu-page', page);
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [page]);
-
-  if (!siteUnlocked) {
-    return <SiteLock onUnlock={() => { localStorage.setItem('ctsc-unlocked', '1'); setSiteUnlocked(true); }} />;
-  }
 
   const Page = window[
   { about: 'AboutPage', commodities: 'CommoditiesPage', newsletter: 'NewsletterGate', membership: 'MembershipPage' }[page]] ||
