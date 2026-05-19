@@ -1503,7 +1503,7 @@ Object.assign(window, { NewsletterPage });
 const { useState: useMemState } = React;
 
 function MembershipPage({ onNav }) {
-  const [form, setForm] = useMemState({ name: '', email: '', year: '', major: '', interest: [] });
+  const [form, setForm] = useMemState({ name: '', email: '', year: '', major: '', minor: '', interest: [] });
   const [submitted, setSubmitted] = useMemState(false);
   const isMobile = useIsMobile();
 
@@ -1553,6 +1553,7 @@ function MembershipPage({ onNav }) {
               data.append('entry.1807555982', form.email);
               data.append('entry.765673597', form.year);
               data.append('entry.1973067703', form.major);
+              data.append('entry.1231550780', form.minor);
               form.interest.forEach(i => data.append('entry.114650675', i));
               fetch('https://docs.google.com/forms/d/e/1FAIpQLSc0ofGJDwgnK9Vf6HIryiPk1r-0keyl1ScJaRFLh67JNhyg6Q/formResponse', {
                 method: 'POST', mode: 'no-cors', body: data
@@ -1587,6 +1588,11 @@ function MembershipPage({ onNav }) {
                     onChange={(e) => setForm({ ...form, major: e.target.value })} style={{ marginTop: 6 }} />
                 </label>
               </div>
+              <label>
+                <Label>MINOR(S) · OPTIONAL</Label>
+                <input className="input" placeholder="e.g. Economics" value={form.minor}
+                  onChange={(e) => setForm({ ...form, minor: e.target.value })} style={{ marginTop: 6 }} />
+              </label>
               <div>
                 <Label>INTERESTS · SELECT ANY</Label>
                 <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
