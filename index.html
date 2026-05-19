@@ -511,12 +511,14 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
               }}>{l.label}</a>
               )}
             </nav>
-            <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
-              BeInvolved <ArrowIcon />
-            </Button>
-            <Button variant="signal" size="sm" as="a" href="https://www.linkedin.com/company/commodity-trading-and-shipping-club/posts/?feedView=all" target="_blank" rel="noopener noreferrer" style={{ background: '#0A66C2', borderColor: '#0A66C2' }}>
-              LinkedIn <ArrowIcon />
-            </Button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <Button variant="signal" size="sm" as="a" href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer">
+                BeInvolved <ArrowIcon />
+              </Button>
+              <Button variant="signal" size="sm" as="a" href="https://www.linkedin.com/company/commodity-trading-and-shipping-club/posts/?feedView=all" target="_blank" rel="noopener noreferrer" style={{ background: '#0A66C2', borderColor: '#0A66C2' }}>
+                LinkedIn <ArrowIcon />
+              </Button>
+            </div>
           </>
         )}
       </div>
