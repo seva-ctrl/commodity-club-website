@@ -884,9 +884,11 @@ function PriceRow({ item }) {
     <tr style={{ borderBottom: '1px solid #ECE8DF', background: item.featured ? '#F8F7F3' : 'transparent' }}>
       <td style={{ padding: '14px 0', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#C49A3E', letterSpacing: 1 }}>{item.sym}</td>
       <td style={{ padding: '14px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <span style={{ fontWeight: item.featured ? 700 : 500, fontSize: 15, color: '#132531' }}>{item.name}</span>
           {item.featured && <span style={{ fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#C8321E', fontWeight: 500 }}>Most traded</span>}
+          {item.isLive && !item.etfProxy && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2E6B3E', display: 'inline-block', flexShrink: 0 }} title="Live price" />}
+          {item.etfProxy && <span style={{ fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', border: '1px solid #D8D4CC', padding: '1px 5px', borderRadius: 2 }} title={item.etfLabel}>ETF</span>}
         </div>
       </td>
       <td style={{ padding: '14px 0', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{item.unit}</td>
@@ -950,8 +952,25 @@ function GasHubDiagram() {
 
 function CommoditiesPage({ onNav }) {
   const [active, setActive] = useCommState('CRUDE & REFINED');
-  const cat = COMMODITIES.find((c) => c.cat === active) || COMMODITIES[0];
   const isMobile = useIsMobile();
+  const { prices, status, updatedAt } = useLivePrices();
+
+  // Merge live prices into static commodity data
+  const liveCommodities = COMMODITIES.map(group => ({
+    ...group,
+    items: group.items.map(item => {
+      const live = prices[item.sym];
+      if (!live) return item;
+      return { ...item, price: live.price, chg: live.chg, isLive: true, etfProxy: live.etfProxy, etfLabel: live.etfLabel };
+    })
+  }));
+
+  const cat = liveCommodities.find((c) => c.cat === active) || liveCommodities[0];
+
+  const statusLabel = status === 'loading' ? 'Fetching live prices…'
+    : status === 'error' ? 'Prices indicative'
+    : updatedAt ? `Updated ${Math.round((Date.now() - updatedAt) / 60000) || '<1'} min ago`
+    : 'Prices indicative';
 
   return (
     <>
@@ -976,7 +995,7 @@ function CommoditiesPage({ onNav }) {
       {/* TICKER STRIP */}
       <section style={{ background: '#181818', color: '#fff', padding: '18px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap', animation: 'ticker 60s linear infinite' }}>
-          {[...COMMODITIES.flatMap((c) => c.items), ...COMMODITIES.flatMap((c) => c.items)].map((it, i) => {
+          {[...liveCommodities.flatMap((c) => c.items), ...liveCommodities.flatMap((c) => c.items)].map((it, i) => {
             const up = it.chg.startsWith('+');
             return (
               <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
@@ -998,12 +1017,17 @@ function CommoditiesPage({ onNav }) {
             <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
               Select a product.
             </h2>
-            {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Prices · indicative · refreshed weekly</div>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {status === 'loading' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C49A3E', display: 'inline-block', animation: 'pulse 1.4s ease-in-out infinite' }} />}
+              {status !== 'loading' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: status === 'error' ? '#6B6B6B' : '#2E6B3E', display: 'inline-block' }} />}
+              <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{statusLabel}</span>
+            </div>
           </div>
+          <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }`}</style>
 
           {/* tab bar */}
           <div style={{ display: 'flex', borderTop: '1px solid #132531', borderBottom: '1px solid #D8D4CC', overflowX: isMobile ? 'auto' : 'visible' }}>
-            {COMMODITIES.map((c) =>
+            {liveCommodities.map((c) =>
             <button key={c.cat}
             onClick={() => setActive(c.cat)}
             style={{
@@ -1605,6 +1629,120 @@ function MembershipPage({ onNav }) {
 
 Object.assign(window, { MembershipPage });
 
+
+// ======== LivePrices.js ========
+/* global React */
+
+const AV_KEY = 'I8R6FD24WF3Y1JN3';
+const FH_KEY = 'd85t531r01qm56kslilgd85t531r01qm56kslim0';
+const PRICE_CACHE_KEY = 'ctsc-live-prices-v2';
+const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+
+// Alpha Vantage commodity endpoints
+// multiplier: convert AV raw value → display unit shown on site
+// AV units: WTI/Brent $/bbl, NATURAL_GAS $/MMBtu, COPPER $/lb,
+//           ALUMINUM $/mt, CORN ¢/bu, WHEAT ¢/bu, COTTON ¢/lb
+//           COFFEE $/lb (site shows ¢/lb → multiply by 100)
+const AV_MAP = {
+  'BRN': { func: 'BRENT',        interval: 'daily',   multiplier: 1,   decimals: 2 },
+  'WTI': { func: 'WTI',          interval: 'daily',   multiplier: 1,   decimals: 2 },
+  'HH':  { func: 'NATURAL_GAS',  interval: 'daily',   multiplier: 1,   decimals: 2 },
+  'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1,   decimals: 3 },
+  'AL':  { func: 'ALUMINUM',     interval: 'monthly', multiplier: 1,   decimals: 0 },
+  'ZC':  { func: 'CORN',         interval: 'monthly', multiplier: 1,   decimals: 2 },
+  'ZW':  { func: 'WHEAT',        interval: 'monthly', multiplier: 1,   decimals: 2 },
+  'CT':  { func: 'COTTON',       interval: 'monthly', multiplier: 1,   decimals: 2 },
+  'KC':  { func: 'COFFEE',       interval: 'monthly', multiplier: 100, decimals: 2 },
+};
+
+// Finnhub ETF proxies for paywalled commodities
+const FH_MAP = {
+  'AU': { symbol: 'GLD',  label: 'SPDR Gold ETF' },
+  'ZS': { symbol: 'SOYB', label: 'Teucrium Soybean ETF' },
+  'LI': { symbol: 'LIT',  label: 'Global X Lithium ETF' },
+  'FE': { symbol: 'PICK', label: 'VanEck Steel ETF' },
+  'NI': { symbol: 'DBB',  label: 'Invesco Base Metals ETF' },
+};
+
+function fmtChg(curr, prev) {
+  const pct = ((curr - prev) / Math.abs(prev)) * 100;
+  const sign = pct >= 0 ? '+' : '';
+  return `${sign}${pct.toFixed(2)}%`;
+}
+
+async function fetchAVCommodity(sym, cfg) {
+  const url = `https://www.alphavantage.co/query?function=${cfg.func}&interval=${cfg.interval}&apikey=${AV_KEY}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  if (!json.data || json.data.length < 2) return null; // rate limit or error
+  const curr = parseFloat(json.data[0].value) * cfg.multiplier;
+  const prev = parseFloat(json.data[1].value) * cfg.multiplier;
+  const raw = curr.toFixed(cfg.decimals);
+  // format large numbers with comma (e.g. 2,418)
+  const price = cfg.decimals === 0 ? Number(raw).toLocaleString('en-US') : raw;
+  return { price, chg: fmtChg(curr, prev), date: json.data[0].date, source: 'alphavantage' };
+}
+
+async function fetchFHQuote(sym, cfg) {
+  const url = `https://finnhub.io/api/v1/quote?symbol=${cfg.symbol}&token=${FH_KEY}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  if (!json.c || json.c === 0) return null;
+  const sign = json.dp >= 0 ? '+' : '';
+  return {
+    price: json.c.toFixed(2),
+    chg: `${sign}${json.dp.toFixed(2)}%`,
+    date: json.t ? new Date(json.t * 1000).toISOString().split('T')[0] : null,
+    source: 'finnhub',
+    etfProxy: cfg.symbol,
+    etfLabel: cfg.label,
+  };
+}
+
+async function loadLivePrices() {
+  const results = {};
+  await Promise.allSettled([
+    ...Object.entries(AV_MAP).map(([sym, cfg]) =>
+      fetchAVCommodity(sym, cfg).then(d => { if (d) results[sym] = d; }).catch(() => {})
+    ),
+    ...Object.entries(FH_MAP).map(([sym, cfg]) =>
+      fetchFHQuote(sym, cfg).then(d => { if (d) results[sym] = d; }).catch(() => {})
+    ),
+  ]);
+  return results;
+}
+
+function useLivePrices() {
+  const readCache = () => {
+    try {
+      const c = JSON.parse(localStorage.getItem(PRICE_CACHE_KEY));
+      if (c && Date.now() - c.ts < PRICE_CACHE_TTL) return c;
+    } catch(e) {}
+    return null;
+  };
+
+  const init = readCache();
+  const [prices, setPrices]       = React.useState(init ? init.prices : {});
+  const [status, setStatus]       = React.useState(init ? 'cached' : 'loading');
+  const [updatedAt, setUpdatedAt] = React.useState(init ? new Date(init.ts) : null);
+
+  React.useEffect(() => {
+    if (readCache()) return; // still fresh, skip fetch
+    loadLivePrices()
+      .then(p => {
+        const ts = Date.now();
+        try { localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ts, prices: p })); } catch(e) {}
+        setPrices(p);
+        setUpdatedAt(new Date(ts));
+        setStatus('live');
+      })
+      .catch(() => setStatus('error'));
+  }, []);
+
+  return { prices, status, updatedAt };
+}
+
+Object.assign(window, { useLivePrices });
 
 
 const { useState, useEffect } = React;
