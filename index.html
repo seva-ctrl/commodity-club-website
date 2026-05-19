@@ -1545,7 +1545,20 @@ function MembershipPage({ onNav }) {
               You're on the list. We'll be in touch.
             </div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); if (form.name && form.email) setSubmitted(true); }}
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!form.name || !form.email) return;
+              const data = new URLSearchParams();
+              data.append('entry.1798515556', form.name);
+              data.append('entry.1807555982', form.email);
+              data.append('entry.765673597', form.year);
+              data.append('entry.1973067703', form.major);
+              form.interest.forEach(i => data.append('entry.114650675', i));
+              fetch('https://docs.google.com/forms/d/e/1FAIpQLSc0ofGJDwgnK9Vf6HIryiPk1r-0keyl1ScJaRFLh67JNhyg6Q/formResponse', {
+                method: 'POST', mode: 'no-cors', body: data
+              }).catch(() => {});
+              setSubmitted(true);
+            }}
               style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <label>
                 <Label>FULL NAME</Label>
@@ -1562,11 +1575,10 @@ function MembershipPage({ onNav }) {
                   <Label>CLASS</Label>
                   <select className="input" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} style={{ marginTop: 6 }}>
                     <option value="">—</option>
-                    <option>Class of 2026</option>
-                    <option>Class of 2027</option>
-                    <option>Class of 2028</option>
-                    <option>Class of 2029</option>
-                    <option>Graduate</option>
+                    <option value="2027">Class of 2027</option>
+                    <option value="2028">Class of 2028</option>
+                    <option value="2029">Class of 2029</option>
+                    <option value="2030">Class of 2030</option>
                   </select>
                 </label>
                 <label>
