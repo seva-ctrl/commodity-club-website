@@ -1673,7 +1673,7 @@ const AV_MAP = {
   'BRN': { func: 'BRENT',        interval: 'daily',   multiplier: 1,   decimals: 2 },
   'WTI': { func: 'WTI',          interval: 'daily',   multiplier: 1,   decimals: 2 },
   'HH':  { func: 'NATURAL_GAS',  interval: 'daily',   multiplier: 1,   decimals: 2 },
-  'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1,   decimals: 3 },
+  'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1/2204.62, decimals: 3 }, // AV returns $/MT, site shows $/lb
   'AL':  { func: 'ALUMINUM',     interval: 'monthly', multiplier: 1,   decimals: 0 },
   'ZC':  { func: 'CORN',         interval: 'monthly', multiplier: 1,   decimals: 2 },
   'ZW':  { func: 'WHEAT',        interval: 'monthly', multiplier: 1,   decimals: 2 },
