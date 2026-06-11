@@ -12,42 +12,76 @@ cd /Users/seva/Downloads/commodity-club-website
 python3 -m http.server 8080
 ```
 
-There are no dependencies to install, no build commands, and no test suite.
+The site has **zero runtime dependencies**. The only tooling is a dev-only test harness (see Testing below).
+
+## Testing
+
+```
+bun install   # once
+bun run test  # runs tests/run-tests.mjs
+```
+
+(The machine has bun, not node; the script also runs under `node tests/run-tests.mjs` if node is ever installed.)
+
+`tests/run-tests.mjs` checks, in order:
+1. **JSX compile** — every `<script type="text/babel">` block compiles with Babel. A syntax error in this file ships a blank page, so this is the most important check.
+2. **Asset existence** — every local image referenced in `index.html` exists on disk (catches filename case/space typos like `dump truck.jpeg` / `houston_trip.JPG`).
+3. **Fictional-content regression** — placeholder copy that was removed (e.g. "The Dispatch", "Vol. VII") stays removed; no dead `href="#"` links.
+4. **Render smoke test** — all pages render in jsdom with `fetch` rejected (offline fallback path); the About calendar shows the current month.
+5. **Data integrity** — `EDITIONS`, `COMMODITIES`, `EVENTS`, `GAS_HUBS` have required fields; every newsletter chart file exists.
+6. **Window exports** — every component the router needs is on `window`.
+
+Run the tests after any change to `index.html`.
 
 ## Architecture
 
-The entire application is a single `index.html` file using **React 18 + in-browser Babel** loaded from CDN. All JSX is written inside `<script type="text/babel" data-presets="env,react">` blocks. There is no bundler.
-
-### Multi-script pattern
-The file is split into multiple `<script type="text/babel">` blocks, each representing a logical module (design system, shared components, individual pages). Because Babel compiles each block in isolation, components defined in one block are exposed to later blocks via:
+The entire application is a single `index.html` using **React 18 + in-browser Babel** loaded from CDN. All JSX lives in **one** `<script type="text/babel" data-presets="env,react">` block, organized with `// ======== pages/X.jsx ========` section comments. Components and data arrays are exposed on `window` via:
 ```js
 Object.assign(window, { ComponentName });
 ```
-This is the only way components cross script boundaries — do not use ES module `import/export`.
+The router (`App`) and `boot()` look components up on `window` — keep these exports when adding pages. Do not use ES module `import/export`.
 
 ### Routing
-Client-side routing uses a single `useState` in the root `App` component. The current page is persisted to `localStorage` under the key `ctsc-iu-page`. Navigation happens by calling `onNav('pagename')` passed as a prop.
+Client-side routing is a single `useState` in the root `App` component (no persistence). Navigation happens by calling `onNav('pagename')` passed as a prop.
 
-### Auth gates
-- **Site-wide password gate**: `SiteLock` component checks `localStorage.getItem('ctsc-unlocked') === '1'`. Password: `PeaceAndQuiet`. The logout button in the footer clears this key and reloads.
-- **Newsletter gate**: `NewsletterGate` uses session `useState` only (resets on close). Password: `Analyst3`.
+### Auth
+There are **no password gates** — the old site-wide `SiteLock` and the newsletter `NewsletterGate` were both removed deliberately. Every page is public.
 
 ### Pages
-| Key | Component | File section |
-|-----|-----------|--------------|
-| `about` | `AboutPage` | `// ======== pages/AboutPage.jsx ========` |
-| `commodities` | `CommoditiesPage` | `// ======== pages/CommoditiesPage.jsx ========` |
-| `newsletter` | `NewsletterGate` → `NewsletterPage` | both inline |
-| `membership` | `MembershipPage` | `// ======== pages/MembershipPage.jsx ========` |
+| Key | Component | Notes |
+|-----|-----------|-------|
+| `about` | `AboutPage` | hero, mission, pillars, Houston trip, **Events month calendar (`EventsCalendar` + `EVENTS` array)**, stats, leadership |
+| `commodities` | `CommoditiesPage` | live-price tables with sparklines, key spreads per desk, **interactive gas hub world map**, market overviews, news sources |
+| `newsletter` | `NewsletterPage` | "Weekly Energy Insights" — real editions from the `EDITIONS` array |
+| `membership` | `MembershipPage` | application info + form |
+
+### Events calendar (`EVENTS` array)
+The About page renders a month-grid calendar (`EventsCalendar`, prev/next month navigation, defaults to the current month). It is intentionally empty until the club schedules events. To add one, append to `EVENTS`:
+```js
+{ date: '2026-09-10', title: 'Guest speaker — Vitol', type: 'SPEAKER', where: 'Hodge Hall' }
+```
+`date` must be `YYYY-MM-DD` (the tests enforce this). Events render as navy chips on desktop and brass dots on mobile.
+
+### Newsletter editions (`EDITIONS` array)
+The newsletter page renders entirely from the `EDITIONS` array (top of the NewsletterPage section). **To publish a new edition**: add an object to the FRONT of the array — `EDITIONS[0]` renders as the current edition, all entries appear in the archive table. Each edition has `no`, `title`, `date`, `cat`, `authors[]`, `tradeIdeas[]` (`dir` must be `BULLISH`/`BEARISH`), and `sections[]` (`desk`, `call`, `paras[]`, `charts[]`). Chart images go in the repo root named `ed<N>-<slug>.png`.
+
+Known pending item: Edition 1's Natural Gas section contains a literal `$X` (unfilled figure from the source doc) — `renderNewsPara()` renders it visibly flagged. Replace `$X` in the `EDITIONS` data when the real number is known.
+
+**Do not create a `newsletter/` directory** — the untracked `Newsletter/` folder (source .docx) in the main checkout would collide on macOS's case-insensitive filesystem.
+
+### Live prices & sparklines
+`useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v3`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
+
+### Gas hub map
+`GasHubDiagram` is a hand-traced equirectangular world map (`WORLD_PATHS`) with hubs in `GAS_HUBS` (projection: `x = 2.778 * (lon + 180)`, `y = 3.69 * (75 - lat)`, viewBox `0 0 1000 480`). Hubs support hover/tap tooltips; LNG routes animate via the `gasflow` keyframe. It renders full-width under the NAT GAS & POWER tab.
 
 ### Local image assets
-All images live alongside `index.html` and are referenced by filename only (no path prefix):
-- `Oil_cargo_about_cover.jpeg` — About page hero
-- `houston_trip.JPG` — Houston trip section (note uppercase .JPG)
-- `refinery.jpeg` — Commodities: Crude & Refined tab
-- `dump truck.jpeg` — Commodities: Metals tab (note space in filename)
-- `LNG_Tanker.jpeg` — Membership page hero
-- `Trading_floor.jpeg` — Commodities page hero
+All images live alongside `index.html`, referenced by filename only. Photos are pre-compressed (~200–500KB; originally up to 9.7MB — keep them small):
+- `Oil_cargo_about_cover.jpeg` — About hero · `houston_trip.JPG` (uppercase .JPG) — Houston trip
+- `refinery.jpeg`, `dump truck.jpeg` (space in name) — Commodities tabs · `Trading_floor.jpeg` — Commodities hero
+- `LNG_Tanker.jpeg` — Membership hero + newsletter subscribe band · `club_logo_clear.png` — header/footer sprite + favicon
+- `ship_aerial.jpeg` — About page "Interested in the field?" CTA band
+- `ed1-*.png` ×10 — Edition 1 newsletter charts (extracted from the source .docx; **leave their styling as-is** — the user wants them to read like a newsletter, not a web feature)
 
 ### Design system
 CSS variables are defined in the `<style>` block at the top of the file. Key colors:
@@ -55,13 +89,19 @@ CSS variables are defined in the `<style>` block at the top of the file. Key col
 - `--c-signal: #C8321E` — signal red (used sparingly for CTAs and accents)
 - `--c-brass: #C49A3E` — brass/gold accent
 - `--c-ivory: #F8F7F3` — primary light surface
+- Up/down market colors: `#2E6B3E` / `#C8321E` on light, `#6ED08B` / `#E85E4A` on dark.
 
 Full design rationale is in `DESIGN-ferrari.md`. The aesthetic is Ferrari editorial — chiaroscuro alternation between dark navy/black sections and ivory panels.
 
 ### Shared components (defined early, used everywhere)
-`Button`, `Label`, `BrassRule`, `Chip`, `EditorialImage`, `ArrowIcon`, `Header`, `Footer` — all defined in the design system script block and exposed on `window`.
+`Button`, `Label`, `BrassRule`, `Chip`, `EditorialImage`, `ArrowIcon`, `Header`, `Footer`, `useIsMobile`, `Sparkline` — defined in the design-system portion of the script and exposed on `window`.
+
+### Motion system
+CSS classes in the second `<style>` block + React helpers: `Reveal` (IntersectionObserver scroll-reveal; falls back to instantly-visible without IO — this keeps jsdom tests passing), `HeroLines` (line-by-line hero headline mask reveal), `CountUp` (stats count up on scroll), `ReadingProgress` (brass bar on the newsletter), `.kenburns` (slow hero-photo drift), `.page-enter` (route/tab transition), ticker hover-pause + edge masks. All honor `prefers-reduced-motion`.
+**Gotcha:** `.page-enter` must keep `animation-fill-mode: backwards` (NOT `both`/`forwards`) — a retained transform makes the page wrapper the containing block for `position: fixed` children (lightbox, progress bar), pinning them to the document instead of the viewport.
 
 ## Key content files
-- `commodities_primer.md` — source of truth for all commodity market descriptions, firms, and instruments on the Commodities page
+- `Newsletter/Commodity Club Newsletter.docx` (main checkout, untracked) — source document for Edition 1
+- `commodities_primer.md` — source of truth for commodity market descriptions, firms, instruments, and the "key spreads" lists
 - `commodity_news_sources.md` — source of truth for the News & Data Sources section
 - `DESIGN-ferrari.md` — full color palette, typography rules, and component styling reference

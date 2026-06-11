@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <title>Commodity Trading &amp; Shipping Club · Indiana University</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The Commodity Trading &amp; Shipping Club at Indiana University's Kelley School of Business — developing the next generation of energy trading professionals.">
+<link rel="icon" type="image/png" href="club_logo_clear.png">
+<meta property="og:title" content="Commodity Trading &amp; Shipping Club · Indiana University">
+<meta property="og:description" content="Student association at the Kelley School of Business covering crude, refined products, natural gas, and freight. Weekly Energy Insights newsletter, trading simulations, and the Houston trek.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="Oil_cargo_about_cover.jpeg">
 <style>
 /* =========================================================
    Commodity Trading & Shipping Club — Design System
@@ -356,6 +362,41 @@ p, .body {
   select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #132531 50%), linear-gradient(135deg, #132531 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
   a.link { color: #132531; text-decoration: none; border-bottom: 1px solid currentColor; transition: color 220ms; }
   a.link:hover { color: #C8321E; }
+
+  /* ---------- Motion system ---------- */
+  ::selection { background: rgba(196,154,62,0.35); color: #132531; }
+  :focus-visible { outline: 2px solid #C49A3E; outline-offset: 2px; }
+
+  /* Page mount transition (App keys each page) */
+  /* fill-mode "backwards" (not "both"): a retained transform would make the
+     page wrapper the containing block for position:fixed children
+     (reading-progress bar, chart lightbox), pinning them to the document
+     instead of the viewport. */
+  @keyframes pageEnter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .page-enter { animation: pageEnter 420ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards; }
+
+  /* Scroll-reveal (added by the Reveal component via IntersectionObserver) */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 700ms cubic-bezier(0.2, 0.7, 0.3, 1), transform 700ms cubic-bezier(0.2, 0.7, 0.3, 1); }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* Hero headline line-by-line mask reveal */
+  @keyframes heroline { from { opacity: 0; transform: translateY(105%); } to { opacity: 1; transform: none; } }
+  .hero-line { display: block; overflow: hidden; }
+  .hero-line > span { display: inline-block; animation: heroline 850ms cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+  /* Slow Ken Burns drift on hero photography */
+  @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.06); } }
+  .kenburns { animation: kenburns 24s ease-out both; will-change: transform; }
+
+  /* Ticker: pause on hover, soft edge masks */
+  .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+  .ticker-wrap { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter, .hero-line > span, .kenburns { animation: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .ticker-track { animation: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -456,7 +497,64 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
-Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon, useIsMobile });
+// Scroll-reveal wrapper: fades content up when it enters the viewport.
+// Falls back to immediately visible when IntersectionObserver is unavailable
+// (old browsers, jsdom tests) or for reduced-motion users (via CSS).
+function Reveal({ children, delay = 0, style }) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { el.classList.add('is-visible'); return; }
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { el.classList.add('is-visible'); io.disconnect(); }
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return <div ref={ref} className="reveal" style={{ transitionDelay: delay ? `${delay}ms` : undefined, ...style }}>{children}</div>;
+}
+
+// Hero headline reveal: each line slides up from behind a mask on page load.
+function HeroLines({ lines, startDelay = 150 }) {
+  return lines.map((line, i) =>
+  <span key={i} className="hero-line">
+      <span style={{ animationDelay: `${startDelay + i * 110}ms` }}>{line}</span>
+    </span>
+  );
+}
+
+// Animated number for the stats band ("50+" counts up when scrolled into view).
+function CountUp({ value, duration = 1300 }) {
+  const match = /^(\d+)(.*)$/.exec(value);
+  const target = match ? parseInt(match[1], 10) : null;
+  const suffix = match ? match[2] : '';
+  const [n, setN] = React.useState(0);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (target === null) return;
+    const el = ref.current;
+    const start = () => {
+      const t0 = performance.now();
+      const tick = (t) => {
+        const p = Math.min((t - t0) / duration, 1);
+        setN(Math.round(target * (1 - Math.pow(1 - p, 3)))); // ease-out cubic
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if (!el || !('IntersectionObserver' in window)) { setN(target); return; }
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { start(); io.disconnect(); }
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [target, duration]);
+  if (target === null) return <span>{value}</span>;
+  return <span ref={ref}>{n}{suffix}</span>;
+}
+
+Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon, useIsMobile, Reveal, HeroLines, CountUp });
 
 
 // ======== components/Chrome.jsx ========
@@ -546,7 +644,7 @@ function Header({ current = 'about', onNav, tone = 'dark' }) {
 
 }
 
-function Footer({ onNav, onLock }) {
+function Footer({ onNav }) {
   const isMobile = useIsMobile();
   return (
     <footer style={{ background: '#060F16', color: '#BFBFBF', padding: isMobile ? '48px 20px 24px' : '64px 40px 28px' }}>
@@ -555,7 +653,7 @@ function Footer({ onNav, onLock }) {
           <div>
             <div role="img" aria-label="CTSC ship" style={{ width: 163, height: 52, backgroundImage: 'url(club_logo_clear.png)', backgroundSize: '228px 228px', backgroundPosition: '-38px -59px', backgroundRepeat: 'no-repeat', filter: 'brightness(0) invert(1)' }} />
             <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginTop: 18, color: '#8F8F8F', lineHeight: 1.9 }}>
-              COMMODITY TRADING<br />&amp; SHIPPING CLUB<br />INDIANA UNIVERSITY · EST. 2019
+              COMMODITY TRADING<br />&amp; SHIPPING CLUB<br />INDIANA UNIVERSITY · EST. 2025
             </div>
             <div style={{ fontSize: 13, color: '#BFBFBF', lineHeight: 1.7, marginTop: 22, maxWidth: 300 }}>
               Kelley School of Business<br />
@@ -589,17 +687,7 @@ function Footer({ onNav, onLock }) {
         </div>
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 12 : 0, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
           <span>2025–2026 COMMODITY TRADING &amp; SHIPPING CLUB · INDIANA UNIVERSITY</span>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 12 : 32 }}>
-            <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
-            {onLock && (
-              <button onClick={onLock}
-                style={{ background: 'transparent', border: '1px solid #4A4A4A', color: '#6B6B6B', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', padding: '6px 12px', cursor: 'pointer', borderRadius: 2, transition: 'all 220ms' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8321E'; e.currentTarget.style.color = '#C8321E'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#4A4A4A'; e.currentTarget.style.color = '#6B6B6B'; }}>
-                Lock Newsletter
-              </button>
-            )}
-          </div>
+          <span>A REGISTERED STUDENT ORGANIZATION · KELLEY SCHOOL OF BUSINESS</span>
         </div>
       </div>
     </footer>);
@@ -613,6 +701,106 @@ Object.assign(window, { Header, Footer });
 /* global React, Button, Label, BrassRule, EditorialImage, ArrowIcon, Header, Footer */
 const { useState: useAboutState } = React;
 
+// Club calendar — add events here and they appear on the About page calendar.
+// Shape: { date: 'YYYY-MM-DD', title: 'Guest speaker — Vitol', type: 'MEETING' | 'SPEAKER' | 'TRIP' | 'SOCIAL', where: 'Hodge Hall' }
+const EVENTS = [];
+
+const CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const CAL_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+function EventsCalendar() {
+  const isMobile = useIsMobile();
+  const today = new Date();
+  const [view, setView] = useAboutState({ y: today.getFullYear(), m: today.getMonth() });
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const offset = new Date(view.y, view.m, 1).getDay();
+  const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < offset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const eventsOn = (d) => EVENTS.filter((e) => e.date === `${view.y}-${pad(view.m + 1)}-${pad(d)}`);
+  const isToday = (d) => d === today.getDate() && view.m === today.getMonth() && view.y === today.getFullYear();
+  const onCurrentMonth = view.m === today.getMonth() && view.y === today.getFullYear();
+  const monthEvents = EVENTS.filter((e) => e.date && e.date.startsWith(`${view.y}-${pad(view.m + 1)}`));
+  const nav = (dir) => setView((v) => { const m = v.m + dir; return { y: v.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 }; });
+
+  const navBtn = {
+    background: 'transparent', border: '1px solid #D8D4CC', color: '#132531',
+    width: 34, height: 34, cursor: 'pointer', borderRadius: 2, fontSize: 15,
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'border-color 220ms, color 220ms'
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+        <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 500, color: '#132531', letterSpacing: '-0.01em' }}>
+          {CAL_MONTHS[view.m]} <span style={{ color: '#8F8F8F', fontWeight: 400 }}>{view.y}</span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {!onCurrentMonth &&
+          <button onClick={() => setView({ y: today.getFullYear(), m: today.getMonth() })}
+            style={{ background: 'transparent', border: 'none', color: '#C8321E', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', padding: '0 6px' }}>
+              Today
+            </button>}
+          <button aria-label="Previous month" onClick={() => nav(-1)} style={navBtn}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#132531'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#D8D4CC'; }}>‹</button>
+          <button aria-label="Next month" onClick={() => nav(1)} style={navBtn}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#132531'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#D8D4CC'; }}>›</button>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderTop: '1px solid #132531' }}>
+        {CAL_DAYS.map((d) =>
+        <div key={d} style={{ padding: '10px 0 8px', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#6B6B6B', textAlign: 'center', borderBottom: '1px solid #D8D4CC' }}>
+            {isMobile ? d.slice(0, 1) : d}
+          </div>
+        )}
+        {cells.map((d, i) =>
+        <div key={i} style={{
+          minHeight: isMobile ? 48 : 96,
+          padding: isMobile ? '6px 4px' : '8px 10px',
+          borderBottom: '1px solid #ECE8DF',
+          borderRight: (i + 1) % 7 === 0 ? 'none' : '1px solid #ECE8DF',
+          background: d && isToday(d) ? '#F8F7F3' : d ? '#fff' : 'transparent'
+        }}>
+            {d &&
+          <>
+              <div style={{
+              fontFamily: 'ui-monospace, Menlo, monospace', fontSize: isMobile ? 11 : 12,
+              color: isToday(d) ? '#C8321E' : '#6B6B6B', fontWeight: isToday(d) ? 700 : 400,
+              textAlign: isMobile ? 'center' : 'left'
+            }}>
+                {pad(d)}
+              </div>
+              {eventsOn(d).map((ev) =>
+            isMobile ?
+            <div key={ev.title} title={ev.title} style={{ width: 5, height: 5, borderRadius: '50%', background: '#C49A3E', margin: '4px auto 0' }} /> :
+
+            <div key={ev.title} title={`${ev.title}${ev.where ? ` · ${ev.where}` : ''}`}
+            style={{ marginTop: 6, padding: '4px 6px', background: '#132531', color: '#F8F7F3', fontSize: 10.5, lineHeight: 1.35, borderLeft: '2px solid #C49A3E', borderRadius: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {ev.title}
+                </div>
+            )}
+            </>}
+          </div>
+        )}
+      </div>
+
+      {monthEvents.length === 0 &&
+      <p style={{ fontSize: 13, color: '#8F8F8F', marginTop: 20, lineHeight: 1.65 }}>
+          No events scheduled for {CAL_MONTHS[view.m]} yet — dates are announced on{' '}
+          <a href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer" style={{ color: '#132531', textDecoration: 'none', borderBottom: '1px solid #D8D4CC' }}>BeInvolved</a>
+          {' '}and in the newsletter.
+        </p>}
+    </div>
+  );
+}
+
 function AboutPage({ onNav }) {
   const isMobile = useIsMobile();
   return (
@@ -624,6 +812,7 @@ function AboutPage({ onNav }) {
           <img
             src="Oil_cargo_about_cover.jpeg"
             alt=""
+            className="kenburns"
             style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(15%) brightness(0.88) contrast(1.05)' }}
             onError={(e) => {e.target.src = 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=2000&q=80';}} />
 
@@ -631,8 +820,11 @@ function AboutPage({ onNav }) {
         </div>
         <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: isMobile ? '120px 20px 60px' : '180px 40px 100px' }}>
           <Label style={{ color: '#C49A3E', marginBottom: 22 }}>INDIANA UNIVERSITY · KELLEY SCHOOL OF BUSINESS · EST. 2025</Label>
-          <h1 style={{ fontSize: isMobile ? 40 : 72, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, textWrap: 'balance', color: '#F8F7F3' }}>
-            An association of students<br />in commodity trading<br />&amp; shipping.
+          <h1 style={{ fontSize: isMobile ? 40 : 72, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 980, margin: 0, color: '#F8F7F3' }}>
+            <HeroLines lines={[
+            <>An <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>association</span> of students</>,
+            <>in commodity trading</>,
+            <>&amp; shipping.</>]} />
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University offering students insight into the physical commodity market from crude oil and refined products to natural gas, and freight.
 
@@ -665,27 +857,36 @@ function AboutPage({ onNav }) {
       {/* EDITORIAL MISSION — signal red panel */}
       <section style={{ background: '#C8321E', padding: isMobile ? '48px 20px' : '64px 40px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <h2 style={{ fontSize: isMobile ? 26 : 42, fontWeight: 400, color: '#F8F7F3', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
-            <span style={{ fontWeight: 700 }}>Our mission is simple:</span> To develop the next generation of IU energy trading professionals.
-          </h2>
+          <Reveal>
+            <h2 style={{ fontSize: isMobile ? 26 : 42, fontWeight: 400, color: '#F8F7F3', lineHeight: 1.18, textAlign: 'center', letterSpacing: '-0.01em', textWrap: 'balance' }}>
+              <span style={{ fontWeight: 700 }}>Our mission is <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>simple</span>:</span> To develop the next generation of IU energy trading professionals.
+            </h2>
+          </Reveal>
         </div>
       </section>
 
       {/* PRINCIPLES — 3 pillars on navy */}
       <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '40px 20px' : '48px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', marginBottom: 32 }}>What we do</h2>
+          <Reveal>
+            <Label style={{ color: '#C49A3E' }}>/ The pillars</Label>
+            <h2 style={{ fontSize: 28, fontWeight: 400, color: '#F8F7F3', letterSpacing: '-0.01em', margin: '12px 0 32px' }}>What we do</h2>
+          </Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.1)' }}>
             {[
             { n: '01', t: 'Weekly Discussions', d: 'Members meet weekly to discuss current events across energy, commodities, and markets. Guest speakers from industry are invited throughout the semester to share their experience firsthand.' },
             { n: '02', t: 'Trading Simulations & Games', d: 'Members compete in commodity and energy trading simulations, applying market knowledge to live case scenarios. Past competitions have included intercollegiate trading challenges and internal desk exercises.' },
             { n: '03', t: 'Network & Resources', d: 'Members gain access to a growing network of Kelley alumni placed across the energy industry in Houston and beyond. The club provides resources, introductions, and career guidance to help members break into the field.' }].
-            map((p) =>
-            <div key={p.n} style={{ background: '#132531', padding: '36px 36px 32px' }}>
-                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: '#C49A3E', letterSpacing: 1, marginBottom: 20 }}>— {p.n}</div>
-                <h3 style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, color: '#fff' }}>{p.t}</h3>
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 16 }}>{p.d}</p>
-              </div>
+            map((p, i) =>
+            <Reveal key={p.n} delay={i * 90}>
+                <div style={{ background: '#132531', padding: '36px 36px 32px', height: '100%', transition: 'background 280ms' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#16293A'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#132531'}>
+                  <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: '#C49A3E', letterSpacing: 1, marginBottom: 20 }}>— {p.n}</div>
+                  <h3 style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, color: '#fff' }}>{p.t}</h3>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 16 }}>{p.d}</p>
+                </div>
+              </Reveal>
             )}
           </div>
         </div>
@@ -694,9 +895,12 @@ function AboutPage({ onNav }) {
       {/* WHAT WE DO — paper panel with dark accent card */}
       <section style={{ background: '#F8F7F3', padding: isMobile ? '40px 20px' : '48px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em' }}>
-            2026 Inaugural Houston Trip
-          </h2>
+          <Reveal>
+            <Label>/ On the road</Label>
+            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, maxWidth: 640, letterSpacing: '-0.01em', marginTop: 12 }}>
+              2026 Inaugural Houston Trip
+            </h2>
+          </Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr', gap: 24, marginTop: 32, alignItems: 'stretch' }}>
             <div style={{ overflow: 'hidden', background: '#132531', display: 'flex' }}>
               <img src="houston_trip.JPG" alt="2026 Inaugural Houston Trip"
@@ -726,14 +930,32 @@ function AboutPage({ onNav }) {
         </div>
       </section>
 
+      {/* EVENTS CALENDAR — month grid driven by the EVENTS array above */}
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px', borderTop: '1px solid #ECE8DF' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <Reveal>
+            <div style={{ marginBottom: 36 }}>
+              <Label>/ Calendar</Label>
+              <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                Events
+              </h2>
+            </div>
+            <EventsCalendar />
+          </Reveal>
+        </div>
+      </section>
+
       {/* STATS BAND — editorial metrics like Novarc */}
       <section style={{ background: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: isMobile ? 40 : 64 }}>
-            <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance' }}>
-              Fastest growing career path at Kelley<br />Backed by a strong alumni network
-            </h2>
-          </div>
+          <Reveal>
+            <div style={{ textAlign: 'center', marginBottom: isMobile ? 40 : 64 }}>
+              <Label>/ The club in numbers</Label>
+              <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance', marginTop: 12 }}>
+                Fastest growing career path at Kelley<br />Backed by a strong alumni network
+              </h2>
+            </div>
+          </Reveal>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
             {[
@@ -741,11 +963,15 @@ function AboutPage({ onNav }) {
             { n: 'Kpler', l: 'Platform Access', d: 'Members gain access to the Kpler platform — the industry standard for commodity tracking, vessel intelligence, and market analytics.' },
             { n: '10+', l: 'Firms with IU alumni', d: 'Kelley has many alumni in the Houston area and the network is constantly growing.' }].
             map((s, i) =>
-            <div key={s.l} style={{ padding: '36px 28px', borderRight: !isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', borderBottom: isMobile && i < 2 ? '1px solid #D8D4CC' : 'none' }}>
-                <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}>{s.n}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
-                <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
-              </div>
+            <Reveal key={s.l} delay={i * 90}>
+                <div style={{ padding: '36px 28px', height: '100%', borderRight: !isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', borderBottom: isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', transition: 'background 280ms' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                  <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}><CountUp value={s.n} /></div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
+                  <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
+                </div>
+              </Reveal>
             )}
           </div>
         </div>
@@ -754,12 +980,17 @@ function AboutPage({ onNav }) {
       {/* LEADERSHIP TABLE */}
       <section style={{ background: '#F8F7F3', padding: isMobile ? '56px 20px' : '96px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-              Leadership Team
-            </h2>
-            {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Founded · 2025</div>}
-          </div>
+          <Reveal>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+              <div>
+                <Label>/ People</Label>
+                <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', marginTop: 12 }}>
+                  Leadership Team
+                </h2>
+              </div>
+              {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Founded · 2025</div>}
+            </div>
+          </Reveal>
           <div style={{ borderTop: '1px solid #132531' }}>
             {[
             ['Co-President', 'Evan Reitz', 'Finance · Class of 2027', 'Aramco Trading Company'],
@@ -779,15 +1010,16 @@ function AboutPage({ onNav }) {
               </div>
             ) : (
             <div key={role + name} style={{
-              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 1.2fr 40px',
-              padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center'
-            }}>
+              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 1.2fr',
+              padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center', transition: 'background 220ms'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F1EEE6'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                 <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
                 <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
                 <div style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{name}</div>
                 <div style={{ fontSize: 13, color: '#6B6B6B' }}>{detail}</div>
                 <div style={{ fontSize: 13, color: '#6B6B6B' }}>{company}</div>
-                <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
               </div>
             ))}
           </div>
@@ -804,21 +1036,24 @@ function AboutPage({ onNav }) {
       <section style={{ position: 'relative', minHeight: isMobile ? 320 : 460, background: '#060F16', color: '#fff', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0 }}>
           <img
-            src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=2000&q=80"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(55%) brightness(0.55)' }}
+            src="ship_aerial.jpeg"
+            className="kenburns"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(25%) brightness(0.6)' }}
             alt="" />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(6,15,22,0.85) 0%, rgba(6,15,22,0.35) 100%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(6,15,22,0.85) 0%, rgba(6,15,22,0.3) 100%)' }} />
         </div>
         <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '80px 20px' : '120px 40px' }}>
-          <h2 style={{ fontSize: isMobile ? 30 : 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em', color: '#F8F7F3' }}>
-            Interested in the field?
-          </h2>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, maxWidth: 460, marginTop: 22 }}>
-            Fill out the application to get involved. For any questions, reach out to the leadership team and we'd love to hear from you.
-          </p>
-          <div style={{ marginTop: 32 }}>
-            <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
-          </div>
+          <Reveal>
+            <h2 style={{ fontSize: isMobile ? 30 : 44, fontWeight: 400, lineHeight: 1.1, maxWidth: 640, letterSpacing: '-0.01em', color: '#F8F7F3' }}>
+              Interested in the field?
+            </h2>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, maxWidth: 460, marginTop: 22 }}>
+              Fill out the application to get involved. For any questions, reach out to the leadership team and we'd love to hear from you.
+            </p>
+            <div style={{ marginTop: 32 }}>
+              <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -827,7 +1062,7 @@ function AboutPage({ onNav }) {
 
 }
 
-Object.assign(window, { AboutPage });
+Object.assign(window, { AboutPage, EVENTS });
 
 
 // ======== pages/CommoditiesPage.jsx ========
@@ -838,55 +1073,71 @@ const COMMODITIES = [
 {
   cat: 'CRUDE & REFINED', sub: 'Crude oil &amp; refined products',
   items: [
-  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '82.14', chg: '+0.42%', featured: true },
-  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '78.62', chg: '−0.18%' },
-  { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '2.412', chg: '−0.21%' },
-  { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '2.641', chg: '+0.31%' },
-  { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '2.580', chg: '+0.18%' }],
+  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '84.20', chg: '+0.42%', featured: true },
+  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '80.65', chg: '−0.18%' },
+  { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '2.524', chg: '−0.21%' },
+  { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '2.781', chg: '+0.31%' },
+  { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '2.712', chg: '+0.18%' }],
   img: 'refinery.jpeg',
   imgLabel: 'REFINERY AT DUSK',
-  description: 'Crude and refined products are the foundation of global energy markets. Brent crude — the world\'s most actively traded commodity — sets the international pricing benchmark. Members study the spread between crude grades, refinery crack spreads, and the economics of moving barrels from wellhead to end consumer.'
+  description: 'Crude and refined products are the foundation of global energy markets. Brent crude — the world\'s most actively traded commodity — sets the international pricing benchmark. Members study the spread between crude grades, refinery crack spreads, and the economics of moving barrels from wellhead to end consumer.',
+  spreads: [
+  { name: 'WTI–Brent', desc: 'US vs. Atlantic Basin benchmark — a read on regional supply and export economics.' },
+  { name: '3-2-1 crack', desc: 'Refinery margin proxy: three barrels of crude against two of gasoline and one of diesel.' },
+  { name: 'Prompt timespreads', desc: 'M1–M2 backwardation or contango — the market\'s view on near-term tightness.' }]
 },
 {
   cat: 'NAT GAS & POWER', sub: 'Natural gas &amp; electricity',
   items: [
-  { sym: 'HH', name: 'Henry Hub', unit: '$/MMBtu', price: '2.15', chg: '+1.64%', note: 'US Gulf Coast · prompt month' },
-  { sym: 'TTF', name: 'TTF', unit: '€/MWh', price: '28.40', chg: '−0.88%', note: 'Netherlands · European benchmark' },
-  { sym: 'JKM', name: 'JKM', unit: '$/MMBtu', price: '9.80', chg: '+0.52%', note: 'Platts · Asia LNG benchmark' },
-  { sym: 'ERC', name: 'ERCOT', unit: '$/MWh', price: '34.20', chg: '−1.10%', note: 'Texas real-time power' }],
-  noTable: true,
+  { sym: 'HH', name: 'Henry Hub', unit: '$/MMBtu', price: '3.21', chg: '+1.64%', note: 'US Gulf Coast · prompt month', featured: true },
+  { sym: 'TTF', name: 'TTF', unit: '€/MWh', price: '39.10', chg: '−0.88%', note: 'Netherlands · European benchmark' },
+  { sym: 'JKM', name: 'JKM', unit: '$/MMBtu', price: '12.80', chg: '+0.52%', note: 'Platts · Asia LNG benchmark' },
+  { sym: 'ERC', name: 'ERCOT', unit: '$/MWh', price: '42.50', chg: '−1.10%', note: 'Texas real-time power' }],
   img: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1400&q=80',
   imgLabel: 'GAS INFRASTRUCTURE',
-  description: 'Natural gas and power markets are shaped by pipeline infrastructure, LNG trade flows, and weather-driven demand. Members study the spread between US Henry Hub and international benchmarks like TTF and JKM, as well as the relationship between gas prices and electricity markets across regions.'
+  description: 'Natural gas and power markets are shaped by pipeline infrastructure, LNG trade flows, and weather-driven demand. Members study the spread between US Henry Hub and international benchmarks like TTF and JKM, as well as the relationship between gas prices and electricity markets across regions.',
+  spreads: [
+  { name: 'TTF–JKM', desc: 'Europe vs. Asia LNG competition — decides which basin pulls the marginal cargo.' },
+  { name: 'Basis swaps', desc: 'Regional hubs priced against Henry Hub — pipeline constraints made tradeable.' },
+  { name: 'Seasonal spreads', desc: 'Winter–summer storage economics: injection season vs. withdrawal season.' },
+  { name: 'Spark spread', desc: 'Power price minus the gas cost to generate it — the gas-fired generation margin.' }]
 },
 {
   cat: 'METALS', sub: 'Base &amp; precious metals',
   items: [
-  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '4.284', chg: '+0.72%', note: 'LME 3M · Grade A cathode' },
-  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '2,418', chg: '−0.34%', note: 'LME · P1020A' },
-  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '2,384.10', chg: '+0.12%', note: 'COMEX · 100 oz' },
-  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '108.40', chg: '−1.82%', note: 'Platts · 62% Fe CFR China' },
-  { sym: 'NI', name: 'Nickel', unit: '$/mt', price: '16,840', chg: '+0.55%', note: 'LME · Class 1' },
-  { sym: 'LI', name: 'Lithium', unit: '$/mt', price: '13,200', chg: '−0.92%', note: 'Fastmarkets · battery grade' }],
+  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '5.12', chg: '+0.72%', note: 'LME 3M · Grade A cathode' },
+  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '2,690', chg: '−0.34%', note: 'LME · P1020A' },
+  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '4,080.00', chg: '+0.12%', note: 'COMEX · 100 oz' },
+  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '104.60', chg: '−1.82%', note: 'Platts · 62% Fe CFR China' },
+  { sym: 'NI', name: 'Nickel', unit: '$/mt', price: '16,450', chg: '+0.55%', note: 'LME · Class 1' },
+  { sym: 'LI', name: 'Lithium', unit: '$/mt', price: '11,800', chg: '−0.92%', note: 'Fastmarkets · battery grade' }],
   img: 'dump truck.jpeg',
   imgLabel: 'MINING OPERATIONS',
-  description: 'Copper is the most actively traded base metal and a key barometer of global industrial health. Members track LME warehouse stocks, the Shanghai premium, and supply dynamics from major producing regions in Chile and the DRC alongside precious metals as macro hedges.'
+  description: 'Copper is the most actively traded base metal and a key barometer of global industrial health. Members track LME warehouse stocks, the Shanghai premium, and supply dynamics from major producing regions in Chile and the DRC alongside precious metals as macro hedges.',
+  spreads: [
+  { name: 'Cash vs. 3M', desc: 'LME nearby against three-month — backwardation signals physical tightness.' },
+  { name: 'Shanghai premium', desc: 'The premium Chinese buyers pay over LME — a live read on import demand.' },
+  { name: 'TCs/RCs', desc: 'Treatment and refining charges — smelter economics for turning concentrate into metal.' }]
 },
 {
   cat: 'AGRICULTURE', sub: 'Grains, softs &amp; oilseeds',
   items: [
-  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '438.25', chg: '−0.44%', note: 'CBOT · #2 Yellow', featured: true },
-  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,184.50', chg: '+0.32%', note: 'CBOT · #1 Yellow' },
-  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '572.00', chg: '+1.06%', note: 'CBOT · SRW' },
-  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '72.84', chg: '−0.08%', note: 'ICE · #2 grade' },
-  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '218.40', chg: '+2.14%', note: 'ICE · Arabica C' }],
+  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '446.25', chg: '−0.44%', note: 'CBOT · #2 Yellow', featured: true },
+  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,052.50', chg: '+0.32%', note: 'CBOT · #1 Yellow' },
+  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '548.00', chg: '+1.06%', note: 'CBOT · SRW' },
+  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '67.40', chg: '−0.08%', note: 'ICE · #2 grade' },
+  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '342.60', chg: '+2.14%', note: 'ICE · Arabica C' }],
   img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80',
   imgLabel: 'GRAIN TERMINAL',
-  description: 'Corn is the most heavily traded agricultural commodity globally, driving livestock feed, ethanol production, and export markets. Members study USDA crop reports, the basis between futures and physical grain, and the seasonal patterns that move prices from planting to harvest.'
+  description: 'Corn is the most heavily traded agricultural commodity globally, driving livestock feed, ethanol production, and export markets. Members study USDA crop reports, the basis between futures and physical grain, and the seasonal patterns that move prices from planting to harvest.',
+  spreads: [
+  { name: 'Basis', desc: 'Local cash price vs. futures — logistics, storage, and local supply in one number.' },
+  { name: 'Soybean crush', desc: 'Beans against meal and oil — the processor\'s margin.' },
+  { name: 'Old crop / new crop', desc: 'Spread across harvests — this year\'s scarcity vs. next year\'s acres.' }]
 }];
 
 
-function PriceRow({ item }) {
+function PriceRow({ item, showTrend }) {
   const up = item.chg.startsWith('+');
   return (
     <tr style={{ borderBottom: '1px solid #ECE8DF', background: item.featured ? '#F8F7F3' : 'transparent' }}>
@@ -900,57 +1151,162 @@ function PriceRow({ item }) {
         </div>
       </td>
       <td style={{ padding: '14px 0', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{item.unit}</td>
-      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 15, color: '#132531', fontWeight: 500 }}>{item.price}</td>
-      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: up ? '#2E6B3E' : '#C8321E' }}>{item.chg}</td>
+      {showTrend &&
+      <td style={{ padding: '14px 0 14px 8px' }} title="Recent trend (live data)">
+        <Sparkline data={item.series} />
+      </td>}
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 15, color: '#132531', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{item.price}</td>
+      <td style={{ padding: '14px 0', textAlign: 'right', fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, color: up ? '#2E6B3E' : '#C8321E', fontVariantNumeric: 'tabular-nums' }}>{item.chg}</td>
     </tr>);
 }
 
+function Sparkline({ data, width = 64, height = 20 }) {
+  if (!data || data.length < 2) return null;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pts = data.map((v, i) =>
+    `${((i / (data.length - 1)) * width).toFixed(1)},${(height - 2 - ((v - min) / range) * (height - 4)).toFixed(1)}`
+  ).join(' ');
+  const up = data[data.length - 1] >= data[0];
+  return (
+    <svg width={width} height={height} style={{ display: 'block' }} aria-hidden="true">
+      <polyline points={pts} fill="none" stroke={up ? '#2E6B3E' : '#C8321E'} strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Geographic world map (simplified equirectangular outlines, hand-traced).
+// x = 2.778 * (lon + 180), y = 3.69 * (75 - lat), viewBox 0 0 1000 480.
+const GAS_HUBS = [
+  { id: 'AECO', name: 'AECO', sub: 'Alberta, Canada', x: 186, y: 89,  role: 'Canadian benchmark — Western Canada supply', price: 'C$2.05 / GJ', up: false, dy: -10 },
+  { id: 'WAH',  name: 'Waha', sub: 'Permian Basin, US', x: 213, y: 161, role: 'Associated-gas pricing point — trades at a discount when takeaway is tight', price: '$1.15 / MMBtu', up: false, anchor: 'end', dy: -12 },
+  { id: 'CHI',  name: 'Chicago CG', sub: 'US Midwest', x: 257, y: 123, role: 'Demand-center citygate for the Midwest', price: '$3.05 / MMBtu', up: true, anchor: 'end', dy: -10 },
+  { id: 'HH',   name: 'Henry Hub', sub: 'Louisiana, US Gulf', x: 246, y: 168, primary: true, role: 'NYMEX futures delivery point — the US benchmark', price: '$3.21 / MMBtu', up: true },
+  { id: 'AGQ',  name: 'Algonquin', sub: 'US Northeast', x: 303, y: 120, role: 'Winter-constrained New England citygate', price: '$3.65 / MMBtu', up: true },
+  { id: 'SAB',  name: 'Sabine Pass', sub: 'US Gulf Coast', x: 230, y: 178, lng: true, role: 'Largest US LNG export terminal (Cheniere)', price: '≈30 MTPA capacity', anchor: 'end', dy: 16 },
+  { id: 'NBP',  name: 'NBP', sub: 'United Kingdom', x: 494, y: 80, role: 'UK benchmark — National Balancing Point', price: '95p / therm', up: false, anchor: 'end' },
+  { id: 'TTF',  name: 'TTF', sub: 'Netherlands', x: 517, y: 86, primary: true, role: 'European benchmark — Title Transfer Facility', price: '€39.10 / MWh', up: false },
+  { id: 'RL',   name: 'Ras Laffan', sub: 'Qatar', x: 643, y: 181, lng: true, role: 'QatarEnergy LNG export hub (≈77 MTPA)', price: '≈77 MTPA capacity' },
+  { id: 'JKM',  name: 'JKM', sub: 'Japan–Korea Marker', x: 872, y: 146, primary: true, role: 'Asia-Pacific spot LNG benchmark (Platts)', price: '$12.80 / MMBtu', up: true },
+  { id: 'GLA',  name: 'Gladstone', sub: 'Queensland, Australia', x: 920, y: 365, lng: true, role: 'Australian east-coast LNG exports', price: '≈25 MTPA capacity', anchor: 'end' }];
+
+const GAS_PIPELINES = [['AECO', 'CHI'], ['WAH', 'HH'], ['HH', 'CHI'], ['CHI', 'AGQ'], ['NBP', 'TTF']];
+const LNG_ROUTES = [
+  { id: 'sab-ttf', d: 'M230,178 Q360,90 510,90' },
+  { id: 'rl-jkm',  d: 'M643,181 Q700,265 790,255 Q855,240 870,152' },
+  { id: 'rl-ttf',  d: 'M643,181 Q580,178 532,142 Q508,118 516,92' },
+  { id: 'gla-jkm', d: 'M920,365 Q905,250 874,152' }];
+
+const WORLD_PATHS = [
+  // North America
+  'M33,33 L56,63 78,66 111,59 133,77 153,100 156,129 175,159 194,192 208,207 233,221 250,229 264,236 278,244 272,232 258,218 250,199 231,185 231,173 247,170 267,166 275,185 278,159 289,144 303,122 317,111 333,107 322,96 339,85 322,55 306,48 278,41 250,33 208,22 153,18 97,18 56,26 Z',
+  // Greenland
+  'M347,26 L356,55 381,55 439,18 411,11 Z',
+  // South America
+  'M283,251 L292,240 300,232 328,240 356,262 361,277 378,288 403,299 403,314 389,332 386,358 367,373 353,402 339,421 328,428 319,450 311,472 303,461 300,443 303,413 306,388 306,351 292,332 286,303 278,288 278,269 Z',
+  // Eurasia
+  'M475,118 L475,140 483,144 500,137 508,122 522,114 539,129 544,137 553,122 564,144 578,137 583,144 600,144 597,162 608,199 619,233 644,229 664,196 656,177 642,188 633,170 639,166 669,185 683,185 700,203 703,221 714,247 722,229 728,214 744,199 756,218 761,218 772,247 778,266 786,271 792,240 803,233 797,199 817,196 836,173 839,162 833,148 847,148 853,137 858,144 856,129 875,114 892,85 939,85 950,63 972,48 994,37 972,18 917,11 806,4 722,11 667,22 611,30 578,15 542,26 514,48 514,63 528,59 533,70 522,74 514,81 500,96 494,100 497,107 494,118 Z',
+  // Africa
+  'M483,148 L528,140 556,159 583,162 594,173 608,221 619,236 642,233 642,240 622,269 614,284 611,314 597,351 592,373 578,399 556,406 533,343 533,299 525,262 517,262 478,262 464,244 453,221 453,199 472,166 Z',
+  // Australia
+  'M817,358 L817,402 844,399 861,395 883,406 892,417 908,417 917,413 925,380 914,351 897,317 878,321 867,317 839,339 Z',
+  // United Kingdom + Ireland
+  'M486,92 L503,89 500,81 494,70 489,63 483,74 492,81 Z',
+  'M469,80 L478,77 480,87 470,90 Z',
+  // Japan
+  'M861,162 L869,151 881,148 889,144 892,133 894,118 900,118 897,133 889,148 875,155 Z',
+  // Sumatra, Borneo, New Guinea
+  'M764,258 L794,299 783,295 769,269 Z',
+  'M803,273 L825,262 831,280 822,292 806,284 Z',
+  'M864,284 L892,288 908,302 897,306 878,292 Z'];
+
 function GasHubDiagram() {
-  const hubs = [
-    { id: 'WAH', name: 'Waha', sub: 'Permian Basin', x: 62, y: 158 },
-    { id: 'HH',  name: 'Henry Hub', sub: 'US Gulf Coast', x: 118, y: 172, primary: true },
-    { id: 'CHI', name: 'Chicago CG', sub: 'Midwest US', x: 155, y: 122 },
-    { id: 'AGQ', name: 'Algonquin', sub: 'US Northeast', x: 192, y: 96 },
-    { id: 'NBP', name: 'NBP', sub: 'United Kingdom', x: 268, y: 72 },
-    { id: 'TTF', name: 'TTF', sub: 'Netherlands', x: 305, y: 84, primary: true },
-    { id: 'JKM', name: 'JKM', sub: 'Asia Pacific LNG', x: 432, y: 148, primary: true },
-  ];
-  const pipelines = [['WAH','HH'],['HH','CHI'],['CHI','AGQ'],['NBP','TTF']];
-  const lngRoutes  = [['AGQ','TTF'],['HH','JKM'],['TTF','JKM']];
-  const get = (id) => hubs.find(h => h.id === id);
+  const [hover, setHover] = React.useState(null);
+  const isMobile = useIsMobile();
+  const get = (id) => GAS_HUBS.find((h) => h.id === id);
+  const active = hover ? get(hover) : null;
+
   return (
     <div>
-      <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', marginBottom: 12 }}>Global Natural Gas Pricing Hubs</div>
-      <svg viewBox="0 0 500 240" style={{ width: '100%', height: 'auto', display: 'block' }}>
-        <rect width="500" height="240" fill="#F8F7F3" rx="2" />
-        {pipelines.map(([a,b]) => { const ha=get(a),hb=get(b); return <line key={a+b} x1={ha.x} y1={ha.y} x2={hb.x} y2={hb.y} stroke="#D8D4CC" strokeWidth="1.5" />; })}
-        {lngRoutes.map(([a,b])  => { const ha=get(a),hb=get(b); return <line key={a+b+'l'} x1={ha.x} y1={ha.y} x2={hb.x} y2={hb.y} stroke="#C49A3E" strokeWidth="1" strokeDasharray="5 3" opacity="0.55" />; })}
-        {hubs.map(h => (
-          <g key={h.id}>
-            {h.primary && <circle cx={h.x} cy={h.y} r="10" fill="#C49A3E" opacity="0.15" />}
-            <circle cx={h.x} cy={h.y} r={h.primary ? 5 : 3.5} fill={h.primary ? '#C49A3E' : '#132531'} />
-            <text x={h.x+10} y={h.y-5} fill="#132531" fontSize="8.5" fontFamily="Inter,sans-serif" fontWeight="600" letterSpacing="0.3">{h.name}</text>
-            <text x={h.x+10} y={h.y+7}  fill="#8F8F8F"  fontSize="7.5" fontFamily="Inter,sans-serif">{h.sub}</text>
-          </g>
-        ))}
-        <line x1="16" y1="218" x2="36" y2="218" stroke="#D8D4CC" strokeWidth="1.5" />
-        <text x="40" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">Pipeline</text>
-        <line x1="90" y1="218" x2="110" y2="218" stroke="#C49A3E" strokeWidth="1" strokeDasharray="5 3" opacity="0.55" />
-        <text x="114" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">LNG route</text>
-        <circle cx="172" cy="218" r="4" fill="#C49A3E" />
-        <text x="180" y="222" fill="#8F8F8F" fontSize="7.5" fontFamily="Inter,sans-serif">Primary benchmark</text>
-      </svg>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginTop: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+        <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Global Natural Gas Pricing Hubs &amp; LNG Flows</div>
+        <div style={{ fontSize: 11, color: '#8F8F8F' }}>{isMobile ? 'Tap' : 'Hover'} a hub for details · Prices indicative</div>
+      </div>
+
+      <div style={{ position: 'relative' }}>
+        <svg viewBox="0 0 1000 480" style={{ width: '100%', height: 'auto', display: 'block', background: '#F8F7F3', borderRadius: 2 }}>
+          <style>{`@keyframes gasflow { to { stroke-dashoffset: -22; } }`}</style>
+          {WORLD_PATHS.map((d, i) => <path key={i} d={d} fill="#EAE6DC" stroke="#D8D4CC" strokeWidth="1" strokeLinejoin="round" />)}
+          {GAS_PIPELINES.map(([a, b]) => {
+            const ha = get(a), hb = get(b);
+            return <line key={a + b} x1={ha.x} y1={ha.y} x2={hb.x} y2={hb.y} stroke="#B9B2A4" strokeWidth="1.6" />;
+          })}
+          {LNG_ROUTES.map((r) =>
+          <path key={r.id} d={r.d} fill="none" stroke="#C49A3E" strokeWidth="1.4" strokeDasharray="7 5" opacity="0.75" style={{ animation: 'gasflow 1.6s linear infinite' }} />
+          )}
+          {/* cargo dots travelling each LNG route */}
+          {LNG_ROUTES.map((r, i) =>
+          <circle key={r.id + '-dot'} r="3" fill="#C49A3E" stroke="#F8F7F3" strokeWidth="1">
+              <animateMotion dur={`${7 + i * 1.5}s`} begin={`${i * 1.8}s`} repeatCount="indefinite" path={r.d} />
+            </circle>
+          )}
+          {GAS_HUBS.map((h) => {
+            const dx = h.anchor === 'end' ? -11 : 11;
+            const dy = h.dy || 0;
+            return (
+              <g key={h.id} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setHover(h.id)} onMouseLeave={() => setHover(null)}
+                onClick={() => setHover(hover === h.id ? null : h.id)}>
+                <circle cx={h.x} cy={h.y} r="14" fill="transparent" />
+                {h.primary && <circle cx={h.x} cy={h.y} r="13" fill="#C49A3E" opacity={hover === h.id ? 0.3 : 0.15} />}
+                {h.lng ?
+                <rect x={h.x - 4.2} y={h.y - 4.2} width="8.4" height="8.4" transform={`rotate(45 ${h.x} ${h.y})`} fill={hover === h.id ? '#C8321E' : '#C49A3E'} /> :
+                <circle cx={h.x} cy={h.y} r={h.primary ? 6 : 4.5} fill={hover === h.id ? '#C8321E' : h.primary ? '#C49A3E' : '#132531'} />}
+                <text x={h.x + dx} y={h.y - 5 + dy} fill="#132531" fontSize="13" fontFamily="Inter,sans-serif" fontWeight="600" letterSpacing="0.3" textAnchor={h.anchor === 'end' ? 'end' : 'start'}>{h.name}</text>
+                <text x={h.x + dx} y={h.y + 10 + dy} fill="#8F8F8F" fontSize="10.5" fontFamily="Inter,sans-serif" textAnchor={h.anchor === 'end' ? 'end' : 'start'}>{h.sub}</text>
+              </g>);
+          })}
+        </svg>
+
+        {active &&
+        <div style={{
+          position: 'absolute',
+          left: `${Math.min(Math.max(active.x / 10, 12), 84)}%`,
+          top: `${active.y / 4.8}%`,
+          transform: 'translate(-50%, -118%)',
+          background: '#132531', color: '#fff', padding: '12px 14px', borderRadius: 2,
+          width: 220, pointerEvents: 'none', boxShadow: '0 8px 24px rgba(6,15,22,0.25)', zIndex: 5
+        }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{active.name}</span>
+              <span style={{ fontFamily: 'ui-monospace,Menlo,monospace', fontSize: 12, color: active.lng ? '#C49A3E' : active.up ? '#6ED08B' : '#E85E4A' }}>{active.price}</span>
+            </div>
+            <div style={{ fontSize: 11, color: '#C49A3E', marginTop: 2, letterSpacing: 0.5, textTransform: 'uppercase' }}>{active.sub}</div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginTop: 8 }}>{active.role}</div>
+          </div>}
+      </div>
+
+      {/* legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 22px', marginTop: 14, alignItems: 'center' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#6B6B6B' }}><span style={{ width: 20, height: 0, borderTop: '1.6px solid #B9B2A4' }} /> Pipeline</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#6B6B6B' }}><span style={{ width: 20, height: 0, borderTop: '1.6px dashed #C49A3E' }} /> LNG route</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#6B6B6B' }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#132531', display: 'inline-block' }} /> Pricing hub</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#6B6B6B' }}><span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C49A3E', display: 'inline-block' }} /> Primary benchmark</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#6B6B6B' }}><span style={{ width: 8, height: 8, background: '#C49A3E', transform: 'rotate(45deg)', display: 'inline-block' }} /> LNG export terminal</span>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 8, marginTop: 18 }}>
         {[
-          { hub: 'Henry Hub', region: 'US Gulf Coast', price: '$2.15 / MMBtu', up: true },
-          { hub: 'TTF',        region: 'Netherlands',   price: '€28.40 / MWh',  up: false },
-          { hub: 'JKM',        region: 'Asia Pacific',  price: '$9.80 / MMBtu', up: true },
-          { hub: 'ERCOT',      region: 'Texas Power',   price: '$34.20 / MWh',  up: false },
-        ].map(h => (
-          <div key={h.hub} style={{ padding: '10px 12px', background: '#F8F7F3', borderLeft: '2px solid #C49A3E' }}>
+        { hub: 'Henry Hub', region: 'US benchmark', price: '$3.21 / MMBtu', up: true },
+        { hub: 'TTF', region: 'European benchmark', price: '€39.10 / MWh', up: false },
+        { hub: 'JKM', region: 'Asia-Pacific LNG', price: '$12.80 / MMBtu', up: true },
+        { hub: 'JKM – TTF', region: 'The spread to watch', price: '≈ +$0.8 / MMBtu', up: true, note: 'When JKM trades over TTF, cargoes pull east — see Edition No. 1.' }].
+        map((h) => (
+          <div key={h.hub} style={{ padding: '12px 14px', background: '#F8F7F3', borderLeft: '2px solid #C49A3E' }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#132531' }}>{h.hub}</div>
             <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>{h.region}</div>
             <div style={{ fontSize: 13, fontFamily: 'ui-monospace,Menlo,monospace', color: h.up ? '#2E6B3E' : '#C8321E', marginTop: 4 }}>{h.price}</div>
+            {h.note && <div style={{ fontSize: 10.5, color: '#8F8F8F', lineHeight: 1.45, marginTop: 6 }}>{h.note}</div>}
           </div>
         ))}
       </div>
@@ -969,7 +1325,7 @@ function CommoditiesPage({ onNav }) {
     items: group.items.map(item => {
       const live = prices[item.sym];
       if (!live) return item;
-      return { ...item, price: live.price, chg: live.chg, isLive: true, etfProxy: live.etfProxy, etfLabel: live.etfLabel };
+      return { ...item, price: live.price, chg: live.chg, isLive: true, etfProxy: live.etfProxy, etfLabel: live.etfLabel, series: live.series };
     })
   }));
 
@@ -987,12 +1343,13 @@ function CommoditiesPage({ onNav }) {
         <Header current="commodities" onNav={onNav} tone="dark" />
         <div style={{ position: 'absolute', inset: 0 }}>
           <img src="Trading_floor.jpeg"
+          className="kenburns"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(20%) brightness(0.55) saturate(1)' }} alt="" />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.65) 0%, rgba(6,15,22,0.55) 100%)' }} />
         </div>
         <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '100px 20px 48px' : '170px 40px 80px' }}>
-          <h1 style={{ fontSize: isMobile ? 38 : 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.88)' }}>
-            Product Groups
+          <h1 style={{ fontSize: isMobile ? 38 : 64, fontWeight: 400, lineHeight: 1.04, letterSpacing: '-0.02em', maxWidth: 820, color: 'rgba(248,247,243,0.88)' }}>
+            <HeroLines lines={[<>Product <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Groups</span></>]} />
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.7)', marginTop: 24, maxWidth: 500 }}>
             The club covers a range of commodity markets throughout the curriculum, with a heavier focus on crude oil and refined products. Our alumni, however, are active across all of them.
@@ -1001,8 +1358,8 @@ function CommoditiesPage({ onNav }) {
       </section>
 
       {/* TICKER STRIP */}
-      <section style={{ background: '#181818', color: '#fff', padding: '18px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <div style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap', animation: 'ticker 60s linear infinite' }}>
+      <section className="ticker-wrap" style={{ background: '#181818', color: '#fff', padding: '18px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="ticker-track" style={{ display: 'flex', gap: 48, whiteSpace: 'nowrap', animation: 'ticker 60s linear infinite' }}>
           {[...liveCommodities.flatMap((c) => c.items), ...liveCommodities.flatMap((c) => c.items)].map((it, i) => {
             const up = it.chg.startsWith('+');
             return (
@@ -1022,9 +1379,12 @@ function CommoditiesPage({ onNav }) {
       <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '96px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-              Select a product.
-            </h2>
+            <div>
+              <Label>/ Live desks</Label>
+              <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', marginTop: 12 }}>
+                Select a product.
+              </h2>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {status === 'loading' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C49A3E', display: 'inline-block', animation: 'pulse 1.4s ease-in-out infinite' }} />}
               {status !== 'loading' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: status === 'error' ? '#6B6B6B' : '#2E6B3E', display: 'inline-block' }} />}
@@ -1051,7 +1411,7 @@ function CommoditiesPage({ onNav }) {
           </div>
 
           {/* detail: grid of image + description, then price table or hub diagram */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
+          <div key={cat.cat} className="page-enter" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: 0, background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none' }}>
             {!isMobile && <EditorialImage src={cat.img} aspect="auto" style={{ height: '100%', minHeight: 380 }} />}
             <div style={{ padding: isMobile ? '24px 20px 24px' : '40px 40px 32px' }}>
               <Label style={{ color: '#C49A3E' }}>{cat.cat}</Label>
@@ -1059,32 +1419,53 @@ function CommoditiesPage({ onNav }) {
               dangerouslySetInnerHTML={{ __html: cat.sub }} />
               <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 16 }}>{cat.description}</p>
               <div style={{ height: 1, background: '#ECE8DF', margin: '24px 0' }} />
-              {cat.noTable ? <GasHubDiagram /> :
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #132531' }}>
                     <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Sym</th>
                     <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Instrument</th>
                     <th style={{ textAlign: 'left', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Unit</th>
+                    {!isMobile && <th style={{ textAlign: 'left', padding: '10px 0 10px 8px', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Trend</th>}
                     <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Last</th>
                     <th style={{ textAlign: 'right', padding: '10px 0', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B', fontWeight: 500 }}>Chg</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cat.items.map((it) => <PriceRow key={it.sym} item={it} />)}
+                  {cat.items.map((it) => <PriceRow key={it.sym} item={it} showTrend={!isMobile} />)}
                 </tbody>
-              </table>}
+              </table>
+              {cat.spreads &&
+              <div style={{ marginTop: 28 }}>
+                <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 12 }}>Key spreads &amp; benchmarks</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {cat.spreads.map((sp) =>
+                  <div key={sp.name} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
+                      <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#132531', fontWeight: 600, flexShrink: 0, minWidth: 130 }}>{sp.name}</span>
+                      <span style={{ fontSize: 12.5, color: '#6B6B6B', lineHeight: 1.55 }}>{sp.desc}</span>
+                    </div>
+                  )}
+                </div>
+              </div>}
             </div>
           </div>
+
+          {/* full-width interactive hub map for the gas & power desk */}
+          {cat.cat === 'NAT GAS & POWER' &&
+          <div style={{ background: '#fff', border: '1px solid #D8D4CC', borderTop: 'none', padding: isMobile ? '24px 16px' : '40px' }}>
+            <GasHubDiagram />
+          </div>}
         </div>
       </section>
 
       {/* MARKET OVERVIEW — four detailed cards */}
       <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', marginBottom: 48 }}>
-            Market overviews
-          </h2>
+          <Reveal>
+            <Label style={{ color: '#C49A3E' }}>/ The markets</Label>
+            <h2 style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', margin: '12px 0 48px' }}>
+              Market <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>overviews</span>
+            </h2>
+          </Reveal>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'rgba(255,255,255,0.08)' }}>
             {[
             {
@@ -1124,7 +1505,9 @@ function CommoditiesPage({ onNav }) {
               instruments: ['CBOT Corn (C)','CBOT Soybeans (S)','CBOT Wheat (W)','ICE Sugar No. 11 (SB)','ICE Cotton (CT)','ICE Cocoa (CC)','ICE Coffee (KC)','MATIF Milling Wheat','Basis','Soybean Crush Spread','Weather Derivatives']
             }
             ].map((m) => (
-            <div key={m.cat} style={{ background: '#0F2030', padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div key={m.cat} style={{ background: '#0F2030', padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', gap: 24, borderLeft: '2px solid transparent', transition: 'background 280ms, border-color 280ms' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#122638'; e.currentTarget.style.borderLeftColor = '#C49A3E'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#0F2030'; e.currentTarget.style.borderLeftColor = 'transparent'; }}>
               <div>
                 <h3 style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', color: '#F8F7F3' }}>{m.cat}</h3>
                 <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginTop: 12 }}>{m.desc}</p>
@@ -1157,7 +1540,8 @@ function CommoditiesPage({ onNav }) {
       <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ marginBottom: isMobile ? 32 : 48 }}>
-            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', margin: 0 }}>
+            <Label>/ Stay informed</Label>
+            <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', margin: '12px 0 0' }}>
               News &amp; Data Sources
             </h2>
             <p style={{ fontSize: 14, color: '#4A4A4A', lineHeight: 1.7, marginTop: 12, maxWidth: 560 }}>
@@ -1241,261 +1625,317 @@ function CommoditiesPage({ onNav }) {
 
 }
 
-Object.assign(window, { CommoditiesPage });
+Object.assign(window, { CommoditiesPage, COMMODITIES, GAS_HUBS });
 
 
 // ======== pages/NewsletterPage.jsx ========
 /* global React, Button, Label, BrassRule, Chip, EditorialImage, ArrowIcon, Header, Footer */
 const { useState: useNewsState } = React;
 
-const ISSUES = [
+// Each newsletter edition is one entry here. To publish a new edition, add an
+// object to the FRONT of this array (EDITIONS[0] is rendered as the current
+// edition; every entry appears in the archive table).
+const EDITIONS = [
 {
-  no: 'Vol. VII · No. 14', date: '20 Mar 2026', cat: 'THE WEEKLY BULLETIN',
-  title: 'A VLCC fixture confirmed at premium on the Piraeus roads.',
-  lede: 'Members will note the Thalassa I reporting at Ras Tanura loadings with a firm sub-contract — an early sign that Q2 demand for Middle East crude may be firmer than the forward curve implies.',
-  img: 'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=1400&q=80',
-  imgLabel: 'VLCC AT SEA',
-  author: 'From the Secretariat', tag: 'FIXTURES'
-},
-{
-  no: 'Vol. VII · No. 13', date: '13 Mar 2026', cat: 'VIEWPOINT',
-  title: "On the quiet reopening of the Bosporus and what the cargo books will say next.",
-  lede: "Three days of closed straits at Istanbul would cost the Black Sea grain complex more than an advisory; the club's grain desk walks through the arithmetic in this week's note.",
-  img: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?w=1400&q=80',
-  imgLabel: 'BOSPORUS AT DAWN',
-  author: 'E. Novak, VP Markets', tag: 'VIEWPOINT'
-},
-{
-  no: 'Vol. VII · No. 12', date: '06 Mar 2026', cat: 'THE WEEKLY BULLETIN',
-  title: 'Spring dinner returns to the Long Room after four seasons away.',
-  lede: "The President will host members at the Indiana Memorial Union on 18 April. A printed ledger of the cohort's placements will be circulated.",
-  img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80',
-  imgLabel: "MEMBERS' DINNER",
-  author: 'The President', tag: 'THE CLUB'
+  no: 1,
+  title: 'Weekly Energy Insights',
+  date: 'April 2026',
+  cat: 'ENERGY',
+  authors: [
+  { name: 'Parker Dettor', email: 'pdettor@iu.edu' },
+  { name: 'Kensei Lawrence', email: 'klawren@iu.edu' },
+  { name: 'Jack Sudac', email: 'jsudac@iu.edu' },
+  { name: 'William Gauthier', email: 'wpgauthi@iu.edu' }],
+  tradeIdeas: [
+  { dir: 'BULLISH', title: 'Distillates East of Suez', thesis: 'Potential supply disruptions loom as tanker freight rates continue to stay high. Long Singapore 10ppm Gasoil vs ULSD.' },
+  { dir: 'BULLISH', title: 'WTI, Short Brent', thesis: 'China is not replacing its lost crude with Brent-priced alternatives, while the U.S.’s seaborne imports have fallen.' },
+  { dir: 'BEARISH', title: 'Naphtha East of Suez', thesis: 'Western exports become more expensive as the shift to summer driving season approaches, and high cracker utilization rates in East Asia are causing inventory drawdowns.' }],
+  sections: [
+  {
+    desk: 'CRUDE OIL', call: 'Bullish Brent over WTI',
+    paras: [
+    'Global refinery gross margin rates have skyrocketed since February, moving from an average of $16/bbl in February to $54/bbl in March, and are expected to increase to $65/bbl in April as crack spreads rally. China is the biggest beneficiary with projected gross margins of $110/bbl in April, up from just $14/bbl in February, driven by privileged access to discounted sanctioned crude.',
+    'Once China began losing access to Iranian oil, refinery runs fell 3.3% in March from February and are projected to drop a further 5.6% in April. This allows us to infer that Chinese refinery margins collapsed once Iranian oil began to be removed from the equation. Meanwhile, US refinery runs increased by 1.6% in March and are projected to increase by 0.7% in April. At the same time, US refinery imports are projected to drop by 8.6% in April, demonstrating that the US plans to sustain throughput with domestic production.',
+    'The data shows that China isn’t replacing its lost Iranian crude with Brent-priced alternatives — instead cutting runs or sourcing from its reserves. The US is also reducing seaborne imports and sustaining refinery throughput with domestic production.'],
+    charts: [
+    { src: 'ed1-crude-margins.png', caption: 'Refinery gross margins — China vs. global average, Feb–Apr 2026 · Source: Kpler' },
+    { src: 'ed1-crude-refinery-activity.png', caption: 'Global refinery throughput vs. crude imports, Feb–Apr 2026 · Source: Kpler' }]
+  },
+  {
+    desk: 'LIGHT ENDS', call: 'Bullish Naphtha East of Suez',
+    paras: [
+    'Asia’s petchem sector, which relies more on light naphtha than on NGLs, is running on inventories that typically last 15–30 days, and we are entering the window where those buffers start to run out.',
+    'Government interventions in East Asia are propping up naphtha cracker utilization by subsidizing feedstock purchases and instructing state-linked companies to increase ethylene output. While this shores up near-term demand, it is accelerating inventory drawdowns and will likely force sharper cracker shutdowns later in April if Hormuz flows don’t resume. Three Japanese crackers have already deferred restarts from maintenance, representing roughly 160 kbd of nameplate naphtha demand.',
+    'Western resupplies cannot meaningfully close the deficit. USGC exports hit record highs in March, but these barrels face competition from the seasonal shift toward summer-grade gasoline, which increases domestic naphtha blending requirements.',
+    'Singapore naphtha cracks have already surged 146% w/w, and with resupplies from the West not arriving until mid-April at earliest, prompt tightness will only deepen before it improves.'],
+    charts: [
+    { src: 'ed1-naphtha-imports.png', caption: 'East Asian monthly naphtha imports, thousand tonnes' },
+    { src: 'ed1-naphtha-brent-spread.png', caption: 'Singapore naphtha–Brent spread, $/bbl' }]
+  },
+  {
+    desk: 'MIDDLE DISTILLATES', call: 'Bullish East of Suez',
+    paras: [
+    'Despite slight demand destruction in Asia — with the Philippines declaring an energy emergency, Japan releasing its SPR, and Australia relaxing ULSD flash point specs — this will not offset the shortage risk caused by heightened tanker freight rates.',
+    'Middle distillates are currently being transported not because it is profitable, but because of prevailing term-supply contracts. From a CIF and CFR perspective, these routes are not profitable for the seller, so the risk of these contracts being cancelled remains a major supply disruption east of the Suez.',
+    'The lack of flows from North America to Asia will increase distillate supply in North America, which may be a bearish signal, although we believe that an oversupply in North America is unlikely given that crude supply has been disrupted by roughly 20%.',
+    'This narrative can be seen through the New York–Singapore diesel spread, which shows Singapore rallying relative to NYH in recent days.'],
+    charts: [
+    { src: 'ed1-ulsd-gasoil-spread.png', caption: 'NYH ULSD vs. Singapore 10ppm gasoil FOB spread' },
+    { src: 'ed1-us-exports-suez.png', caption: 'US weekly exports to East of Suez, kbd' }]
+  },
+  {
+    desk: 'RESIDUALS', call: 'Neutral',
+    paras: [
+    'In the East, Singapore HSFO cracks have already fallen sharply, down $6.70/bbl w/w, and the M1–M3 backwardation has narrowed by $140/t from its post-war peak. This results from Russian inflows and floating storage volumes keeping Singapore and Malaysia reasonably supplied. India’s pivot to Malaysian HSFO (first imports since February 2023) after losing both Russian and Middle Eastern barrels shows that alternative sourcing routes are being established, even if imperfectly.'],
+    charts: [
+    { src: 'ed1-russia-fuel-oil.png', caption: 'Russian Federation monthly fuel-oil exports to Singapore' },
+    { src: 'ed1-hsfo-crack.png', caption: '380 CST fuel-oil crack spread vs. Brent, $/mt' }]
+  },
+  {
+    desk: 'NATURAL GAS', call: 'Long-term bullish TTF–JKM spread',
+    paras: [
+    'The JKM premium over TTF has widened to $X per MMBtu as of April 5th, 2026, led by supply disruptions from Cyclone Narelle on four LNG plants, and strong renewable generation west of the Suez. This incentivizes flows towards the east of the Suez.',
+    'To fill their mandatory 90% fill rate by 1 November, the EU needs to inject roughly 63 bcm over the summer — equivalent to roughly 665 LNG cargoes.',
+    'Long-term TTF prices, therefore, should bid up to JKM levels as Europe seeks to meet their regulatory requirement.'],
+    charts: [
+    { src: 'ed1-jkm-ttf-spread.png', caption: 'JKM–TTF spread, USD/MMBtu' },
+    { src: 'ed1-eu-gas-storage.png', caption: 'OECD Europe natural gas storage capacity utilization, %' }]
+  }]
 }];
 
+// "$X" is an unfilled figure carried over from the source document — render it
+// visibly flagged so it reads as pending rather than a typo.
+function renderNewsPara(text) {
+  if (!text.includes('$X')) return text;
+  const parts = text.split('$X');
+  return (
+    <>{parts[0]}<mark title="Figure pending — update EDITIONS in index.html" style={{ background: 'rgba(196,154,62,0.22)', color: '#132531', padding: '0 4px', borderBottom: '1px dashed #C49A3E' }}>$X</mark>{parts[1]}</>
+  );
+}
 
-const PAST_ISSUES = [
-{ no: 'No. 11', date: '27 Feb 2026', title: 'Copper warehouse queues at Johor and the LME carry.', cat: 'METALS' },
-{ no: 'No. 10', date: '20 Feb 2026', title: 'A soybean season in two hemispheres.', cat: 'AGRICULTURE' },
-{ no: 'No. 09', date: '13 Feb 2026', title: 'Diesel crack spreads and the refinery calendar.', cat: 'ENERGY' },
-{ no: 'No. 08', date: '06 Feb 2026', title: "On reading an aging sister's bill of lading.", cat: 'VIEWPOINT' },
-{ no: 'No. 07', date: '30 Jan 2026', title: 'The Baltic Dry closes the month above 1,800.', cat: 'FREIGHT' },
-{ no: 'No. 06', date: '23 Jan 2026', title: 'Arabica at two-year highs — the Brazilian basis.', cat: 'AGRICULTURE' }];
 
+// Thin brass bar under the top of the viewport showing article scroll progress.
+function ReadingProgress() {
+  const [p, setP] = React.useState(0);
+  React.useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      setP(max > 0 ? Math.min(window.scrollY / max, 1) : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, height: 3, width: `${p * 100}%`, background: '#C49A3E', zIndex: 60 }} />;
+}
 
-function NewsletterPage({ onNav, onLock }) {
+function NewsletterPage({ onNav }) {
   const [email, setEmail] = useNewsState('');
   const [sent, setSent] = useNewsState(false);
-  const [filter, setFilter] = useNewsState('ALL');
+  const [zoom, setZoom] = useNewsState(null);
   const isMobile = useIsMobile();
 
-  const lead = ISSUES[0];
-  const rest = ISSUES.slice(1);
+  React.useEffect(() => {
+    if (!zoom) return;
+    const onKey = (e) => { if (e.key === 'Escape') setZoom(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [zoom]);
+
+  const ed = EDITIONS[0];
 
   return (
     <>
-      {/* HERO — masthead treatment */}
-      <section style={{ background: '#F8F7F3', paddingBottom: 40 }}>
+      <ReadingProgress />
+      {/* MASTHEAD */}
+      <section style={{ background: '#F8F7F3', paddingBottom: 8 }}>
         <Header current="newsletter" onNav={onNav} tone="light" />
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '48px 20px 36px' : '72px 40px 56px', textAlign: 'center' }}>
-          <Label style={{ marginBottom: 24 }}>/ The weekly bulletin · published since 2019</Label>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '48px 20px 40px' : '72px 40px 52px', textAlign: 'center' }}>
+          <Label style={{ marginBottom: 24 }}>/ The CTSC markets newsletter</Label>
           <h1 style={{
             fontFamily: 'Fraunces, Times New Roman, serif',
-            fontSize: isMobile ? 52 : 92, fontWeight: 400, color: '#132531',
-            lineHeight: 0.95, letterSpacing: '-0.03em',
+            fontSize: isMobile ? 42 : 84, fontWeight: 400, color: '#132531',
+            lineHeight: 1.02, letterSpacing: '-0.03em',
             margin: 0
           }}>
-            The Dispatch
+            <HeroLines lines={[<>Weekly Energy Insights</>]} />
           </h1>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 18, marginTop: 22 }}>
             <div style={{ width: 80, height: 1, background: '#132531' }} />
             <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#6B6B6B' }}>
-              Vol. VII · Issue 14 · Friday 20 Mar 2026
+              Edition No. {ed.no} · {ed.date}
             </div>
             <div style={{ width: 80, height: 1, background: '#132531' }} />
           </div>
-          <p style={{ fontSize: 15, lineHeight: 1.65, color: '#4A4A4A', marginTop: 32, maxWidth: 620, margin: '32px auto 0' }}>
-            A Friday-morning note from the Secretariat. Fixtures, admissions, and a single editorial observation from the desks. No advertisements. Members and candidates only.
-          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: isMobile ? '14px 24px' : '14px 44px', marginTop: 30 }}>
+            {ed.authors.map((a) =>
+            <div key={a.email}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#132531' }}>{a.name}</div>
+                <a href={`mailto:${a.email}`} style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B', textDecoration: 'none' }}>{a.email}</a>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* LEAD ISSUE — big editorial treatment */}
-      <section style={{ background: '#F8F7F3', padding: isMobile ? '0 20px 56px' : '0 40px 96px' }}>
+      {/* TRADE IDEAS */}
+      <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '48px 20px' : '72px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ height: 1, background: '#132531', marginBottom: 24 }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 32, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>
-            <span>This Friday · Lead article</span>
-            <span>{lead.no} · {lead.date}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 36, gap: 16 }}>
+            <h2 style={{ fontSize: isMobile ? 26 : 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', margin: 0 }}>Trade ideas</h2>
+            <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>Educational · Not investment advice</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.25fr 1fr', gap: isMobile ? 24 : 56, alignItems: 'center' }}>
-            <EditorialImage src={lead.img} aspect="4 / 3" />
-            <div>
-              <Chip variant="solid" style={{ marginBottom: 22 }}>{lead.tag}</Chip>
-              <h2 style={{
-                fontFamily: 'Fraunces, serif',
-                fontSize: 44, fontWeight: 400, color: '#132531',
-                lineHeight: 1.1, letterSpacing: '-0.01em', textWrap: 'balance'
-              }}>
-                {lead.title}
-              </h2>
-              <p style={{ fontSize: 16, lineHeight: 1.7, color: '#4A4A4A', marginTop: 20, textWrap: 'pretty' }}>
-                {lead.lede}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 28 }}>
-                <BrassRule />
-                <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{lead.author}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 1, background: 'rgba(255,255,255,0.08)' }}>
+            {ed.tradeIdeas.map((t, i) =>
+            <div key={t.title} style={{ background: '#0F2030', padding: '30px 28px 28px', borderTop: `2px solid ${t.dir === 'BULLISH' ? '#6ED08B' : '#E85E4A'}`, transition: 'background 280ms, transform 280ms' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#122638'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#0F2030'; e.currentTarget.style.transform = 'none'; }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+                  <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: t.dir === 'BULLISH' ? '#6ED08B' : '#E85E4A' }}>{t.dir}</span>
+                  <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#C49A3E' }}>— 0{i + 1}</span>
+                </div>
+                <h3 style={{ fontSize: 20, fontWeight: 500, lineHeight: 1.25, color: '#F8F7F3', margin: 0 }}>{t.title}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginTop: 14 }}>{t.thesis}</p>
               </div>
-              <div style={{ marginTop: 36 }}>
-                <Button variant="primary">Read the entry <ArrowIcon /></Button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* SUBSCRIBE — dark band, centered, high ceremony */}
+      {/* ARTICLE — one section per desk */}
+      <section style={{ background: '#fff', padding: isMobile ? '48px 20px' : '80px 40px' }}>
+        <div style={{ maxWidth: 880, margin: '0 auto' }}>
+          {ed.sections.map((s, i) =>
+          <article key={s.desk} style={{ paddingTop: i === 0 ? 0 : isMobile ? 44 : 60, marginTop: i === 0 ? 0 : isMobile ? 44 : 60, borderTop: i === 0 ? 'none' : '1px solid #ECE8DF' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <Label style={{ color: '#C49A3E' }}>/ {s.desk}</Label>
+                <div style={{ flex: 1, height: 1, background: '#ECE8DF' }} />
+                <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#8F8F8F' }}>0{i + 1} / 0{ed.sections.length}</span>
+              </div>
+              <blockquote style={{ margin: '24px 0 0', padding: '4px 0 4px 22px', borderLeft: '3px solid #C49A3E' }}>
+                <span style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#6B6B6B', display: 'block', marginBottom: 6 }}>Our call</span>
+                <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: isMobile ? 22 : 28, color: '#132531', lineHeight: 1.25 }}>{s.call}</span>
+              </blockquote>
+              {s.paras.map((p, j) =>
+              <p key={j} style={{ fontSize: 15, lineHeight: 1.8, color: '#4A4A4A', marginTop: j === 0 ? 28 : 18, textWrap: 'pretty' }}>{renderNewsPara(p)}</p>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 16, marginTop: 32 }}>
+                {s.charts.map((c) =>
+                <figure key={c.src} style={{ margin: 0, border: '1px solid #ECE8DF', background: '#fff', transition: 'border-color 220ms' }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = '#C49A3E'}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = '#ECE8DF'}>
+                    <img src={c.src} alt={c.caption} loading="lazy" title="Click to enlarge"
+                  onClick={() => setZoom(c)}
+                  style={{ width: '100%', display: 'block', cursor: 'zoom-in' }} />
+                    <figcaption style={{ padding: '10px 14px', fontSize: 11, letterSpacing: 0.5, color: '#6B6B6B', borderTop: '1px solid #ECE8DF', lineHeight: 1.5 }}>{c.caption}</figcaption>
+                  </figure>
+                )}
+              </div>
+            </article>
+          )}
+          <div style={{ marginTop: isMobile ? 48 : 64, paddingTop: 28, borderTop: '1px solid #132531', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', gap: 12 }}>
+            <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>{ed.title} · Edition No. {ed.no} · {ed.date}</span>
+            <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Commodity Trading &amp; Shipping Club · Indiana University</span>
+          </div>
+        </div>
+      </section>
+
+      {/* SUBSCRIBE — dark band */}
       <section style={{ background: '#060F16', color: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
-          <img src="https://images.unsplash.com/photo-1494412651409-8dd6e94a9db2?w=2000&q=80"
+          <img src="LNG_Tanker.jpeg"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) brightness(0.5)' }} alt="" />
         </div>
         <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
           <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ Subscribe</Label>
           <h2 style={{ fontSize: isMobile ? 30 : 44, fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'balance' }}>
-            <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Friday morning,</span> a short note<br />from the Secretariat.
+            <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Every edition,</span> straight<br />from the desks.
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, marginTop: 22, maxWidth: 520, margin: '22px auto 0' }}>
-            One issue, each Friday, before morning markets. No advertisements, no trackers, one-click unsubscribe.
+            Leave your email and the analyst team will send each new edition of Weekly Energy Insights when it publishes.
           </p>
           {!sent ?
           <form onSubmit={(e) => {e.preventDefault();if (email) setSent(true);}}
           style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 10, marginTop: 36, maxWidth: 480, margin: '36px auto 0' }}>
               <input
               value={email} onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@indiana.edu"
+              placeholder="name@iu.edu"
               style={{
                 flex: 1, background: 'transparent', color: '#fff',
                 border: '1px solid rgba(255,255,255,0.35)', borderRadius: 2, padding: '14px 16px',
                 fontSize: 15, outline: 'none'
               }} />
-            
+
               <button type="submit" className="btn btn--signal">Subscribe <ArrowIcon /></button>
             </form> :
 
           <div style={{ marginTop: 36, maxWidth: 480, margin: '36px auto 0', padding: '14px 18px', border: '1px solid #2E6B3E', color: '#A6D5B2', fontSize: 14, borderRadius: 2 }}>
-              Confirmed. A note will follow from the Secretariat.
+              Noted. The next edition will land in your inbox.
             </div>
           }
           <div style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F', marginTop: 20 }}>
-            Never shared · Unsubscribe in one click · IU email preferred
+            Never shared · IU email preferred
           </div>
         </div>
       </section>
 
-      {/* RECENT ISSUES */}
-      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '96px 40px' }}>
+      {/* ARCHIVE TABLE — grows as editions are added to EDITIONS */}
+      <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-            <div>
-              <Label>/ Recent issues</Label>
-              <h2 style={{ fontSize: isMobile ? 26 : 34, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-                From the Secretariat and the membership.
-              </h2>
-            </div>
-            {!isMobile && <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>All issues →</a>}
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 24 }}>
-            {rest.map((d) =>
-            <article key={d.no} style={{ background: '#fff', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', border: '1px solid #ECE8DF' }}>
-                <EditorialImage src={d.img} aspect="auto" style={{ height: '100%' }} />
-                <div style={{ padding: '28px 28px 24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <Chip variant="outline">{d.tag}</Chip>
-                    <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>{d.date}</span>
-                  </div>
-                  <h3 style={{ fontSize: 18, fontWeight: 500, lineHeight: 1.3, color: '#132531', textWrap: 'pretty' }}>{d.title}</h3>
-                  <p style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.6, marginTop: 10 }}>{d.lede.split('.')[0]}.</p>
-                  <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <BrassRule width={24} />
-                    <span style={{ fontSize: 12, color: '#132531', letterSpacing: 0.5, fontWeight: 500 }}>Read the entry</span>
-                  </div>
-                </div>
-              </article>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ARCHIVE TABLE */}
-      <section style={{ background: '#fff', padding: isMobile ? '48px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', gap: isMobile ? 20 : 0, marginBottom: 32 }}>
-            <div>
-              <Label>/ The archive</Label>
-              <h2 style={{ fontSize: isMobile ? 26 : 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
-                Retained in perpetuity.
-              </h2>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {['ALL', 'ENERGY', 'METALS', 'AGRICULTURE', 'FREIGHT', 'VIEWPOINT'].map((t) =>
-              <button key={t}
-              onClick={() => setFilter(t)}
-              className={t === filter ? 'btn btn--primary btn--micro' : 'btn btn--ghost-dark btn--micro'}
-              style={{
-                border: t === filter ? '1px solid #132531' : '1px solid #D8D4CC',
-                background: t === filter ? '#132531' : 'transparent',
-                color: t === filter ? '#fff' : '#132531'
-              }}>
-                  {t}
-                </button>
-              )}
-            </div>
+          <div style={{ marginBottom: 32 }}>
+            <Label>/ The archive</Label>
+            <h2 style={{ fontSize: isMobile ? 26 : 30, fontWeight: 400, color: '#132531', marginTop: 12, lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              Every edition, retained.
+            </h2>
           </div>
 
           <div style={{ borderTop: '1px solid #132531' }}>
-            {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).map((iss, i) =>
+            {EDITIONS.map((e) =>
             isMobile ? (
-              <div key={iss.no} style={{ padding: '16px 0', borderBottom: '1px solid #ECE8DF', cursor: 'pointer' }}>
+              <div key={e.no} style={{ padding: '16px 0', borderBottom: '1px solid #ECE8DF' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <Chip variant="outline">{iss.cat}</Chip>
-                  <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{iss.date}</span>
+                  <Chip variant="outline">{e.cat}</Chip>
+                  <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{e.date}</span>
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 500, color: '#132531', lineHeight: 1.35 }}>{iss.title}</div>
+                <div style={{ fontSize: 15, fontWeight: 500, color: '#132531', lineHeight: 1.35 }}>{e.title}</div>
               </div>
             ) : (
-            <div key={iss.no} style={{
-              display: 'grid', gridTemplateColumns: '110px 110px 1fr 140px 40px',
-              padding: '20px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center',
-              cursor: 'pointer', transition: 'background 220ms'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{iss.no}</div>
-                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#132531' }}>{iss.date}</div>
-                <div style={{ fontSize: 16, fontWeight: 500, color: '#132531' }}>{iss.title}</div>
-                <div><Chip variant="outline">{iss.cat}</Chip></div>
+            <div key={e.no} style={{
+              display: 'grid', gridTemplateColumns: '110px 130px 1fr 140px 40px',
+              padding: '20px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center'
+            }}>
+                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>No. {String(e.no).padStart(2, '0')}</div>
+                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#132531' }}>{e.date}</div>
+                <div style={{ fontSize: 16, fontWeight: 500, color: '#132531' }}>{e.title}</div>
+                <div><Chip variant="outline">{e.cat}</Chip></div>
                 <div style={{ textAlign: 'right', color: '#132531' }}><ArrowIcon size={14} /></div>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ marginTop: 24 }}>
             <span style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#8F8F8F' }}>
-              Showing {PAST_ISSUES.filter((i) => filter === 'ALL' || i.cat === filter).length} of 142 issues
+              {EDITIONS.length} edition{EDITIONS.length === 1 ? '' : 's'} published · The archive grows from here
             </span>
-            <a href="#" className="link" style={{ fontSize: 13, fontWeight: 600 }}>Open full archive →</a>
           </div>
         </div>
       </section>
 
-      <Footer onNav={onNav} onLock={onLock} />
+      {/* chart lightbox — click any chart to enlarge, Esc or click to close */}
+      {zoom &&
+      <div onClick={() => setZoom(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(6,15,22,0.93)', zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, cursor: 'zoom-out' }}>
+          <figure style={{ margin: 0 }}>
+            <img src={zoom.src} alt={zoom.caption} style={{ maxWidth: '94vw', maxHeight: '84vh', display: 'block', background: '#fff', padding: 8 }} />
+            <figcaption style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, marginTop: 12, textAlign: 'center', letterSpacing: 0.5 }}>{zoom.caption}</figcaption>
+          </figure>
+        </div>}
+
+      <Footer onNav={onNav} />
     </>);
 
 }
 
-Object.assign(window, { NewsletterPage });
+Object.assign(window, { NewsletterPage, EDITIONS });
 
 
 // ======== pages/MembershipPage.jsx ========
@@ -1521,12 +1961,15 @@ function MembershipPage({ onNav }) {
         <Header current="membership" onNav={onNav} tone="dark" />
         <div style={{ position: 'absolute', inset: 0 }}>
           <img src="LNG_Tanker.jpeg"
+          className="kenburns"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.6) saturate(1)' }} alt="" />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.5) 0%, rgba(6,15,22,0.5) 100%)' }} />
         </div>
         <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '110px 20px 40px' : '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: isMobile ? 280 : 400, justifyContent: 'space-between' }}>
-          <h1 style={{ fontSize: isMobile ? 36 : 64, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 820, textWrap: 'balance', color: 'rgba(248,247,243,0.72)' }}>
-            Membership is by admission only.
+          <h1 style={{ fontSize: isMobile ? 36 : 64, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 820, color: 'rgba(248,247,243,0.72)' }}>
+            <HeroLines lines={[
+            <>Membership is by</>,
+            <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>admission</span> only.</>]} />
           </h1>
           <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340, marginTop: isMobile ? 20 : 0 }}>
             Your application will be reviewed by the leadership team. Join the mailing list below to stay up to date with news, events, and announcements.
@@ -1661,7 +2104,7 @@ Object.assign(window, { MembershipPage });
 
 const AV_KEY = 'I8R6FD24WF3Y1JN3';
 const FH_KEY = 'd85t531r01qm56kslilgd85t531r01qm56kslim0';
-const PRICE_CACHE_KEY = 'ctsc-live-prices-v2';
+const PRICE_CACHE_KEY = 'ctsc-live-prices-v3'; // v3: adds trend series for sparklines
 const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
 // Alpha Vantage commodity endpoints
@@ -1706,7 +2149,14 @@ async function fetchAVCommodity(sym, cfg) {
   const raw = curr.toFixed(cfg.decimals);
   // format large numbers with comma (e.g. 2,418)
   const price = cfg.decimals === 0 ? Number(raw).toLocaleString('en-US') : raw;
-  return { price, chg: fmtChg(curr, prev), date: json.data[0].date, source: 'alphavantage' };
+  // recent trend for sparklines: ~30 sessions for daily series, 12 for monthly.
+  // AV returns newest-first; reverse so the sparkline reads left → right in time.
+  const span = cfg.interval === 'daily' ? 30 : 12;
+  const series = json.data.slice(0, span).
+  map((d) => parseFloat(d.value) * cfg.multiplier).
+  filter((v) => !isNaN(v)).
+  reverse();
+  return { price, chg: fmtChg(curr, prev), date: json.data[0].date, source: 'alphavantage', series };
 }
 
 async function fetchFHQuote(sym, cfg) {
@@ -1773,81 +2223,6 @@ Object.assign(window, { useLivePrices });
 
 const { useState, useEffect } = React;
 
-function SiteLock({ onUnlock }) {
-  const [pw, setPw] = useState('');
-  const [err, setErr] = useState(false);
-  const submit = (e) => {
-    e.preventDefault();
-    if (pw === 'PeaceAndQuiet') { onUnlock(); }
-    else { setErr(true); setPw(''); }
-  };
-  return (
-    <div style={{ minHeight: '100vh', background: '#060F16', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-      <img src="club_logo_clear.png" alt="CTSC" style={{ height: 140, marginBottom: 40 }} />
-      <div style={{ width: '100%', maxWidth: 380 }}>
-        <div style={{ fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 32, textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic' }}>Members Only</div>
-        <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <input
-            type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
-            placeholder="Enter password"
-            autoFocus
-            style={{ background: 'transparent', border: `1px solid ${err ? '#C8321E' : 'rgba(255,255,255,0.25)'}`, borderRadius: 2, padding: '14px 16px', fontSize: 15, color: '#F8F7F3', outline: 'none', letterSpacing: '0.1em' }} />
-          {err && <div style={{ fontSize: 12, color: '#C8321E', letterSpacing: 1, textTransform: 'uppercase' }}>Incorrect password</div>}
-          <button type="submit" className="btn btn--signal" style={{ marginTop: 4 }}>Enter <ArrowIcon /></button>
-        </form>
-        <div style={{ marginTop: 32, height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ marginTop: 20, fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#4A4A4A', textAlign: 'center' }}>
-          Indiana University · Kelley School of Business
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function NewsletterGate({ onNav }) {
-  const [pw, setPw] = useState('');
-  const [unlocked, setUnlocked] = useState(false);
-  const [err, setErr] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const isMobile = useIsMobile();
-
-  if (unlocked) return <NewsletterPage onNav={onNav} onLock={() => setUnlocked(false)} />;
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (pw === 'Analyst3') { setUnlocked(true); }
-    else { setErr(true); setPw(''); }
-  };
-
-  return (
-    <>
-      <Header current="newsletter" onNav={onNav} tone="light" />
-      <section style={{ minHeight: '80vh', background: '#F8F7F3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '60px 20px' : '80px 40px', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: 'Fraunces, Times New Roman, serif', fontSize: isMobile ? 48 : 72, fontWeight: 400, color: '#132531', lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
-          Coming Soon
-        </h1>
-        <div style={{ marginTop: 36 }}>
-          <Button variant="ghost-dark" onClick={() => setShowPreview(!showPreview)}>Preview access</Button>
-        </div>
-        {showPreview && (
-          <form onSubmit={submit} style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
-            <input
-              type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
-              placeholder="Preview password"
-              autoFocus
-              style={{ background: 'transparent', border: `1px solid ${err ? '#C8321E' : '#D8D4CC'}`, borderRadius: 2, padding: '12px 16px', fontSize: 14, color: '#132531', outline: 'none' }} />
-            {err && <div style={{ fontSize: 12, color: '#C8321E', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'left' }}>Incorrect password</div>}
-            <button type="submit" className="btn btn--primary btn--sm">Unlock <ArrowIcon /></button>
-          </form>
-        )}
-      </section>
-      <Footer onNav={onNav} />
-    </>
-  );
-}
-
-Object.assign(window, { NewsletterGate });
-
 function App() {
   const [page, setPage] = useState('about');
   useEffect(() => {
@@ -1855,10 +2230,10 @@ function App() {
   }, [page]);
 
   const Page = window[
-  { about: 'AboutPage', commodities: 'CommoditiesPage', newsletter: 'NewsletterGate', membership: 'MembershipPage' }[page]] ||
+  { about: 'AboutPage', commodities: 'CommoditiesPage', newsletter: 'NewsletterPage', membership: 'MembershipPage' }[page]] ||
   window.AboutPage;
   if (!Page) return <div style={{ padding: 40, color: '#132531' }}>Loading…</div>;
-  return <div data-screen-label={`CTSC · ${page}`}><Page onNav={setPage} /></div>;
+  return <div key={page} className="page-enter" data-screen-label={`CTSC · ${page}`}><Page onNav={setPage} /></div>;
 }
 function boot() {
   if (!window.AboutPage || !window.CommoditiesPage || !window.NewsletterPage || !window.MembershipPage || !window.Header) {
