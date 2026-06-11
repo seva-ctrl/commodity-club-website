@@ -1,0 +1,17 @@
+{
+  "name": "ctsc-iu-website",
+  "private": true,
+  "description": "Dev-only test harness for the CTSC single-file static site. The site itself has zero runtime dependencies — these packages exist solely so `npm test` can compile and render index.html outside a browser.",
+  "type": "module",
+  "scripts": {
+    "test": "bun tests/run-tests.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
