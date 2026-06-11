@@ -128,7 +128,7 @@ async function renderPage(name, props, expects) {
 const noop = () => {};
 const monthName = new Date().toLocaleString('en-US', { month: 'long' });
 await renderPage('AboutPage', { onNav: noop }, ['Houston', 'Leadership Team', 'Events', monthName]);
-await renderPage('CommoditiesPage', { onNav: noop }, ['Product Groups', 'Brent Crude']);
+await renderPage('CommoditiesPage', { onNav: noop }, ['Product Groups', 'Brent Crude', 'FREIGHT', 'POWER', 'Cushing']);
 await renderPage('MembershipPage', { onNav: noop }, []);
 await renderPage('NewsletterPage', { onNav: noop }, [
   'Weekly Energy Insights', 'Trade ideas', 'Our call', 'Parker Dettor', 'NATURAL GAS',
@@ -137,7 +137,7 @@ await renderPage('NewsletterPage', { onNav: noop }, [
 // ---------------------------------------------------------------------------
 section('5. Data integrity (EDITIONS, COMMODITIES, EVENTS, GAS_HUBS)');
 
-const { EDITIONS, COMMODITIES, EVENTS, GAS_HUBS } = win;
+const { EDITIONS, COMMODITIES, EVENTS, DESK_MAPS } = win;
 ok(Array.isArray(EDITIONS) && EDITIONS.length >= 1, 'EDITIONS is a non-empty array');
 for (const ed of EDITIONS || []) {
   const id = `edition ${ed.no}`;
@@ -153,7 +153,7 @@ for (const ed of EDITIONS || []) {
   }
 }
 
-ok(Array.isArray(COMMODITIES) && COMMODITIES.length >= 4, 'COMMODITIES has all product groups');
+ok(Array.isArray(COMMODITIES) && COMMODITIES.length === 6, 'COMMODITIES has all six product groups');
 for (const g of COMMODITIES || []) {
   ok(g.items.every((it) => it.sym && it.name && it.unit && it.price && /^[+−-]/.test(it.chg)),
     `COMMODITIES "${g.cat}" items have sym/name/unit/price and signed chg`);
@@ -161,8 +161,23 @@ for (const g of COMMODITIES || []) {
 
 ok(Array.isArray(EVENTS) && EVENTS.every((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.title && e.type),
   'EVENTS entries (if any) have YYYY-MM-DD date, title, and type');
-ok(Array.isArray(GAS_HUBS) && GAS_HUBS.length >= 8 && GAS_HUBS.every((h) => h.name && h.role && h.price && h.x > 0 && h.x < 1000 && h.y > 0 && h.y < 480),
-  'GAS_HUBS hubs have names/roles/prices and sit inside the map viewBox');
+// Commodity Atlas: every desk has a complete, well-formed map layer.
+const REQUIRED_DESKS = ['CRUDE & REFINED', 'NAT GAS', 'POWER', 'METALS', 'AGRICULTURE', 'FREIGHT'];
+ok(DESK_MAPS && REQUIRED_DESKS.every((d) => DESK_MAPS[d]), 'DESK_MAPS covers all six desks');
+for (const d of REQUIRED_DESKS) {
+  const m = (DESK_MAPS && DESK_MAPS[d]) || { points: [], routes: [], regions: [] };
+  ok(m.points.length >= 8, `${d} map has 8+ points (${m.points.length})`);
+  ok(m.points.every((p) =>
+    p.name && p.detail && p.stat && ['hub', 'port', 'chokepoint'].includes(p.kind) &&
+    p.lon >= -180 && p.lon <= 180 && p.lat >= -55 && p.lat <= 75),
+    `${d} points have name/detail/stat/kind and in-frame lon/lat`);
+  ok(new Set(m.points.map((p) => p.id)).size === m.points.length, `${d} point ids are unique`);
+  ok(m.routes.every((r) => r.label && Array.isArray(r.waypoints) && r.waypoints.length >= 3), `${d} routes have labels and 3+ waypoints`);
+}
+ok((COMMODITIES || []).every((g) => DESK_MAPS && DESK_MAPS[g.cat]), 'every COMMODITIES tab has a matching map layer');
+const wp = html.match(/\/\* WORLD_PATHS:BEGIN \*\/([\s\S]*?)\/\* WORLD_PATHS:END \*\//);
+ok(wp && wp[1].length > 10000 && wp[1].length < 60000,
+  `WORLD_PATHS geometry is generated and within budget (${wp ? Math.round(wp[1].length / 1024) : 0}KB)`);
 
 // ---------------------------------------------------------------------------
 section('6. Cross-script exports (window registry the router depends on)');

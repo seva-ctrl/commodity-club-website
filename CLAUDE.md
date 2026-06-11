@@ -28,7 +28,7 @@ bun run test  # runs tests/run-tests.mjs
 2. **Asset existence** — every local image referenced in `index.html` exists on disk (catches filename case/space typos like `dump truck.jpeg` / `houston_trip.JPG`).
 3. **Fictional-content regression** — placeholder copy that was removed (e.g. "The Dispatch", "Vol. VII") stays removed; no dead `href="#"` links.
 4. **Render smoke test** — all pages render in jsdom with `fetch` rejected (offline fallback path); the About calendar shows the current month.
-5. **Data integrity** — `EDITIONS`, `COMMODITIES`, `EVENTS`, `GAS_HUBS` have required fields; every newsletter chart file exists.
+5. **Data integrity** — `EDITIONS`, `COMMODITIES`, `EVENTS`, `DESK_MAPS` have required fields (all six desks, 8+ points each, unique ids, in-frame lon/lat); every newsletter chart file exists; `WORLD_PATHS` stays generated and under budget.
 6. **Window exports** — every component the router needs is on `window`.
 
 Run the tests after any change to `index.html`.
@@ -51,7 +51,7 @@ There are **no password gates** — the old site-wide `SiteLock` and the newslet
 | Key | Component | Notes |
 |-----|-----------|-------|
 | `about` | `AboutPage` | hero, mission, pillars, Houston trip, **Events month calendar (`EventsCalendar` + `EVENTS` array)**, stats, leadership |
-| `commodities` | `CommoditiesPage` | live-price tables with sparklines, key spreads per desk, **interactive gas hub world map**, market overviews, news sources |
+| `commodities` | `CommoditiesPage` | **Commodity Atlas (persistent interactive world map, `DESK_MAPS`)** with 6 desk tabs, live-price tables with sparklines, key spreads per desk, market overviews, news sources |
 | `newsletter` | `NewsletterPage` | "Weekly Energy Insights" — real editions from the `EDITIONS` array |
 | `membership` | `MembershipPage` | application info + form |
 
@@ -72,8 +72,14 @@ Known pending item: Edition 1's Natural Gas section contains a literal `$X` (unf
 ### Live prices & sparklines
 `useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v3`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
 
-### Gas hub map
-`GasHubDiagram` is a hand-traced equirectangular world map (`WORLD_PATHS`) with hubs in `GAS_HUBS` (projection: `x = 2.778 * (lon + 180)`, `y = 3.69 * (75 - lat)`, viewBox `0 0 1000 480`). Hubs support hover/tap tooltips; LNG routes animate via the `gasflow` keyframe. It renders full-width under the NAT GAS & POWER tab.
+### Commodity Atlas (the map)
+The Commodities page is built around one persistent world map (`CommodityMap`) that sits directly under the desk tab bar; switching tabs cross-fades its layers (220ms). Six desks: CRUDE & REFINED · NAT GAS · POWER · METALS · AGRICULTURE · FREIGHT — the desk keys in `DESK_MAPS` must exactly match `COMMODITIES[].cat`.
+
+- **Geometry**: `WORLD_PATHS` is generated from Natural Earth 110m land outlines (public domain) by `scripts/generate-world-paths.mjs` (`bun scripts/generate-world-paths.mjs`). It injects between `/* WORLD_PATHS:BEGIN */` and `/* WORLD_PATHS:END */` sentinels — never hand-edit that blob (~32KB; tests guard <60KB).
+- **Projection**: `x = 2.778 * (lon + 180)`, `y = 3.69 * (75 - lat)`, viewBox `0 0 1000 480` (crop 75°N–55°S). Points store real lon/lat and project at render via `projX`/`projY`.
+- **`DESK_MAPS` schema** per desk: `points` (`kind: 'hub' | 'port' | 'chokepoint'`, `primary`, `stat`, `detail` for the pinned card, optional label hints `anchor: 'end'` / `dy`), `routes` (`waypoints: [[lon,lat],…]` smoothed by `routePath()`; must not cross land or the antimeridian — no transpacific routes), `regions` (tinted ellipses; for POWER they're grid-market footprints in navy).
+- **Interactions**: hover tooltip (desktop), click pins a detail card below the map, animated dash-flow + travelling cargo dots on routes, legend adapts to the marker kinds present.
+- When adding a point in a crowded cluster (NW Europe, Singapore strait, US Gulf, Middle East), set `anchor`/`dy` and check overlaps — the browser console trick: compare `getBBox()` of the 13px `<text>` labels.
 
 ### Local image assets
 All images live alongside `index.html`, referenced by filename only. Photos are pre-compressed (~200–500KB; originally up to 9.7MB — keep them small):
