@@ -41,6 +41,9 @@ Object.assign(window, { ComponentName });
 ```
 The router (`App`) and `boot()` look components up on `window` — keep these exports when adding pages. Do not use ES module `import/export`.
 
+### Loading skeleton
+`<div id="root">` contains static skeleton markup (`.skel` class + `skel-pulse` shimmer, defined in the second `<style>` block) that displays while React/Babel load and compile. React's first render replaces it automatically — nothing to clean up. It mirrors the About hero (dark header bar + headline blocks); keep its shape roughly in sync if that hero changes materially.
+
 ### Routing
 Client-side routing is a single `useState` in the root `App` component (no persistence). Navigation happens by calling `onNav('pagename')` passed as a prop.
 
@@ -71,6 +74,8 @@ Known pending item: Edition 1's Natural Gas section contains a literal `$X` (unf
 
 ### Live prices & sparklines
 `useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v3`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
+
+`LiveSpreadStrip` (next to `Sparkline`) computes the Brent–WTI front spread from the BRN/WTI daily series (tail-aligned — both follow the EIA publication calendar) and renders a value + sparkline card above the descriptive "Key spreads & benchmarks" list on the Crude & Refined desk. It renders nothing until both series are live, so there is no fake fallback number.
 
 ### Commodity Atlas (the map)
 The Commodities page is built around one persistent world map (`CommodityMap`) that sits directly under the desk tab bar; switching tabs cross-fades its layers (220ms). Six desks: CRUDE & REFINED · NAT GAS · POWER · METALS · AGRICULTURE · FREIGHT — the desk keys in `DESK_MAPS` must exactly match `COMMODITIES[].cat`.

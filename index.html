@@ -392,15 +392,48 @@ p, .body {
   .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
   .ticker-wrap { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%); }
 
+  /* Static loading skeleton — markup lives in #root, replaced by the first render */
+  @keyframes skel-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+  .skel { background: rgba(255,255,255,0.08); border-radius: 2px; animation: skel-pulse 1.6s ease-in-out infinite; }
+
   @media (prefers-reduced-motion: reduce) {
-    .page-enter, .hero-line > span, .kenburns { animation: none !important; }
+    .page-enter, .hero-line > span, .kenburns, .skel { animation: none !important; }
     .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
     .ticker-track { animation: none !important; }
   }
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <!-- Loading skeleton — mirrors the About hero so the swap to the real page is seamless -->
+  <div style="min-height:100vh;background:#060F16;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 40px;border-bottom:1px solid rgba(255,255,255,0.12);">
+      <div class="skel" style="width:163px;height:52px;flex-shrink:0;"></div>
+      <div style="display:flex;gap:36px;">
+        <div class="skel" style="width:44px;height:12px;"></div>
+        <div class="skel" style="width:84px;height:12px;"></div>
+        <div class="skel" style="width:72px;height:12px;"></div>
+        <div class="skel" style="width:80px;height:12px;"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="skel" style="width:110px;height:36px;"></div>
+        <div class="skel" style="width:98px;height:36px;"></div>
+      </div>
+    </div>
+    <div style="max-width:1360px;margin:0 auto;padding:150px 40px 100px;">
+      <div class="skel" style="width:340px;max-width:80%;height:12px;margin-bottom:28px;"></div>
+      <div class="skel" style="width:72%;max-width:900px;height:58px;margin-bottom:16px;"></div>
+      <div class="skel" style="width:58%;max-width:720px;height:58px;margin-bottom:16px;"></div>
+      <div class="skel" style="width:42%;max-width:540px;height:58px;"></div>
+      <div class="skel" style="width:440px;max-width:85%;height:13px;margin-top:34px;"></div>
+      <div class="skel" style="width:370px;max-width:72%;height:13px;margin-top:10px;"></div>
+      <div style="display:flex;gap:14px;margin-top:40px;">
+        <div class="skel" style="width:152px;height:46px;"></div>
+        <div class="skel" style="width:168px;height:46px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -993,12 +1026,12 @@ function AboutPage({ onNav }) {
           </Reveal>
           <div style={{ borderTop: '1px solid #132531' }}>
             {[
-            ['Co-Founder', 'Evan Reitz', 'Finance · Class of 2027', 'Aramco Trading Company'],
-            ['Co-Founder', 'Kamber Michael', 'Finance · Class of 2027', 'Louis Dreyfus'],
-            ['Co-Founder', 'Nick Scerbo', 'Finance · Class of 2028', 'Phillips 66'],
-            ['Internal Social', 'Landon Johnson', 'Finance · Class of 2028', ''],
-            ['External Social', 'Seva Ulyanov', 'Finance · Class of 2029', '']].
-            map(([role, name, detail, company], i) =>
+            ['Co-Founder', 'Evan Reitz', 'Finance · Class of 2027'],
+            ['Co-Founder', 'Kamber Michael', 'Finance · Class of 2027'],
+            ['Co-Founder', 'Nick Scerbo', 'Finance · Class of 2028'],
+            ['Internal Social', 'Landon Johnson', 'Finance · Class of 2028'],
+            ['External Social', 'Seva Ulyanov', 'Finance · Class of 2029']].
+            map(([role, name, detail], i) =>
             isMobile ? (
               <div key={role + name} style={{ padding: '18px 0', borderBottom: '1px solid #ECE8DF' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -1006,11 +1039,11 @@ function AboutPage({ onNav }) {
                   <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
                 </div>
                 <div style={{ fontSize: 17, fontWeight: 500, color: '#132531', marginTop: 4 }}>{name}</div>
-                <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>{detail}{company ? ` · ${company}` : ''}</div>
+                <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>{detail}</div>
               </div>
             ) : (
             <div key={role + name} style={{
-              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr 1.2fr',
+              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr',
               padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center', transition: 'background 220ms'
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = '#F1EEE6'}
@@ -1019,7 +1052,6 @@ function AboutPage({ onNav }) {
                 <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
                 <div style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{name}</div>
                 <div style={{ fontSize: 13, color: '#6B6B6B' }}>{detail}</div>
-                <div style={{ fontSize: 13, color: '#6B6B6B' }}>{company}</div>
               </div>
             ))}
           </div>
@@ -1202,6 +1234,38 @@ function Sparkline({ data, width = 64, height = 20 }) {
     <svg width={width} height={height} style={{ display: 'block' }} aria-hidden="true">
       <polyline points={pts} fill="none" stroke={up ? '#2E6B3E' : '#C8321E'} strokeWidth="1.2" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+// Live Brent–WTI front spread computed from the AV daily series. The two series
+// share the EIA publication calendar, so they're aligned tail-first (most
+// recent session last). Renders nothing until both series are available.
+function LiveSpreadStrip({ prices = {} }) {
+  const brn = prices.BRN && prices.BRN.series;
+  const wti = prices.WTI && prices.WTI.series;
+  if (!brn || !wti || brn.length < 2 || wti.length < 2) return null;
+  const n = Math.min(brn.length, wti.length);
+  const series = Array.from({ length: n }, (_, i) => brn[brn.length - n + i] - wti[wti.length - n + i]);
+  const last = series[n - 1], delta = last - series[n - 2];
+  if (!Number.isFinite(last) || !Number.isFinite(delta)) return null; // stale/malformed cache
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '12px 14px', background: '#F8F7F3', borderLeft: '2px solid #C49A3E', marginBottom: 16 }}>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#132531', fontWeight: 600 }}>Brent–WTI arb</span>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#2E6B3E', display: 'inline-block' }} title="Computed from live prices" />
+        </div>
+        <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>Front spread · last {n} sessions · $/bbl</div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontSize: 17, fontFamily: 'ui-monospace, Menlo, monospace', color: '#132531', fontWeight: 500 }}>{last.toFixed(2)}</span>
+          <span style={{ fontSize: 12, fontFamily: 'ui-monospace, Menlo, monospace', color: delta >= 0 ? '#2E6B3E' : '#C8321E', marginLeft: 8 }}>{delta >= 0 ? '+' : '−'}{Math.abs(delta).toFixed(2)}</span>
+        </div>
+        <Sparkline data={series} width={90} height={26} />
+      </div>
+    </div>
   );
 }
 
@@ -1706,6 +1770,7 @@ function CommoditiesPage({ onNav }) {
               {cat.spreads &&
               <div style={{ marginTop: 28 }}>
                 <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 12 }}>Key spreads &amp; benchmarks</div>
+                {cat.cat === 'CRUDE & REFINED' && <LiveSpreadStrip prices={prices} />}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {cat.spreads.map((sp) =>
                   <div key={sp.name} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
