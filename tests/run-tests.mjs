@@ -126,8 +126,9 @@ async function renderPage(name, props, expects) {
 }
 
 const noop = () => {};
-const monthName = new Date().toLocaleString('en-US', { month: 'long' });
-await renderPage('AboutPage', { onNav: noop }, ['Houston', 'Events', monthName]);
+// Events calendar is temporarily hidden on the About page (SHOW_EVENTS_CALENDAR) — "Events" still
+// appears via the footer nav link, but the month-grid label is gone until it's switched back on.
+await renderPage('AboutPage', { onNav: noop }, ['Houston', 'Events']);
 await renderPage('CommoditiesPage', { onNav: noop }, ['Product Groups', 'Brent Crude', 'FREIGHT', 'POWER', 'Cushing']);
 await renderPage('MembershipPage', { onNav: noop }, []);
 // Newsletter content is temporarily behind a "coming soon" cover (NEWSLETTER_COMING_SOON) — verify the cover, not the hidden edition.

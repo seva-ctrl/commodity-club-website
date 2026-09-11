@@ -738,6 +738,9 @@ const { useState: useAboutState } = React;
 // Shape: { date: 'YYYY-MM-DD', title: 'Guest speaker — Vitol', type: 'MEETING' | 'SPEAKER' | 'TRIP' | 'SOCIAL', where: 'Hodge Hall' }
 const EVENTS = [];
 
+// Temporary — flip to true to bring the Events calendar back on the About page.
+const SHOW_EVENTS_CALENDAR = false;
+
 const CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const CAL_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -963,7 +966,8 @@ function AboutPage({ onNav }) {
         </div>
       </section>
 
-      {/* EVENTS CALENDAR — month grid driven by the EVENTS array above */}
+      {/* EVENTS CALENDAR — month grid driven by the EVENTS array above; temporarily hidden via SHOW_EVENTS_CALENDAR */}
+      {SHOW_EVENTS_CALENDAR &&
       <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <Reveal>
@@ -976,7 +980,7 @@ function AboutPage({ onNav }) {
             <EventsCalendar />
           </Reveal>
         </div>
-      </section>
+      </section>}
 
       {/* STATS BAND — editorial metrics like Novarc */}
       <section style={{ background: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
@@ -2281,11 +2285,11 @@ function MembershipPage({ onNav }) {
         <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '110px 20px 40px' : '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: isMobile ? 280 : 400, justifyContent: 'space-between' }}>
           <h1 style={{ fontSize: isMobile ? 36 : 64, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 820, color: 'rgba(248,247,243,0.72)' }}>
             <HeroLines lines={[
-            <>Membership is by</>,
-            <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>admission</span> only.</>]} />
+            <>Membership is</>,
+            <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>interest-based</span>.</>]} />
           </h1>
           <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340, marginTop: isMobile ? 20 : 0 }}>
-            Your application will be reviewed by the leadership team. Join the mailing list below to stay up to date with news, events, and announcements.
+            No application, no admissions process. Just fill out the form below to join the mailing list and get involved.
           </p>
         </div>
       </section>
@@ -2381,11 +2385,11 @@ function MembershipPage({ onNav }) {
 
           <div style={{ marginTop: 40, borderTop: '1px solid #132531' }}>
             {[
-            ['Who can join?', 'The club is open to all Indiana University students at the Kelley School of Business. No prior experience in energy or commodities is required — just a genuine interest in learning about markets and trading.'],
-            ['What does a typical meeting look like?', 'Members meet weekly for discussions on current events in energy and commodity markets, guest speaker sessions from industry professionals, and trading simulations and games.'],
-            ['Do I need to be a finance major?', 'No. While many members study finance, the club welcomes students from any major who have an interest in energy markets and trading.'],
-            ['How do I join?', 'Submit the interest form on this page to be added to our mailing list. For any questions or to connect directly with the leadership team, please reach out to us at commoditytradingshippingclub@gmail.com. We look forward to hearing from you.'],
-            ['What career paths do members typically pursue?', 'Members have gone on to roles at oil majors, trading houses, and midstream energy companies — particularly in Houston. The club provides direct exposure to these industries through speaker events, simulations, and our alumni network.']].
+            ['Who can join?', 'Anyone at Kelley with an interest in commodities, energy, or trading. You don\'t need prior experience, just curiosity about how these markets work.'],
+            ['What does a typical meeting look like?', 'We meet weekly to talk through what\'s happening in energy and commodity markets, hear from industry guest speakers, and run trading simulations and games.'],
+            ['Do I need to be a finance major?', 'Not at all. Plenty of our members study finance, but we welcome students from any major who are interested in energy markets and trading.'],
+            ['How do I join?', 'Fill out the interest form on this page and we\'ll add you to our mailing list. Questions? Email us at commoditytradingshippingclub@gmail.com, we\'d love to hear from you.'],
+            ['What career paths do members typically pursue?', 'Our members have gone on to oil majors, trading houses, and midstream energy companies, especially in Houston. Being part of the club gives you direct exposure through speaker events, simulations, and our alumni network.']].
             map(([q, a], i) =>
             <details key={i} style={{ borderBottom: '1px solid #ECE8DF' }}>
                 <summary style={{
