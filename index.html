@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Commodity Trading &amp; Shipping Club · Indiana University</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The Commodity Trading &amp; Shipping Club at Indiana University's Kelley School of Business — developing the next generation of energy trading professionals.">
+<meta name="description" content="The Commodity Trading &amp; Shipping Club at Indiana University's Kelley School of Business, developing the next generation of energy trading professionals.">
 <link rel="icon" type="image/png" href="club_logo_clear.png">
 <meta property="og:title" content="Commodity Trading &amp; Shipping Club · Indiana University">
 <meta property="og:description" content="Student association at the Kelley School of Business covering crude, refined products, natural gas, and freight. Weekly Energy Insights newsletter, trading simulations, and the Houston trek.">
@@ -695,7 +695,7 @@ function Footer({ onNav }) {
             </div>
           </div>
           {[
-          { h: 'THE CLUB', l: [['About', 'about'], ['Leadership', 'about'], ['Events', 'about']] },
+          { h: 'THE CLUB', l: [['About', 'about'], ['Events', 'about']] },
           { h: 'MARKETS', l: [['Crude', 'commodities'], ['Refined Products', 'commodities'], ['Power / Nat Gas', 'commodities'], ['Metals', 'commodities'], ['Agriculture', 'commodities']] },
           { h: 'MEMBERS', l: [['Newsletter', 'newsletter'], ['Membership', 'membership'], ['Contact', 'membership']] }].
           map((col) =>
@@ -737,6 +737,9 @@ const { useState: useAboutState } = React;
 // Club calendar — add events here and they appear on the About page calendar.
 // Shape: { date: 'YYYY-MM-DD', title: 'Guest speaker — Vitol', type: 'MEETING' | 'SPEAKER' | 'TRIP' | 'SOCIAL', where: 'Hodge Hall' }
 const EVENTS = [];
+
+// Temporary — flip to true to bring the Events calendar back on the About page.
+const SHOW_EVENTS_CALENDAR = false;
 
 const CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const CAL_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -826,7 +829,7 @@ function EventsCalendar() {
 
       {monthEvents.length === 0 &&
       <p style={{ fontSize: 13, color: '#8F8F8F', marginTop: 20, lineHeight: 1.65 }}>
-          No events scheduled for {CAL_MONTHS[view.m]} yet — dates are announced on{' '}
+          No events scheduled for {CAL_MONTHS[view.m]} yet. Dates are announced on{' '}
           <a href="https://beinvolved.indiana.edu/organization/ctsc" target="_blank" rel="noopener noreferrer" style={{ color: '#132531', textDecoration: 'none', borderBottom: '1px solid #D8D4CC' }}>BeInvolved</a>
           {' '}and in the newsletter.
         </p>}
@@ -859,9 +862,7 @@ function AboutPage({ onNav }) {
             <>in commodity trading</>,
             <>&amp; shipping.</>]} />
           </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University offering students insight into the physical commodity market from crude oil and refined products to natural gas, and freight.
-
-          </p>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: 'rgba(255,255,255,0.78)', marginTop: 28, maxWidth: 480, fontFamily: "Inter" }}>The Commodity Trading & Shipping Club is a new organization at Indiana University giving students a real look at physical commodity markets, from crude oil and refined products to natural gas and freight.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 36 }}>
             <Button variant="signal" as="a" href="https://docs.google.com/forms/d/e/1FAIpQLSfLCVKcVkxxzwD05zNeoQwZsbGJsxG8fX9RllwWSTEE8eGeQg/viewform" target="_blank" rel="noopener noreferrer">Application <ArrowIcon /></Button>
             <Button variant="ghost" onClick={() => onNav?.('commodities')}>Product Groups</Button>
@@ -963,7 +964,8 @@ function AboutPage({ onNav }) {
         </div>
       </section>
 
-      {/* EVENTS CALENDAR — month grid driven by the EVENTS array above */}
+      {/* EVENTS CALENDAR — month grid driven by the EVENTS array above; temporarily hidden via SHOW_EVENTS_CALENDAR */}
+      {SHOW_EVENTS_CALENDAR &&
       <section style={{ background: '#F8F7F3', padding: isMobile ? '48px 20px' : '80px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <Reveal>
@@ -976,28 +978,26 @@ function AboutPage({ onNav }) {
             <EventsCalendar />
           </Reveal>
         </div>
-      </section>
+      </section>}
 
       {/* STATS BAND — editorial metrics like Novarc */}
       <section style={{ background: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <Reveal>
             <div style={{ textAlign: 'center', marginBottom: isMobile ? 40 : 64 }}>
-              <Label>/ The club in numbers</Label>
+              <Label>/ Resources</Label>
               <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance', marginTop: 12 }}>
-                Fastest growing career path at Kelley<br />Backed by a strong alumni network
+                Real market data, not textbook cases
               </h2>
             </div>
           </Reveal>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 0, border: '1px solid #D8D4CC' }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             {[
-            { n: '50+', l: 'Active members', d: 'Across all undergraduate grade levels.' },
-            { n: 'Kpler', l: 'Platform Access', d: 'Members gain access to the Kpler platform — the industry standard for commodity tracking, vessel intelligence, and market analytics.' },
-            { n: '10+', l: 'Firms with IU alumni', d: 'Kelley has many alumni in the Houston area and the network is constantly growing.' }].
+            { n: 'Kpler', l: 'Platform Access', d: 'Members gain access to the Kpler platform, the industry standard for commodity tracking, vessel intelligence, and market analytics.' }].
             map((s, i) =>
             <Reveal key={s.l} delay={i * 90}>
-                <div style={{ padding: '36px 28px', height: '100%', borderRight: !isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', borderBottom: isMobile && i < 2 ? '1px solid #D8D4CC' : 'none', transition: 'background 280ms' }}
+                <div style={{ padding: '36px 28px', maxWidth: 420, textAlign: 'center', border: '1px solid #D8D4CC', transition: 'background 280ms' }}
               onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
               onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}><CountUp value={s.n} /></div>
@@ -1007,60 +1007,6 @@ function AboutPage({ onNav }) {
               </Reveal>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* LEADERSHIP TABLE */}
-      <section style={{ background: '#F8F7F3', padding: isMobile ? '56px 20px' : '96px 40px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <Reveal>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
-              <div>
-                <Label>/ People</Label>
-                <h2 style={{ fontSize: isMobile ? 28 : 34, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', marginTop: 12 }}>
-                  Leadership Team
-                </h2>
-              </div>
-              {!isMobile && <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#6B6B6B' }}>Founded · 2025</div>}
-            </div>
-          </Reveal>
-          <div style={{ borderTop: '1px solid #132531' }}>
-            {[
-            ['Co-Founder', 'Evan Reitz', 'Finance · Class of 2027'],
-            ['Co-Founder', 'Kamber Michael', 'Finance · Class of 2027'],
-            ['Co-Founder', 'Nick Scerbo', 'Finance · Class of 2028'],
-            ['Internal Social', 'Landon Johnson', 'Finance · Class of 2028'],
-            ['External Social', 'Seva Ulyanov', 'Finance · Class of 2029']].
-            map(([role, name, detail], i) =>
-            isMobile ? (
-              <div key={role + name} style={{ padding: '18px 0', borderBottom: '1px solid #ECE8DF' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
-                  <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 11, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
-                </div>
-                <div style={{ fontSize: 17, fontWeight: 500, color: '#132531', marginTop: 4 }}>{name}</div>
-                <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>{detail}</div>
-              </div>
-            ) : (
-            <div key={role + name} style={{
-              display: 'grid', gridTemplateColumns: '80px 1fr 1.2fr 1.2fr',
-              padding: '22px 0', borderBottom: '1px solid #ECE8DF', alignItems: 'center', transition: 'background 220ms'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#F1EEE6'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#6B6B6B' }}>{String(i + 1).padStart(2, '0')}</div>
-                <div style={{ fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: '#C49A3E' }}>{role}</div>
-                <div style={{ fontSize: 18, fontWeight: 500, color: '#132531' }}>{name}</div>
-                <div style={{ fontSize: 13, color: '#6B6B6B' }}>{detail}</div>
-              </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 13, color: '#6B6B6B', marginTop: 28, lineHeight: 1.65 }}>
-            Have a question for the team? Reach out at{' '}
-            <a href="mailto:commoditytradingshippingclub@gmail.com" style={{ color: '#132531', textDecoration: 'none', borderBottom: '1px solid #132531' }}>
-              commoditytradingshippingclub@gmail.com
-            </a>
-          </p>
         </div>
       </section>
 
@@ -1105,96 +1051,96 @@ const COMMODITIES = [
 {
   cat: 'CRUDE & REFINED', sub: 'Crude oil &amp; refined products',
   items: [
-  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '84.20', chg: '+0.42%', featured: true },
-  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '80.65', chg: '−0.18%' },
-  { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '2.524', chg: '−0.21%' },
-  { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '2.781', chg: '+0.31%' },
-  { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '2.712', chg: '+0.18%' }],
+  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '109.51', chg: '+3.19%', featured: true },
+  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '97.26', chg: '+3.24%' },
+  { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '3.04', chg: '+1.15%' },
+  { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '3.35', chg: '+0.85%' },
+  { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '3.27', chg: '+0.62%' }],
   img: 'refinery.jpeg',
   imgLabel: 'REFINERY AT DUSK',
-  description: 'Crude and refined products are the foundation of global energy markets. Brent crude — the world\'s most actively traded commodity — sets the international pricing benchmark. Members study the spread between crude grades, refinery crack spreads, and the economics of moving barrels from wellhead to end consumer.',
+  description: 'Crude and refined products are the foundation of global energy markets. Brent crude, the world\'s most actively traded commodity, sets the international pricing benchmark. Members study the spread between crude grades, refinery crack spreads, and the economics of moving barrels from wellhead to end consumer.',
   spreads: [
-  { name: 'WTI–Brent', desc: 'US vs. Atlantic Basin benchmark — a read on regional supply and export economics.' },
+  { name: 'WTI–Brent', desc: 'US vs. Atlantic Basin benchmark, a read on regional supply and export economics.' },
   { name: '3-2-1 crack', desc: 'Refinery margin proxy: three barrels of crude against two of gasoline and one of diesel.' },
-  { name: 'Prompt timespreads', desc: 'M1–M2 backwardation or contango — the market\'s view on near-term tightness.' }]
+  { name: 'Prompt timespreads', desc: 'M1–M2 backwardation or contango, the market\'s view on near-term tightness.' }]
 },
 {
   cat: 'NAT GAS', sub: 'Natural gas &amp; LNG',
   items: [
-  { sym: 'HH', name: 'Henry Hub', unit: '$/MMBtu', price: '3.21', chg: '+1.64%', note: 'US Gulf Coast · prompt month', featured: true },
-  { sym: 'TTF', name: 'TTF', unit: '€/MWh', price: '39.10', chg: '−0.88%', note: 'Netherlands · European benchmark' },
-  { sym: 'JKM', name: 'JKM', unit: '$/MMBtu', price: '12.80', chg: '+0.52%', note: 'Platts · Asia LNG benchmark' },
-  { sym: 'WAHA', name: 'Waha', unit: '$/MMBtu', price: '1.15', chg: '−2.30%', note: 'Permian Basin · basis to HH' }],
+  { sym: 'HH', name: 'Henry Hub', unit: '$/MMBtu', price: '2.81', chg: '−3.10%', note: 'US Gulf Coast · prompt month', featured: true },
+  { sym: 'TTF', name: 'TTF', unit: '€/MWh', price: '73.55', chg: '+2.40%', note: 'Netherlands · European benchmark' },
+  { sym: 'JKM', name: 'JKM', unit: '$/MMBtu', price: '24.05', chg: '+1.80%', note: 'Platts · Asia LNG benchmark' },
+  { sym: 'WAHA', name: 'Waha', unit: '$/MMBtu', price: '1.01', chg: '−2.10%', note: 'Permian Basin · basis to HH' }],
   img: 'LNG_Tanker.jpeg',
   imgLabel: 'LNG CARRIER',
-  description: 'Natural gas markets are shaped by pipeline infrastructure, LNG trade flows, and weather-driven demand. Members study the spread between US Henry Hub and international benchmarks like TTF and JKM — the arbitrage that decides where LNG cargoes land.',
+  description: 'Natural gas markets are shaped by pipeline infrastructure, LNG trade flows, and weather-driven demand. Members study the spread between US Henry Hub and international benchmarks like TTF and JKM, the arbitrage that decides where LNG cargoes land.',
   spreads: [
-  { name: 'TTF–JKM', desc: 'Europe vs. Asia LNG competition — decides which basin pulls the marginal cargo.' },
-  { name: 'Basis swaps', desc: 'Regional hubs priced against Henry Hub — pipeline constraints made tradeable.' },
+  { name: 'TTF–JKM', desc: 'Europe vs. Asia LNG competition, decides which basin pulls the marginal cargo.' },
+  { name: 'Basis swaps', desc: 'Regional hubs priced against Henry Hub, pipeline constraints made tradeable.' },
   { name: 'Seasonal spreads', desc: 'Winter–summer storage economics: injection season vs. withdrawal season.' }]
 },
 {
   cat: 'POWER', sub: 'US &amp; European wholesale electricity',
   items: [
-  { sym: 'PJMW', name: 'PJM West Hub', unit: '$/MWh', price: '38.20', chg: '+1.85%', note: 'Day-ahead · mid-Atlantic US', featured: true },
-  { sym: 'CAIS', name: 'CAISO SP15', unit: '$/MWh', price: '34.65', chg: '−2.40%', note: 'Southern California hub' },
-  { sym: 'ERCN', name: 'ERCOT North', unit: '$/MWh', price: '42.50', chg: '−1.10%', note: 'Texas · day-ahead' },
-  { sym: 'EEXDE', name: 'EEX German Baseload', unit: '€/MWh', price: '82.30', chg: '+1.10%', note: 'Front-month' }],
+  { sym: 'PJMW', name: 'PJM West Hub', unit: '$/MWh', price: '33.40', chg: '+0.95%', note: 'Day-ahead · mid-Atlantic US', featured: true },
+  { sym: 'CAIS', name: 'CAISO SP15', unit: '$/MWh', price: '30.30', chg: '−1.20%', note: 'Southern California hub' },
+  { sym: 'ERCN', name: 'ERCOT North', unit: '$/MWh', price: '37.20', chg: '−0.80%', note: 'Texas · day-ahead' },
+  { sym: 'EEXDE', name: 'EEX German Baseload', unit: '€/MWh', price: '154.70', chg: '+3.50%', note: 'Front-month' }],
   img: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1400&q=80',
   imgLabel: 'POWER GRID',
   description: 'Power is the most localized commodity market: it cannot be stored economically, so prices are set hour-by-hour at regional hubs based on real-time supply and demand. Natural gas is usually the marginal fuel setting the price, linking power markets tightly to the gas curve.',
   spreads: [
-  { name: 'Spark spread', desc: 'Power price minus the gas cost to generate it (adjusted for plant efficiency) — the gas-fired generation margin.' },
+  { name: 'Spark spread', desc: 'Power price minus the gas cost to generate it (adjusted for plant efficiency), the gas-fired generation margin.' },
   { name: 'Dark spread', desc: 'The coal-plant equivalent: power price minus coal cost, adjusted for efficiency and carbon where priced.' },
   { name: 'DA vs. real-time', desc: 'Most power clears day-ahead; real-time prices spike when weather, demand, or outages diverge from forecast.' }]
 },
 {
   cat: 'METALS', sub: 'Base &amp; precious metals',
   items: [
-  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '5.12', chg: '+0.72%', note: 'LME 3M · Grade A cathode' },
-  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '2,690', chg: '−0.34%', note: 'LME · P1020A' },
-  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '4,080.00', chg: '+0.12%', note: 'COMEX · 100 oz' },
-  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '104.60', chg: '−1.82%', note: 'Platts · 62% Fe CFR China' },
-  { sym: 'NI', name: 'Nickel', unit: '$/mt', price: '16,450', chg: '+0.55%', note: 'LME · Class 1' },
-  { sym: 'LI', name: 'Lithium', unit: '$/mt', price: '11,800', chg: '−0.92%', note: 'Fastmarkets · battery grade' }],
+  { sym: 'CU', name: 'Copper', unit: '$/lb', price: '6.14', chg: '−0.07%', note: 'LME 3M · Grade A cathode' },
+  { sym: 'AL', name: 'Aluminium', unit: '$/mt', price: '3,158', chg: '−8.16%', note: 'LME · P1020A' },
+  { sym: 'AU', name: 'Gold', unit: '$/oz', price: '4,405.00', chg: '+0.18%', note: 'COMEX · 100 oz' },
+  { sym: 'FE', name: 'Iron Ore', unit: '$/mt', price: '100.05', chg: '+0.45%', note: 'Platts · 62% Fe CFR China' },
+  { sym: 'NI', name: 'Nickel', unit: '$/mt', price: '16,858', chg: '−1.05%', note: 'LME · Class 1' },
+  { sym: 'LI', name: 'Lithium', unit: '$/mt', price: '19,750', chg: '−0.80%', note: 'Fastmarkets · battery grade' }],
   img: 'dump truck.jpeg',
   imgLabel: 'MINING OPERATIONS',
   description: 'Copper is the most actively traded base metal and a key barometer of global industrial health. Members track LME warehouse stocks, the Shanghai premium, and supply dynamics from major producing regions in Chile and the DRC alongside precious metals as macro hedges.',
   spreads: [
-  { name: 'Cash vs. 3M', desc: 'LME nearby against three-month — backwardation signals physical tightness.' },
-  { name: 'Shanghai premium', desc: 'The premium Chinese buyers pay over LME — a live read on import demand.' },
-  { name: 'TCs/RCs', desc: 'Treatment and refining charges — smelter economics for turning concentrate into metal.' }]
+  { name: 'Cash vs. 3M', desc: 'LME nearby against three-month, backwardation signals physical tightness.' },
+  { name: 'Shanghai premium', desc: 'The premium Chinese buyers pay over LME, a live read on import demand.' },
+  { name: 'TCs/RCs', desc: 'Treatment and refining charges, smelter economics for turning concentrate into metal.' }]
 },
 {
   cat: 'AGRICULTURE', sub: 'Grains, softs &amp; oilseeds',
   items: [
-  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '446.25', chg: '−0.44%', note: 'CBOT · #2 Yellow', featured: true },
-  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,052.50', chg: '+0.32%', note: 'CBOT · #1 Yellow' },
-  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '548.00', chg: '+1.06%', note: 'CBOT · SRW' },
-  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '67.40', chg: '−0.08%', note: 'ICE · #2 grade' },
-  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '342.60', chg: '+2.14%', note: 'ICE · Arabica C' }],
+  { sym: 'ZC', name: 'Corn', unit: '¢/bu', price: '541.53', chg: '+8.89%', note: 'CBOT · #2 Yellow', featured: true },
+  { sym: 'ZS', name: 'Soybeans', unit: '¢/bu', price: '1,310.00', chg: '+1.90%', note: 'CBOT · #1 Yellow' },
+  { sym: 'ZW', name: 'Wheat', unit: '¢/bu', price: '622.52', chg: '+14.57%', note: 'CBOT · SRW' },
+  { sym: 'CT', name: 'Cotton', unit: '¢/lb', price: '88.78', chg: '+2.88%', note: 'ICE · #2 grade' },
+  { sym: 'KC', name: 'Coffee', unit: '¢/lb', price: '359.16', chg: '+16.68%', note: 'ICE · Arabica C' }],
   img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80',
   imgLabel: 'GRAIN TERMINAL',
   description: 'Corn is the most heavily traded agricultural commodity globally, driving livestock feed, ethanol production, and export markets. Members study USDA crop reports, the basis between futures and physical grain, and the seasonal patterns that move prices from planting to harvest.',
   spreads: [
-  { name: 'Basis', desc: 'Local cash price vs. futures — logistics, storage, and local supply in one number.' },
-  { name: 'Soybean crush', desc: 'Beans against meal and oil — the processor\'s margin.' },
-  { name: 'Old crop / new crop', desc: 'Spread across harvests — this year\'s scarcity vs. next year\'s acres.' }]
+  { name: 'Basis', desc: 'Local cash price vs. futures, logistics, storage, and local supply in one number.' },
+  { name: 'Soybean crush', desc: 'Beans against meal and oil, the processor\'s margin.' },
+  { name: 'Old crop / new crop', desc: 'Spread across harvests, this year\'s scarcity vs. next year\'s acres.' }]
 },
 {
   cat: 'FREIGHT', sub: 'Dry bulk, tankers &amp; containers',
   items: [
-  { sym: 'BDI', name: 'Baltic Dry Index', unit: 'index', price: '1,820', chg: '+1.24%', note: 'Baltic Exchange · composite', featured: true },
-  { sym: 'TD3C', name: 'AG → China VLCC', unit: '$/mt', price: '18.45', chg: '−0.62%', note: 'Middle East Gulf → China crude' },
-  { sym: 'C5', name: 'W. Australia → Qingdao', unit: '$/mt', price: '9.80', chg: '+2.10%', note: 'Capesize iron ore benchmark' },
-  { sym: 'BDTI', name: 'Baltic Dirty Tanker', unit: 'index', price: '975', chg: '−0.85%', note: 'Crude tanker composite' },
-  { sym: 'SCFI', name: 'Shanghai Container Index', unit: 'index', price: '2,140', chg: '+3.45%', note: 'SCFI · composite, all routes' }],
+  { sym: 'BDI', name: 'Baltic Dry Index', unit: 'index', price: '3,584', chg: '+0.25%', note: 'Baltic Exchange · composite', featured: true },
+  { sym: 'TD3C', name: 'AG → China VLCC', unit: '$/mt', price: '36.33', chg: '+2.50%', note: 'Middle East Gulf → China crude' },
+  { sym: 'C5', name: 'W. Australia → Qingdao', unit: '$/mt', price: '19.30', chg: '+1.10%', note: 'Capesize iron ore benchmark' },
+  { sym: 'BDTI', name: 'Baltic Dirty Tanker', unit: 'index', price: '2,777', chg: '+1.85%', note: 'Crude tanker composite' },
+  { sym: 'SCFI', name: 'Shanghai Container Index', unit: 'index', price: '2,461', chg: '+2.10%', note: 'SCFI · composite, all routes' }],
   img: 'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=1400&q=80',
   imgLabel: 'VLCC AT SEA',
   description: 'Freight is the cost of moving everything else, and it trades like a commodity in its own right. Rates are set route-by-route in the physical spot and time-charter market, then hedged with Freight Forward Agreements (FFAs) settled against Baltic Exchange indices.',
   spreads: [
-  { name: 'FFA curve', desc: 'Forward freight agreements across quarterly contracts — a futures curve for shipping rates.' },
-  { name: 'TCE vs. spot', desc: 'Time-charter equivalent strips voyage costs (fuel, port fees, canal tolls) from the headline rate — the owner\'s actual daily earnings.' },
+  { name: 'FFA curve', desc: 'Forward freight agreements across quarterly contracts, a futures curve for shipping rates.' },
+  { name: 'TCE vs. spot', desc: 'Time-charter equivalent strips voyage costs (fuel, port fees, canal tolls) from the headline rate, the owner\'s actual daily earnings.' },
   { name: 'Fronthaul / backhaul', desc: 'The loaded leg earns far more than the often-empty return leg; the gap reflects trade imbalances.' }]
 }];
 
@@ -1295,13 +1241,13 @@ function routePath(waypoints) {
 const DESK_MAPS = {
 'CRUDE & REFINED': {
   points: [
-  { id: 'CUS', name: 'Cushing', sub: 'Oklahoma, US', lon: -96.77, lat: 35.99, kind: 'hub', primary: true, stat: '$80.65 / bbl WTI', detail: 'The pricing point for WTI futures and the official delivery location for the NYMEX contract. Pipeline and storage hub at the crossroads of multiple US crude arteries — when traders say "WTI Cushing," this tank farm is the physical reference.' },
+  { id: 'CUS', name: 'Cushing', sub: 'Oklahoma, US', lon: -96.77, lat: 35.99, kind: 'hub', primary: true, stat: '$80.65 / bbl WTI', detail: 'The pricing point for WTI futures and the official delivery location for the NYMEX contract. Pipeline and storage hub at the crossroads of multiple US crude arteries, when traders say "WTI Cushing," this tank farm is the physical reference.' },
   { id: 'HOU', name: 'Houston Ship Channel', sub: 'Texas, US', lon: -95.08, lat: 29.73, kind: 'port', stat: '~2.5 mb/d refining throughput', detail: 'Dense corridor of refineries, petrochemical plants, and export docks linking Gulf Coast crude and products to the world. Increasingly the delivery point referenced by WTI Houston (MEH) contracts.', anchor: 'end' },
   { id: 'CCH', name: 'Corpus Christi', sub: 'Texas, US', lon: -97.40, lat: 27.80, kind: 'port', stat: '#1 US crude export port', detail: 'The largest US crude oil export terminal by volume, loading Permian-sourced barrels onto VLCCs bound mainly for Asia and Europe. Expansion of dock capacity here has been a key driver of the US becoming a swing exporter.', anchor: 'end', dy: 12 },
   { id: 'ROT', name: 'Rotterdam ARA', sub: 'Netherlands', lon: 4.48, lat: 51.92, kind: 'hub', primary: true, stat: 'NW Europe products benchmark', detail: 'Europe\'s largest port and refined-products trading and storage hub, anchoring the Amsterdam-Rotterdam-Antwerp (ARA) barge market. Gasoil and fuel oil traded "FOB ARA" set the regional benchmark for Northwest Europe.', dy: 10 },
   { id: 'SUL', name: 'Sullom Voe', sub: 'Shetland Islands, UK', lon: -1.28, lat: 60.48, kind: 'port', stat: 'Brent complex loading terminal', detail: 'Terminal handling Brent and Ninian crude streams from North Sea fields, one of the components underpinning the dated Brent benchmark (BFOET basket). North Sea output has declined but Brent remains the global seaborne reference price.', anchor: 'end', dy: -6 },
   { id: 'RAS', name: 'Ras Tanura', sub: 'Saudi Arabia', lon: 50.16, lat: 26.64, kind: 'port', stat: '~6.5 mb/d export capacity', detail: 'Saudi Aramco\'s largest crude oil export terminal and one of the world\'s biggest oil ports, loading Arab Light and other grades for Asian and Western buyers. Sits at the head of the Gulf, just inside the Strait of Hormuz chokepoint.', anchor: 'end', dy: 16 },
-  { id: 'FUJ', name: 'Fujairah', sub: 'UAE', lon: 56.34, lat: 25.12, kind: 'port', stat: 'Mid-East bunkering & storage hub', detail: 'Major bunkering and storage hub on the Gulf of Oman, outside the Strait of Hormuz — a strategic staging point for crude and product cargoes that avoids transiting the strait twice. Closely watched for inventory data as a proxy for regional flows.', anchor: 'end', dy: 38 },
+  { id: 'FUJ', name: 'Fujairah', sub: 'UAE', lon: 56.34, lat: 25.12, kind: 'port', stat: 'Mid-East bunkering & storage hub', detail: 'Major bunkering and storage hub on the Gulf of Oman, outside the Strait of Hormuz, a strategic staging point for crude and product cargoes that avoids transiting the strait twice. Closely watched for inventory data as a proxy for regional flows.', anchor: 'end', dy: 38 },
   { id: 'SIN', name: 'Singapore', sub: 'Singapore', lon: 103.82, lat: 1.29, kind: 'hub', primary: true, stat: 'Asia products benchmark (MOPS)', detail: 'The pricing center for Asian refined products via Mean of Platts Singapore (MOPS) assessments, and one of the world\'s largest bunkering ports. Sits directly on the Strait of Malacca, the main artery for Middle East crude heading to East Asia.', dy: 12 },
   { id: 'JAM', name: 'Jamnagar', sub: 'Gujarat, India', lon: 70.05, lat: 22.34, kind: 'port', stat: '1.24 mb/d, world\'s largest refinery', detail: 'Reliance Industries\' refining complex, the single largest refinery in the world by capacity, processing a wide range of crude grades into products exported across Asia, Europe, and the US.', dy: 12 },
   { id: 'NIN', name: 'Ningbo-Zhoushan', sub: 'Zhejiang, China', lon: 121.85, lat: 29.95, kind: 'port', stat: 'Top China crude import hub', detail: 'One of China\'s busiest ports by cargo throughput and a major crude import and storage hub feeding refineries across the Yangtze River Delta. China\'s import volumes here are a closely watched signal of Asian demand.' },
@@ -1323,7 +1269,7 @@ const DESK_MAPS = {
   { id: 'WAH', name: 'Waha', sub: 'Permian Basin, US', lon: -103.0, lat: 31.0, kind: 'hub', stat: 'often negative basis vs HH', detail: 'Permian Basin gas pricing hub, where associated gas from oil drilling can outstrip pipeline takeaway capacity. Waha prices have repeatedly traded negative, reflecting local oversupply relative to Henry Hub.', anchor: 'end' },
   { id: 'AEC', name: 'AECO', sub: 'Alberta, Canada', lon: -113.5, lat: 51.0, kind: 'hub', stat: 'C$2.05 / GJ', detail: 'Western Canada\'s benchmark gas price hub, reflecting a large supply basin (Montney, Deep Basin) with limited export pipeline access. AECO typically trades at a discount to Henry Hub due to this takeaway constraint.' },
   { id: 'CHI', name: 'Chicago Citygate', sub: 'Illinois, US', lon: -87.65, lat: 41.85, kind: 'hub', stat: '$3.05 / MMBtu', detail: 'A major demarcation point where multiple interstate pipelines deliver gas into the Midwest distribution grid, serving as a regional price reference for utilities and industrial buyers across the Great Lakes region.', anchor: 'end', dy: -6 },
-  { id: 'ALG', name: 'Algonquin Citygate', sub: 'Boston, US', lon: -71.06, lat: 42.36, kind: 'hub', stat: 'winter spikes >$20 / MMBtu', detail: 'New England\'s gas delivery point, notorious for extreme winter price spikes due to constrained pipeline capacity into the region — the area increasingly relies on LNG imports during cold snaps.' },
+  { id: 'ALG', name: 'Algonquin Citygate', sub: 'Boston, US', lon: -71.06, lat: 42.36, kind: 'hub', stat: 'winter spikes >$20 / MMBtu', detail: 'New England\'s gas delivery point, notorious for extreme winter price spikes due to constrained pipeline capacity into the region. The area increasingly relies on LNG imports during cold snaps.' },
   { id: 'NBP', name: 'NBP', sub: 'United Kingdom', lon: -0.5, lat: 52.0, kind: 'hub', stat: '95p / therm', detail: 'The National Balancing Point is a notional hub representing the UK\'s entire gas transmission system, used as the pricing reference for UK gas trading and closely linked to TTF via interconnector flows.', anchor: 'end', dy: -8 },
   { id: 'TTF', name: 'TTF', sub: 'Netherlands', lon: 5.5, lat: 52.1, kind: 'hub', primary: true, stat: '€39.10 / MWh', detail: 'The Title Transfer Facility is continental Europe\'s benchmark gas price, a virtual trading point on the Dutch grid. Since 2022 it has become the global reference for spot LNG cargoes heading to Europe.', dy: 12 },
   { id: 'JKM', name: 'JKM', sub: 'Japan–Korea Marker', lon: 129.0, lat: 35.0, kind: 'hub', primary: true, stat: '$12.80 / MMBtu', detail: 'The Japan-Korea Marker is the benchmark price for spot LNG cargoes delivered to Northeast Asia, the world\'s largest LNG-importing region. JKM vs TTF spreads drive global cargo routing decisions.' },
@@ -1346,7 +1292,7 @@ const DESK_MAPS = {
   { id: 'ERC', name: 'ERCOT', sub: 'Texas, US', lon: -97.74, lat: 30.27, kind: 'hub', primary: true, stat: '$42.50 / MWh', detail: 'The Electric Reliability Council of Texas operates a grid largely isolated from the rest of the US, leaving it exposed to extreme price volatility during heat waves and winter freezes when reserve margins tighten.', anchor: 'end', dy: 10 },
   { id: 'PJM', name: 'PJM Western Hub', sub: 'Pennsylvania, US', lon: -76.5, lat: 40.5, kind: 'hub', stat: '$34 / MWh avg', detail: 'PJM Interconnection is the largest US grid operator by population served, spanning the Mid-Atlantic and parts of the Midwest. The Western Hub price is a widely traded benchmark for capacity and energy products in the region.', dy: 8 },
   { id: 'CAI', name: 'CAISO SP15', sub: 'Southern California, US', lon: -118.24, lat: 34.05, kind: 'hub', stat: 'negative midday, evening ramps', detail: 'SP15 is the Southern California pricing zone of the California ISO, where heavy solar penetration drives prices to zero or negative during midday hours and sharply higher during the evening "net load" ramp.', anchor: 'end' },
-  { id: 'MIS', name: 'MISO', sub: 'Indiana, US', lon: -86.16, lat: 39.77, kind: 'hub', primary: true, stat: '$29 / MWh avg', detail: 'The Midcontinent Independent System Operator runs the wholesale market covering Indiana and much of the Midwest — this is the club\'s home grid: Bloomington sits inside its footprint, making MISO data a natural starting point for local market analysis.', anchor: 'end', dy: -10 },
+  { id: 'MIS', name: 'MISO', sub: 'Indiana, US', lon: -86.16, lat: 39.77, kind: 'hub', primary: true, stat: '$29 / MWh avg', detail: 'The Midcontinent Independent System Operator runs the wholesale market covering Indiana and much of the Midwest. This is the club\'s home grid: Bloomington sits inside its footprint, making MISO data a natural starting point for local market analysis.', anchor: 'end', dy: -10 },
   { id: 'NPL', name: 'Nord Pool', sub: 'Oslo, Norway', lon: 10.75, lat: 59.91, kind: 'hub', stat: '€45 / MWh, hydro-driven', detail: 'Nord Pool is the day-ahead power exchange for the Nordic and Baltic countries, where abundant hydro reservoir storage means prices are heavily influenced by snowpack and rainfall rather than fuel costs.' },
   { id: 'EPX', name: 'EPEX Core', sub: 'Frankfurt, Germany', lon: 8.68, lat: 50.11, kind: 'hub', stat: '€68 / MWh avg', detail: 'EPEX Spot operates the central European power exchanges spanning Germany, France, and neighboring markets, where prices are set on the margin by gas plants and increasingly shaped by wind and solar output swings.', dy: 12 },
   { id: 'JPX', name: 'JEPX', sub: 'Tokyo, Japan', lon: 139.69, lat: 35.69, kind: 'hub', stat: '¥18 / kWh avg', detail: 'The Japan Electric Power Exchange is the main spot market for Japan\'s regionally fragmented grid, where prices remain sensitive to LNG import costs given Japan\'s heavy reliance on imported gas for generation.' },
@@ -1492,11 +1438,11 @@ const WORLD_PATHS = [
 ];
 
 const DESK_MAP_TITLES = {
-  'CRUDE & REFINED': 'Global crude & refined products — hubs, refineries & flows',
+  'CRUDE & REFINED': 'Global crude & refined products: hubs, refineries & flows',
   'NAT GAS': 'Global natural gas pricing hubs & LNG flows',
-  'POWER': 'Wholesale power markets — grid footprints & trading hubs',
-  'METALS': 'Global metals — mines, warehouses & trade lanes',
-  'AGRICULTURE': 'Global grains & softs — export terminals & flows',
+  'POWER': 'Wholesale power markets: grid footprints & trading hubs',
+  'METALS': 'Global metals: mines, warehouses & trade lanes',
+  'AGRICULTURE': 'Global grains & softs: export terminals & flows',
   'FREIGHT': 'Shipping lanes & maritime chokepoints'
 };
 
@@ -1812,7 +1758,7 @@ function CommoditiesPage({ onNav }) {
             {
               cat: 'Natural Gas',
               desc: 'Natural gas heats buildings, generates electricity, and feeds industrial and petrochemical processes. Unlike oil, it\'s expensive and difficult to transport: you either pipe it or liquefy it (LNG) and ship it. That constraint keeps gas markets regional in a way oil markets are not. U.S. prices can be completely disconnected from European or Asian prices depending on infrastructure and LNG flow. Seasonality drives everything. Cold winters and hot summers create demand spikes that can move prices dramatically in a short window. Storage levels are tracked obsessively, since a deficit heading into winter can push prices to multiples of where they started the year.',
-              firms: ['EQT','Chesapeake Energy','ConocoPhillips','Shell','QatarEnergy','Novatek','Cheniere Energy','Vitol','Trafigura','Goldman Sachs','Citigroup'],
+              firms: ['EQT','Expand Energy','ConocoPhillips','Shell','QatarEnergy','Novatek','Cheniere Energy','Vitol','Trafigura','Goldman Sachs','Citigroup'],
               instruments: ['Henry Hub (NYMEX: NG)','TTF (ICE)','JKM (Japan Korea Marker)','NBP (National Balancing Point)','Basis Swaps','Seasonal Spreads']
             },
             {
@@ -1830,12 +1776,12 @@ function CommoditiesPage({ onNav }) {
             {
               cat: 'Agriculture',
               desc: 'Ag commodities cover grains (corn, wheat, soybeans, rice), softs (sugar, coffee, cocoa, cotton), oilseeds, and livestock. These markets predate nearly everything else in commodity trading. Exchanges were originally built so farmers and processors could manage price risk before crops were even harvested. Weather is the main driver: a drought in Brazil, a flood in the Midwest, or a frost in Vietnam can move coffee or soy 20% in a week. What separates ag from other commodities is the crop cycle. Supply resets every harvest. A bad year sends prices to multi-year highs; one good growing season can knock them back down just as fast.',
-              firms: ['ADM','Bunge','Cargill','Louis Dreyfus','Viterra','COFCO'],
+              firms: ['ADM','Bunge','Cargill','Louis Dreyfus','Wilmar International','COFCO'],
               instruments: ['CBOT Corn (C)','CBOT Soybeans (S)','CBOT Wheat (W)','ICE Sugar No. 11 (SB)','ICE Cotton (CT)','ICE Cocoa (CC)','ICE Coffee (KC)','MATIF Milling Wheat','Basis','Soybean Crush Spread','Weather Derivatives']
             },
             {
               cat: 'Freight',
-              desc: 'Shipping is the plumbing of the commodity world: roughly 80% of traded goods by volume move by sea, and freight cost determines whether an arbitrage between two regions is actually profitable. Rates are driven by vessel supply (newbuild deliveries vs. scrapping), fuel costs, and chokepoint disruptions. Think of freight as a derivative on global trade volumes — when a chokepoint closes or a fleet gets congested, tonne-mile demand spikes even if nothing is produced or consumed differently, and rates can multiply in weeks.',
+              desc: 'Shipping is the plumbing of the commodity world: roughly 80% of traded goods by volume move by sea, and freight cost determines whether an arbitrage between two regions is actually profitable. Rates are driven by vessel supply (newbuild deliveries vs. scrapping), fuel costs, and chokepoint disruptions. Think of freight as a derivative on global trade volumes. When a chokepoint closes or a fleet gets congested, tonne-mile demand spikes even if nothing is produced or consumed differently, and rates can multiply in weeks.',
               firms: ['Clarksons','Maersk','MSC','CMA CGM','Frontline','Euronav','Star Bulk Carriers','Trafigura Maritime Logistics','Cargill Ocean Transportation','Hafnia'],
               instruments: ['FFAs (Freight Forward Agreements)','Baltic Dry Index (BDI)','TD3C (VLCC, AG–China)','C5 (Capesize, WA–Qingdao)','Time-Charter Equivalent (TCE)','Period charters','COAs (Contracts of Affreightment)','Bunker swaps (VLSFO)']
             }
@@ -1894,10 +1840,10 @@ function CommoditiesPage({ onNav }) {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {[
-                  { name: 'EIA', desc: 'U.S. Energy Information Administration — production, storage, and demand data', url: 'https://www.eia.gov' },
+                  { name: 'EIA', desc: 'U.S. Energy Information Administration: production, storage, and demand data', url: 'https://www.eia.gov' },
                   { name: 'CME Group', desc: 'Exchange data, contract specs, and settlement prices for futures', url: 'https://www.cmegroup.com' },
-                  { name: 'ICE', desc: 'Intercontinental Exchange — Brent, Gasoil, TTF, and more', url: 'https://www.theice.com' },
-                  { name: 'LME', desc: 'London Metal Exchange — official base metals pricing and warehouse data', url: 'https://www.lme.com' },
+                  { name: 'ICE', desc: 'Intercontinental Exchange: Brent, Gasoil, TTF, and more', url: 'https://www.theice.com' },
+                  { name: 'LME', desc: 'London Metal Exchange: official base metals pricing and warehouse data', url: 'https://www.lme.com' },
                   { name: 'Reuters Commodities', desc: 'Breaking news on energy, metals, and agricultural markets', url: 'https://www.reuters.com/business/energy' },
                   { name: 'CNBC Futures & Commodities', desc: 'Prices, news, and analysis for all major commodity classes', url: 'https://www.cnbc.com/futures-and-commodities' },
                   { name: 'OilPrice.com', desc: 'Oil and gas news, prices, and market commentary', url: 'https://oilprice.com' },
@@ -1927,7 +1873,7 @@ function CommoditiesPage({ onNav }) {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {[
-                  { name: 'Bloomberg Terminal', desc: 'Full terminal access via IU Libraries — real-time data, analytics, and news across every asset class', url: 'https://guides.libraries.indiana.edu/bloomberg' },
+                  { name: 'Bloomberg Terminal', desc: 'Full terminal access via IU Libraries: real-time data, analytics, and news across every asset class', url: 'https://guides.libraries.indiana.edu/bloomberg' },
                   { name: 'S&P Global Commodity Insights', desc: 'Platts price assessments, market reports, and commodity intelligence across energy, metals, and agriculture', url: 'https://www.spglobal.com/commodityinsights/en' },
                   { name: 'Financial Times', desc: 'In-depth commodity and energy market coverage, data, and analysis', url: 'https://www.ft.com' },
                   { name: 'Wall Street Journal', desc: 'Markets and commodities reporting, energy sector coverage, and commodity price tables', url: 'https://www.wsj.com' },
@@ -2065,6 +2011,38 @@ function ReadingProgress() {
   return <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, height: 3, width: `${p * 100}%`, background: '#C49A3E', zIndex: 60 }} />;
 }
 
+// Temporary cover — flip to false to bring the newsletter content back live.
+const NEWSLETTER_COMING_SOON = true;
+
+function NewsletterComingSoon({ onNav }) {
+  const isMobile = useIsMobile();
+  return (
+    <>
+      <section style={{ position: 'relative', minHeight: '100vh', background: '#060F16', color: '#fff', overflow: 'hidden' }}>
+        <Header current="newsletter" onNav={onNav} tone="dark" />
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <img src="LNG_Tanker.jpeg" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(60%) brightness(0.35)' }} alt="" />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(6,15,22,0.7) 0%, rgba(6,15,22,0.88) 100%)' }} />
+        </div>
+        <div style={{ position: 'relative', maxWidth: 780, margin: '0 auto', padding: isMobile ? '140px 20px 120px' : '220px 40px 160px', textAlign: 'center' }}>
+          <Label style={{ color: '#C49A3E', marginBottom: 22 }}>/ The CTSC markets newsletter</Label>
+          <h1 style={{
+            fontFamily: 'Fraunces, Times New Roman, serif',
+            fontSize: isMobile ? 40 : 72, fontWeight: 400, lineHeight: 1.06, letterSpacing: '-0.02em',
+            color: '#F8F7F3', margin: 0
+          }}>
+            <HeroLines lines={[<>Weekly Energy Insights</>, <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>is coming soon</span></>]} />
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.7, color: 'rgba(255,255,255,0.65)', marginTop: 28, maxWidth: 460, margin: '28px auto 0' }}>
+            The analyst desks are putting together the first edition. Check back soon.
+          </p>
+        </div>
+      </section>
+      <Footer onNav={onNav} />
+    </>);
+
+}
+
 function NewsletterPage({ onNav }) {
   const [email, setEmail] = useNewsState('');
   const [sent, setSent] = useNewsState(false);
@@ -2079,6 +2057,8 @@ function NewsletterPage({ onNav }) {
   }, [zoom]);
 
   const ed = EDITIONS[0];
+
+  if (NEWSLETTER_COMING_SOON) return <NewsletterComingSoon onNav={onNav} />;
 
   return (
     <>
@@ -2303,11 +2283,11 @@ function MembershipPage({ onNav }) {
         <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: isMobile ? '110px 20px 40px' : '170px 40px 60px', display: 'flex', flexDirection: 'column', minHeight: isMobile ? 280 : 400, justifyContent: 'space-between' }}>
           <h1 style={{ fontSize: isMobile ? 36 : 64, fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.02em', maxWidth: 820, color: 'rgba(248,247,243,0.72)' }}>
             <HeroLines lines={[
-            <>Membership is by</>,
-            <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>admission</span> only.</>]} />
+            <>Membership is</>,
+            <><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>interest-based</span>.</>]} />
           </h1>
           <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', maxWidth: 340, marginTop: isMobile ? 20 : 0 }}>
-            Your application will be reviewed by the leadership team. Join the mailing list below to stay up to date with news, events, and announcements.
+            No application, no admissions process. Just fill out the form below to join the mailing list and get involved.
           </p>
         </div>
       </section>
@@ -2403,11 +2383,11 @@ function MembershipPage({ onNav }) {
 
           <div style={{ marginTop: 40, borderTop: '1px solid #132531' }}>
             {[
-            ['Who can join?', 'The club is open to all Indiana University students at the Kelley School of Business. No prior experience in energy or commodities is required — just a genuine interest in learning about markets and trading.'],
-            ['What does a typical meeting look like?', 'Members meet weekly for discussions on current events in energy and commodity markets, guest speaker sessions from industry professionals, and trading simulations and games.'],
-            ['Do I need to be a finance major?', 'No. While many members study finance, the club welcomes students from any major who have an interest in energy markets and trading.'],
-            ['How do I join?', 'Submit the interest form on this page to be added to our mailing list. For any questions or to connect directly with the leadership team, please reach out to us at commoditytradingshippingclub@gmail.com. We look forward to hearing from you.'],
-            ['What career paths do members typically pursue?', 'Members have gone on to roles at oil majors, trading houses, and midstream energy companies — particularly in Houston. The club provides direct exposure to these industries through speaker events, simulations, and our alumni network.']].
+            ['Who can join?', 'Anyone at Kelley with an interest in commodities, energy, or trading. You don\'t need prior experience, just curiosity about how these markets work.'],
+            ['What does a typical meeting look like?', 'We meet weekly to talk through what\'s happening in energy and commodity markets, hear from industry guest speakers, and run trading simulations and games.'],
+            ['Do I need to be a finance major?', 'Not at all. Plenty of our members study finance, but we welcome students from any major who are interested in energy markets and trading.'],
+            ['How do I join?', 'Fill out the interest form on this page and we\'ll add you to our mailing list. Questions? Email us at commoditytradingshippingclub@gmail.com, we\'d love to hear from you.'],
+            ['What career paths do members typically pursue?', 'Our members have gone on to oil majors, trading houses, and midstream energy companies, especially in Houston. Being part of the club gives you direct exposure through speaker events, simulations, and our alumni network.']].
             map(([q, a], i) =>
             <details key={i} style={{ borderBottom: '1px solid #ECE8DF' }}>
                 <summary style={{
@@ -2439,33 +2419,36 @@ Object.assign(window, { MembershipPage });
 
 const AV_KEY = 'I8R6FD24WF3Y1JN3';
 const FH_KEY = 'd85t531r01qm56kslilgd85t531r01qm56kslim0';
-const PRICE_CACHE_KEY = 'ctsc-live-prices-v3'; // v3: adds trend series for sparklines
+const PRICE_CACHE_KEY = 'ctsc-live-prices-v4'; // v4: fixes CORN/WHEAT $/mt→¢/bu conversion and COFFEE unit, adds RB (gasoline)
 const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
 // Alpha Vantage commodity endpoints
 // multiplier: convert AV raw value → display unit shown on site
-// AV units: WTI/Brent $/bbl, NATURAL_GAS $/MMBtu, COPPER $/lb,
-//           ALUMINUM $/mt, CORN ¢/bu, WHEAT ¢/bu, COTTON ¢/lb
-//           COFFEE $/lb (site shows ¢/lb → multiply by 100)
+// AV units (verified against the API's own "unit" field): WTI/BRENT $/bbl,
+//           NATURAL_GAS $/MMBtu, COPPER $/mt, ALUMINUM $/mt, CORN $/mt,
+//           WHEAT $/mt, COTTON ¢/lb, COFFEE ¢/lb
+const BU_PER_MT_CORN = 1000 / 25.40117;  // corn bushel = 56 lb
+const BU_PER_MT_WHEAT = 1000 / 27.2155;  // wheat bushel = 60 lb
 const AV_MAP = {
   'BRN': { func: 'BRENT',        interval: 'daily',   multiplier: 1,   decimals: 2 },
   'WTI': { func: 'WTI',          interval: 'daily',   multiplier: 1,   decimals: 2 },
   'HH':  { func: 'NATURAL_GAS',  interval: 'daily',   multiplier: 1,   decimals: 2 },
-  'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1/2204.62, decimals: 3 }, // AV returns $/MT, site shows $/lb
+  'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1/2204.62, decimals: 3 }, // AV returns $/mt, site shows $/lb
   'AL':  { func: 'ALUMINUM',     interval: 'monthly', multiplier: 1,   decimals: 0 },
-  'ZC':  { func: 'CORN',         interval: 'monthly', multiplier: 1,   decimals: 2 },
-  'ZW':  { func: 'WHEAT',        interval: 'monthly', multiplier: 1,   decimals: 2 },
+  'ZC':  { func: 'CORN',         interval: 'monthly', multiplier: 100 / BU_PER_MT_CORN,  decimals: 2 }, // AV returns $/mt, site shows ¢/bu
+  'ZW':  { func: 'WHEAT',        interval: 'monthly', multiplier: 100 / BU_PER_MT_WHEAT, decimals: 2 }, // AV returns $/mt, site shows ¢/bu
   'CT':  { func: 'COTTON',       interval: 'monthly', multiplier: 1,   decimals: 2 },
-  'KC':  { func: 'COFFEE',       interval: 'monthly', multiplier: 100, decimals: 2 },
+  'KC':  { func: 'COFFEE',       interval: 'monthly', multiplier: 1,   decimals: 2 }, // AV already returns ¢/lb
 };
 
-// Finnhub ETF proxies for paywalled commodities
+// Finnhub ETF proxies for paywalled/unavailable commodities
 const FH_MAP = {
   'AU': { symbol: 'GLD',  label: 'SPDR Gold ETF' },
   'ZS': { symbol: 'SOYB', label: 'Teucrium Soybean ETF' },
   'LI': { symbol: 'LIT',  label: 'Global X Lithium ETF' },
   'FE': { symbol: 'PICK', label: 'VanEck Steel ETF' },
   'NI': { symbol: 'DBB',  label: 'Invesco Base Metals ETF' },
+  'RB': { symbol: 'UGA',  label: 'United States Gasoline Fund' },
 };
 
 function fmtChg(curr, prev) {

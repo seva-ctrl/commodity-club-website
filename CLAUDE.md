@@ -73,7 +73,9 @@ Known pending item: Edition 1's Natural Gas section contains a literal `$X` (unf
 **Do not create a `newsletter/` directory** — the untracked `Newsletter/` folder (source .docx) in the main checkout would collide on macOS's case-insensitive filesystem.
 
 ### Live prices & sparklines
-`useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v3`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
+`useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v4`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
+
+`AV_MAP`'s `multiplier` must convert Alpha Vantage's raw unit (check the API response's own `unit` field, not just the docs) to the unit `COMMODITIES` displays — CORN and WHEAT come back in $/metric ton and need the bushel conversion baked into the multiplier (`BU_PER_MT_CORN`/`BU_PER_MT_WHEAT`), COFFEE already comes back in ¢/lb. RB (RBOB Gasoline) has no Alpha Vantage commodity endpoint, so it's wired through `FH_MAP` as an ETF proxy (UGA) like AU/ZS/LI/FE/NI — the `ETF` badge in `PriceRow` disclaims it's a correlated fund price, not the literal spot commodity.
 
 `LiveSpreadStrip` (next to `Sparkline`) computes the Brent–WTI front spread from the BRN/WTI daily series (tail-aligned — both follow the EIA publication calendar) and renders a value + sparkline card above the descriptive "Key spreads & benchmarks" list on the Crude & Refined desk. It renders nothing until both series are live, so there is no fake fallback number.
 
