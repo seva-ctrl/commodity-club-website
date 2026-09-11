@@ -127,11 +127,12 @@ async function renderPage(name, props, expects) {
 
 const noop = () => {};
 const monthName = new Date().toLocaleString('en-US', { month: 'long' });
-await renderPage('AboutPage', { onNav: noop }, ['Houston', 'Leadership Team', 'Events', monthName]);
+await renderPage('AboutPage', { onNav: noop }, ['Houston', 'Events', monthName]);
 await renderPage('CommoditiesPage', { onNav: noop }, ['Product Groups', 'Brent Crude', 'FREIGHT', 'POWER', 'Cushing']);
 await renderPage('MembershipPage', { onNav: noop }, []);
+// Newsletter content is temporarily behind a "coming soon" cover (NEWSLETTER_COMING_SOON) — verify the cover, not the hidden edition.
 await renderPage('NewsletterPage', { onNav: noop }, [
-  'Weekly Energy Insights', 'Trade ideas', 'Our call', 'Parker Dettor', 'NATURAL GAS',
+  'Weekly Energy Insights', 'is coming soon',
 ]);
 
 // ---------------------------------------------------------------------------
