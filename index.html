@@ -980,33 +980,26 @@ function AboutPage({ onNav }) {
         </div>
       </section>}
 
-      {/* STATS BAND — editorial metrics like Novarc */}
+      {/* MEMBER PERK — editorial split, Kpler platform access */}
       <section style={{ background: '#fff', padding: isMobile ? '56px 20px' : '96px 40px', borderTop: '1px solid #ECE8DF' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: isMobile ? 40 : 64 }}>
-              <Label>/ Resources</Label>
-              <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 400, color: '#132531', lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'balance', marginTop: 12 }}>
-                Real market data, not textbook cases
-              </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.9fr 1.3fr', gap: isMobile ? 28 : 64, alignItems: 'center' }}>
+              <div>
+                <Label>/ Member perks</Label>
+                <div style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 400, fontSize: isMobile ? 40 : 60, color: '#132531', lineHeight: 1.05, letterSpacing: '-0.02em', marginTop: 14 }}>
+                  Exclusive access
+                </div>
+                <BrassRule style={{ marginTop: 22 }} />
+              </div>
+              <div style={{ borderLeft: isMobile ? 'none' : '1px solid #D8D4CC', borderTop: isMobile ? '1px solid #D8D4CC' : 'none', paddingLeft: isMobile ? 0 : 48, paddingTop: isMobile ? 28 : 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#C49A3E', textTransform: 'uppercase', letterSpacing: 1.5 }}>Kpler Platform</div>
+                <p style={{ fontSize: isMobile ? 16 : 19, color: '#132531', lineHeight: 1.6, marginTop: 14, maxWidth: 560, letterSpacing: '-0.005em' }}>
+                  Members get access to Kpler, the industry-standard platform for commodity tracking, vessel intelligence, and market analytics.
+                </p>
+              </div>
             </div>
           </Reveal>
-
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            {[
-            { n: 'Kpler', l: 'Platform Access', d: 'Members gain access to the Kpler platform, the industry standard for commodity tracking, vessel intelligence, and market analytics.' }].
-            map((s, i) =>
-            <Reveal key={s.l} delay={i * 90}>
-                <div style={{ padding: '36px 28px', maxWidth: 420, textAlign: 'center', border: '1px solid #D8D4CC', transition: 'background 280ms' }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#F8F7F3'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                  <div style={{ fontSize: 56, fontWeight: 400, color: '#132531', letterSpacing: '-0.03em', lineHeight: 1 }}><CountUp value={s.n} /></div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#132531', textTransform: 'uppercase', letterSpacing: 1, marginTop: 18 }}>{s.l}</div>
-                  <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.65, marginTop: 8 }}>{s.d}</div>
-                </div>
-              </Reveal>
-            )}
-          </div>
         </div>
       </section>
 
