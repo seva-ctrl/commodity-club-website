@@ -59,7 +59,7 @@ Seasonality drives everything. Cold winters and hot summers create demand spikes
 
 **Major Players**
 
-- *Producers:* EQT, Chesapeake Energy, ConocoPhillips, Shell, QatarEnergy, Novatek
+- *Producers:* EQT, Expand Energy (formerly Chesapeake Energy, renamed after its 2024 merger with Southwestern Energy), ConocoPhillips, Shell, QatarEnergy, Novatek
 - *Trading Houses:* Shell Trading, Vitol, Cheniere Energy, Trafigura
 - *Banks:* Goldman Sachs, Citigroup
 - *End-Users:* Utilities, Industrial Manufacturers, LNG Importers
@@ -133,8 +133,8 @@ What separates ag from other commodities is the crop cycle. Supply resets every 
 
 **Major Players**
 
-- *Merchants (the "ABCD" firms):* ADM, Bunge, Cargill, Louis Dreyfus
-- *Other Traders:* Viterra, COFCO
+- *Merchants (the "ABCD" firms):* ADM, Bunge (which absorbed fellow major grain trader Viterra in a 2025 merger), Cargill, Louis Dreyfus
+- *Other Traders:* Wilmar International, COFCO
 - *End-Users:* Flour Mills, Food Manufacturers, Animal Feed Producers, Ethanol Plants, Confectionery Companies
 - *Financial Players:* Commodity Trading Advisors (CTAs), Hedge Funds
 
