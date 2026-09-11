@@ -520,6 +520,21 @@ function ArrowIcon({ size = 12, style }) {
 
 }
 
+// Kpler's own wordmark, traced from their site nav (kpler.com). fill="currentColor" so it inherits text color.
+function KplerLogo({ height = 40, style }) {
+  return (
+    <svg height={height} viewBox="0 0 220 72.08" fill="currentColor" style={{ display: 'inline-block', ...style }} role="img" aria-label="Kpler">
+      <path d="m220,15.22c-3.53-2.04-7.63-3.22-12-3.22s-8.47,1.17-12,3.22v-3.22h-12v48.06h12v-24.03c0-1.45.25-2.83.72-4.12,1.68-4.61,6.09-7.9,11.28-7.9.99,0,1.95.12,2.87.35l9.14-9.15Z" fillRule="evenodd" />
+      <path d="m31.98,12.02l-16.29,15.54c-4.92,4.69-4.92,12.3,0,16.99l16.29,15.53h16.02l-20.86-19.89c-2.4-2.29-2.4-5.99,0-8.28l20.86-19.89h-16.02Z" />
+      <path d="m0,60.08V0h12v60.08H0Z" />
+      <path d="m55,72.08V12h12v60.08h-12Z" />
+      <path d="m79,12c-13.26,0-24,10.76-24,24.03s10.75,24.03,24,24.03,24-10.76,24-24.03-10.75-24.03-24-24.03Zm0,12.02c-6.63,0-12,5.38-12,12.02s5.37,12.02,12,12.02,12-5.38,12-12.02-5.37-12.02-12-12.02Z" fillRule="evenodd" />
+      <path d="m110,60.08V0h12v60.08h-12Z" />
+      <path d="m153,12c-13.26,0-24,10.76-24,24.03s10.75,24.03,24,24.03c5.41,0,10.39-1.79,14.41-4.81l-8.27-8.28s0,0,0,0c-1.86,1.11-3.97,1.76-6.14,1.76-5.07,0-9.81-3.55-11.76-8.2h23.51s11.82,0,11.82,0h0c.02-.13.05-.26.07-.39.23-1.34.35-2.72.35-4.12,0-13.27-10.75-24.03-24-24.03Zm0,11.33c-5.07,0-9.81,3.55-11.76,8.2h23.51c-1.94-4.64-6.68-8.2-11.76-8.2Z" fillRule="evenodd" />
+    </svg>);
+
+}
+
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = React.useState(() => window.innerWidth < breakpoint);
   React.useEffect(() => {
@@ -587,7 +602,7 @@ function CountUp({ value, duration = 1300 }) {
   return <span ref={ref}>{n}{suffix}</span>;
 }
 
-Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon, useIsMobile, Reveal, HeroLines, CountUp });
+Object.assign(window, { Button, Label, BrassRule, HairRule, Chip, EditorialImage, ImagePlaceholder, ArrowIcon, KplerLogo, useIsMobile, Reveal, HeroLines, CountUp });
 
 
 // ======== components/Chrome.jsx ========
@@ -987,9 +1002,7 @@ function AboutPage({ onNav }) {
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.9fr 1.3fr', gap: isMobile ? 28 : 64, alignItems: 'center' }}>
               <div>
                 <Label>/ Member perks</Label>
-                <div style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 400, fontSize: isMobile ? 40 : 60, color: '#132531', lineHeight: 1.05, letterSpacing: '-0.02em', marginTop: 14 }}>
-                  Exclusive access
-                </div>
+                <KplerLogo height={isMobile ? 32 : 44} style={{ color: '#132531', marginTop: 18 }} />
                 <BrassRule style={{ marginTop: 22 }} />
               </div>
               <div style={{ borderLeft: isMobile ? 'none' : '1px solid #D8D4CC', borderTop: isMobile ? '1px solid #D8D4CC' : 'none', paddingLeft: isMobile ? 0 : 48, paddingTop: isMobile ? 28 : 0 }}>
@@ -1722,91 +1735,6 @@ function CommoditiesPage({ onNav }) {
             </div>
           </div>
 
-        </div>
-      </section>
-
-      {/* MARKET OVERVIEW — four detailed cards */}
-      <section style={{ background: '#132531', color: '#fff', padding: isMobile ? '48px 20px' : '80px 40px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <Reveal>
-            <Label style={{ color: '#C49A3E' }}>/ The markets</Label>
-            <h2 style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.01em', margin: '12px 0 48px' }}>
-              Market <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>overviews</span>
-            </h2>
-          </Reveal>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'rgba(255,255,255,0.08)' }}>
-            {[
-            {
-              cat: 'Crude Oil',
-              desc: 'Crude oil is raw petroleum pulled out of the ground before it gets refined into anything usable. It\'s the world\'s most traded commodity, and nearly every economy depends on it. Prices move on geopolitics, OPEC production decisions, storage levels, and global demand. Traders deal in physical barrels as well as financial contracts that let buyers and sellers lock in prices without ever touching the oil itself. Two grades dominate global pricing: WTI (West Texas Intermediate), the U.S. benchmark, and Brent, which prices most crude from the Atlantic Basin and North Sea. The gap between them is itself a tradeable instrument that reflects regional supply and demand at any given moment.',
-              firms: ['Saudi Aramco','ExxonMobil','Shell','BP','TotalEnergies','Chevron','Rosneft','ADNOC','Vitol','Trafigura','Glencore','Gunvor','Mercuria','Goldman Sachs','Morgan Stanley','JPMorgan'],
-              instruments: ['WTI Crude (NYMEX: CL)','Brent Crude (ICE: B)','Dubai/Oman','WTI-Brent Spread','CMA Swaps','CFD Swaps']
-            },
-            {
-              cat: 'Refined Products',
-              desc: 'Crude oil does nothing on its own. Refineries crack it into usable products: gasoline, diesel, jet fuel, heating oil, fuel oil, naphtha. Each has its own supply chain and price logic. Refinery margins, called the crack spread, measure the difference between what a refinery pays for crude and what it earns selling products, and they\'re one of the most watched numbers in the oil market. Real demand tends to show up in products before it shows up in crude. A cold winter tightens heating oil. Summer driving lifts gasoline. Jet fuel demand fell off a cliff in 2020 well before crude markets fully processed it.',
-              firms: ['Valero','Marathon Petroleum','Phillips 66','Neste','Reliance Industries','PetroChina','Vitol','Trafigura','Gunvor','Freepoint Commodities'],
-              instruments: ['RBOB Gasoline (NYMEX: RB)','ULSD / Heating Oil (NYMEX: HO)','Gasoil (ICE: G)','Jet Fuel / Jet Kerosene','Crack Spreads (3-2-1)','Product Swaps']
-            },
-            {
-              cat: 'Natural Gas',
-              desc: 'Natural gas heats buildings, generates electricity, and feeds industrial and petrochemical processes. Unlike oil, it\'s expensive and difficult to transport: you either pipe it or liquefy it (LNG) and ship it. That constraint keeps gas markets regional in a way oil markets are not. U.S. prices can be completely disconnected from European or Asian prices depending on infrastructure and LNG flow. Seasonality drives everything. Cold winters and hot summers create demand spikes that can move prices dramatically in a short window. Storage levels are tracked obsessively, since a deficit heading into winter can push prices to multiples of where they started the year.',
-              firms: ['EQT','Expand Energy','ConocoPhillips','Shell','QatarEnergy','Novatek','Cheniere Energy','Vitol','Trafigura','Goldman Sachs','Citigroup'],
-              instruments: ['Henry Hub (NYMEX: NG)','TTF (ICE)','JKM (Japan Korea Marker)','NBP (National Balancing Point)','Basis Swaps','Seasonal Spreads']
-            },
-            {
-              cat: 'Power / Electricity',
-              desc: 'Power is unlike every other commodity because you can\'t store it at scale. Electricity has to be generated and consumed at the same instant. That balancing requirement produces some of the most extreme price swings in any market: prices can go negative overnight when wind farms are producing and nobody needs the output, then spike to extraordinary levels during a heatwave when grid capacity gets overwhelmed. Traders deal in everything from day-ahead auctions to long-dated financial contracts that let utilities and large industrial consumers hedge years out. Renewable growth has changed how these markets behave. Wind and solar add cheap but unpredictable supply, which tends to create more volatility rather than less.',
-              firms: ['NextEra Energy','Duke Energy','Enel','RWE','Orsted','EDF','Vitol','Trafigura','Shell Energy','Castleton Commodities','Hartree Partners','Macquarie Energy'],
-              instruments: ['PJM','ERCOT','CAISO','EEX (European Energy Exchange)','Day-Ahead Markets','Real-Time Markets','Spark Spreads','Dark Spreads','RECs (Renewable Energy Certificates)']
-            },
-            {
-              cat: 'Metals',
-              desc: 'Metals fall into two categories: base metals (copper, aluminum, zinc, nickel, lead, tin) and precious metals (gold, silver, platinum, palladium). Base metals are industrial, going into buildings, cars, wiring, batteries, and infrastructure. Precious metals sit between industrial use and financial demand, with gold functioning as a store of value and a hedge against currency weakness. Copper has earned the nickname "Dr. Copper" because its price tracks global economic activity fairly well. The energy transition has added another layer: EVs and grid buildout consume enormous amounts of copper, nickel, and cobalt, creating structural demand that runs on top of the normal economic cycle.',
-              firms: ['BHP','Rio Tinto','Glencore','Freeport-McMoRan','Vale','Norilsk Nickel','Barrick Gold','Newmont','Trafigura','IXM','Gerald Metals','ICBC Standard Bank','Goldman Sachs','HSBC'],
-              instruments: ['LME Copper (CA)','LME Aluminum (AH)','LME Nickel','LME Zinc','COMEX Gold (GC)','COMEX Silver (SI)','COMEX Copper (HG)','Gold Spot (XAUUSD)','TCs/RCs','Metal Swaps','Cash vs. 3-Month Spreads']
-            },
-            {
-              cat: 'Agriculture',
-              desc: 'Ag commodities cover grains (corn, wheat, soybeans, rice), softs (sugar, coffee, cocoa, cotton), oilseeds, and livestock. These markets predate nearly everything else in commodity trading. Exchanges were originally built so farmers and processors could manage price risk before crops were even harvested. Weather is the main driver: a drought in Brazil, a flood in the Midwest, or a frost in Vietnam can move coffee or soy 20% in a week. What separates ag from other commodities is the crop cycle. Supply resets every harvest. A bad year sends prices to multi-year highs; one good growing season can knock them back down just as fast.',
-              firms: ['ADM','Bunge','Cargill','Louis Dreyfus','Wilmar International','COFCO'],
-              instruments: ['CBOT Corn (C)','CBOT Soybeans (S)','CBOT Wheat (W)','ICE Sugar No. 11 (SB)','ICE Cotton (CT)','ICE Cocoa (CC)','ICE Coffee (KC)','MATIF Milling Wheat','Basis','Soybean Crush Spread','Weather Derivatives']
-            },
-            {
-              cat: 'Freight',
-              desc: 'Shipping is the plumbing of the commodity world: roughly 80% of traded goods by volume move by sea, and freight cost determines whether an arbitrage between two regions is actually profitable. Rates are driven by vessel supply (newbuild deliveries vs. scrapping), fuel costs, and chokepoint disruptions. Think of freight as a derivative on global trade volumes. When a chokepoint closes or a fleet gets congested, tonne-mile demand spikes even if nothing is produced or consumed differently, and rates can multiply in weeks.',
-              firms: ['Clarksons','Maersk','MSC','CMA CGM','Frontline','Euronav','Star Bulk Carriers','Trafigura Maritime Logistics','Cargill Ocean Transportation','Hafnia'],
-              instruments: ['FFAs (Freight Forward Agreements)','Baltic Dry Index (BDI)','TD3C (VLCC, AG–China)','C5 (Capesize, WA–Qingdao)','Time-Charter Equivalent (TCE)','Period charters','COAs (Contracts of Affreightment)','Bunker swaps (VLSFO)']
-            }
-            ].map((m) => (
-            <div key={m.cat} style={{ background: '#0F2030', padding: '40px 36px 36px', display: 'flex', flexDirection: 'column', gap: 24, borderLeft: '2px solid transparent', transition: 'background 280ms, border-color 280ms' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#122638'; e.currentTarget.style.borderLeftColor = '#C49A3E'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = '#0F2030'; e.currentTarget.style.borderLeftColor = 'transparent'; }}>
-              <div>
-                <h3 style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', color: '#F8F7F3' }}>{m.cat}</h3>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginTop: 12 }}>{m.desc}</p>
-              </div>
-
-              <div>
-                <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 10 }}>Major Firms</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {m.firms.map((f) => (
-                    <span key={f} style={{ fontSize: 11, padding: '4px 10px', border: '1px solid rgba(196,154,62,0.4)', color: '#C49A3E', borderRadius: 2, letterSpacing: 0.5 }}>{f}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>Key Instruments</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {m.instruments.map((inst) => (
-                    <span key={inst} style={{ fontSize: 11, fontFamily: 'ui-monospace, Menlo, monospace', padding: '4px 10px', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', borderRadius: 2 }}>{inst}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-            ))}
-          </div>
         </div>
       </section>
 
