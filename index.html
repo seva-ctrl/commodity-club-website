@@ -1092,7 +1092,8 @@ const COMMODITIES = [
   { sym: 'PJMW', name: 'PJM West Hub', unit: '$/MWh', price: '36.16', chg: '+0.50%', note: 'Day-ahead · mid-Atlantic US', featured: true },
   { sym: 'CAIS', name: 'CAISO SP15', unit: '$/MWh', price: '19.34', chg: '−1.00%', note: 'Southern California hub' },
   { sym: 'ERCN', name: 'ERCOT North', unit: '$/MWh', price: '37.20', chg: '−0.80%', note: 'Texas · day-ahead' },
-  { sym: 'EEXDE', name: 'EEX German Baseload', unit: '€/MWh', price: '86.75', chg: '−1.20%', note: 'Front-month' }],
+  { sym: 'EEXDE', name: 'EEX German Baseload', unit: '€/MWh', price: '86.75', chg: '−1.20%', note: 'Front-month' },
+  { sym: 'EUA', name: 'EU Carbon Allowances', unit: '€/tCO2', price: '86.59', chg: '−0.35%', note: 'EU ETS · front-Dec' }],
   img: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1400&q=80',
   imgLabel: 'POWER GRID',
   description: 'Power is the most localized commodity market: it cannot be stored economically, so prices are set hour-by-hour at regional hubs based on real-time supply and demand. Natural gas is usually the marginal fuel setting the price, linking power markets tightly to the gas curve.',
@@ -2345,14 +2346,15 @@ Object.assign(window, { MembershipPage });
 
 const AV_KEY = 'I8R6FD24WF3Y1JN3';
 const FH_KEY = 'd85t531r01qm56kslilgd85t531r01qm56kslim0';
-// OilPriceAPI covers refined products AV/Finnhub don't (diesel, jet fuel — no ETF
-// proxy exists for either). Free tier: sign up at oilpriceapi.com/auth/signup
-// (no card), grab the key from the dashboard, paste it below. Until it's set,
-// HO/JET fall back to the static COMMODITIES price with a "not live" disclosure
-// and an outbound link (see SOURCE_LINKS) instead of silently faking a live dot.
-const OP_KEY = '';
-const PRICE_CACHE_KEY = 'ctsc-live-prices-v5'; // v5: adds OilPriceAPI (diesel, jet fuel)
-const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+// OilPriceAPI covers refined products + carbon AV/Finnhub don't (diesel, jet
+// fuel, EU carbon allowances — no ETF proxy exists for any of these). Free
+// plan: 10,000 requests/month, shared across every visitor's browser since
+// the key ships client-side — see OP_CACHE_TTL below for how that's managed.
+const OP_KEY = 'ae6b8ef4e46531ef852b4ecf3e78e161e668c82f451b6585699211aab115fce1';
+const PRICE_CACHE_KEY = 'ctsc-live-prices-v5';
+const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours — Alpha Vantage / Finnhub
+const OP_CACHE_KEY = 'ctsc-op-prices-v1';
+const OP_CACHE_TTL = 24 * 60 * 60 * 1000; // 24h — keeps OilPriceAPI usage to ~3 req/visitor/day, well inside the 10k/month plan even at a few hundred daily visitors
 
 // Alpha Vantage commodity endpoints
 // multiplier: convert AV raw value → display unit shown on site
@@ -2388,6 +2390,7 @@ const FH_MAP = {
 const OP_MAP = {
   'HO':  { code: 'HEATING_OIL_USD' }, // NY Harbor ULSD futures — the site's "Diesel" row
   'JET': { code: 'JET_FUEL_USD' },
+  'EUA': { code: 'EU_CARBON_EUR' },   // EU ETS carbon allowances, €/tCO2
 };
 
 // Outbound source for rows with no live feed (no free API covers the desk at
@@ -2395,6 +2398,7 @@ const OP_MAP = {
 const SOURCE_LINKS = {
   HO:    { url: 'https://oilprice.com/Energy/Heating-Oil/', label: 'oilprice.com' },
   JET:   { url: 'https://www.oilpriceapi.com/live/jet-fuel-price', label: 'oilpriceapi.com' },
+  EUA:   { url: 'https://tradingeconomics.com/commodity/carbon', label: 'Trading Economics' },
   TTF:   { url: 'https://tradingeconomics.com/commodity/eu-natural-gas', label: 'Trading Economics' },
   JKM:   { url: 'https://www.spglobal.com/commodityinsights/en/market-insights/latest-news/lng', label: 'S&P Global Platts' },
   WAHA:  { url: 'https://www.naturalgasintel.com/data-snapshot/daily/WTXWAHA/', label: 'Natural Gas Intel' },
@@ -2455,12 +2459,18 @@ async function fetchOPQuote(sym, cfg) {
   const url = `https://api.oilpriceapi.com/v1/prices/latest?by_code=${cfg.code}`;
   const res = await fetch(url, { headers: { Authorization: `Token ${OP_KEY}` } });
   const json = await res.json();
-  if (json.status !== 'success' || !json.data || !json.data.price) return null;
-  const sign = json.data.change_24h >= 0 ? '+' : '';
+  const d = json.data;
+  // Real response nests the 24h change under data.changes["24h"], not a flat
+  // data.change_24h field like the docs example shows. Some codes (e.g. weekly
+  // EIA-sourced jet fuel) omit it entirely — treat that as "not live enough"
+  // rather than rendering a fake 0.00% or an undefined chg string.
+  const chg24h = d && d.changes && d.changes['24h'];
+  if (json.status !== 'success' || !d || !d.price || !chg24h) return null;
+  const sign = chg24h.percent >= 0 ? '+' : '';
   return {
-    price: json.data.price.toFixed(2),
-    chg: `${sign}${json.data.change_24h.toFixed(2)}%`,
-    date: json.data.as_of || json.data.updated_at || null,
+    price: d.price.toFixed(2),
+    chg: `${sign}${chg24h.percent.toFixed(2)}%`,
+    date: d.as_of || d.updated_at || null,
     source: 'oilpriceapi',
   };
 }
@@ -2474,40 +2484,59 @@ async function loadLivePrices() {
     ...Object.entries(FH_MAP).map(([sym, cfg]) =>
       fetchFHQuote(sym, cfg).then(d => { if (d) results[sym] = d; }).catch(() => {})
     ),
-    // Skip entirely without a key rather than firing requests that will 401 —
-    // OP_KEY is blank until someone signs up free at oilpriceapi.com/auth/signup.
-    ...(OP_KEY ? Object.entries(OP_MAP).map(([sym, cfg]) =>
-      fetchOPQuote(sym, cfg).then(d => { if (d) results[sym] = d; }).catch(() => {})
-    ) : []),
   ]);
   return results;
 }
 
-function useLivePrices() {
-  const readCache = () => {
-    try {
-      const c = JSON.parse(localStorage.getItem(PRICE_CACHE_KEY));
-      if (c && Date.now() - c.ts < PRICE_CACHE_TTL) return c;
-    } catch(e) {}
-    return null;
-  };
+async function loadOPPrices() {
+  const results = {};
+  await Promise.allSettled(
+    Object.entries(OP_MAP).map(([sym, cfg]) =>
+      fetchOPQuote(sym, cfg).then(d => { if (d) results[sym] = d; }).catch(() => {})
+    )
+  );
+  return results;
+}
 
-  const init = readCache();
-  const [prices, setPrices]       = React.useState(init ? init.prices : {});
+function readPriceCache(key, ttl) {
+  try {
+    const c = JSON.parse(localStorage.getItem(key));
+    if (c && Date.now() - c.ts < ttl) return c;
+  } catch(e) {}
+  return null;
+}
+
+function useLivePrices() {
+  const init = readPriceCache(PRICE_CACHE_KEY, PRICE_CACHE_TTL);
+  const initOP = readPriceCache(OP_CACHE_KEY, OP_CACHE_TTL);
+  const [prices, setPrices]       = React.useState({ ...(init ? init.prices : {}), ...(initOP ? initOP.prices : {}) });
   const [status, setStatus]       = React.useState(init ? 'cached' : 'loading');
   const [updatedAt, setUpdatedAt] = React.useState(init ? new Date(init.ts) : null);
 
   React.useEffect(() => {
-    if (readCache()) return; // still fresh, skip fetch
-    loadLivePrices()
-      .then(p => {
-        const ts = Date.now();
-        try { localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ts, prices: p })); } catch(e) {}
-        setPrices(p);
-        setUpdatedAt(new Date(ts));
-        setStatus('live');
-      })
-      .catch(() => setStatus('error'));
+    if (!readPriceCache(PRICE_CACHE_KEY, PRICE_CACHE_TTL)) {
+      loadLivePrices()
+        .then(p => {
+          const ts = Date.now();
+          try { localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ts, prices: p })); } catch(e) {}
+          setPrices(prev => ({ ...prev, ...p }));
+          setUpdatedAt(new Date(ts));
+          setStatus('live');
+        })
+        .catch(() => setStatus('error'));
+    }
+    // OilPriceAPI runs on its own, longer-lived cache — diesel/jet/carbon don't
+    // move fast enough to justify the request volume of the 6h main cycle, and
+    // the free plan's monthly quota is shared across every visitor's browser.
+    if (OP_KEY && !readPriceCache(OP_CACHE_KEY, OP_CACHE_TTL)) {
+      loadOPPrices()
+        .then(p => {
+          const ts = Date.now();
+          try { localStorage.setItem(OP_CACHE_KEY, JSON.stringify({ ts, prices: p })); } catch(e) {}
+          setPrices(prev => ({ ...prev, ...p }));
+        })
+        .catch(() => {});
+    }
   }, []);
 
   return { prices, status, updatedAt };
