@@ -1229,6 +1229,42 @@ function LiveSpreadStrip({ prices = {} }) {
   );
 }
 
+// Live diesel crack (1-1-0): NY Harbor ULSD futures (OilPriceAPI, $/gal, ×42
+// to convert to $/bbl) minus WTI ($/bbl, Alpha Vantage). Only a 2-point series
+// (today vs. OilPriceAPI's own previous_price) since OP's /latest endpoint
+// doesn't return history — fetching /past_week would double the request
+// volume against the free plan's monthly quota for a sparkline. Renders
+// nothing until both sides are live.
+function DieselCrackStrip({ prices = {} }) {
+  const ho = prices.HO, wti = prices.WTI;
+  const wtiSeries = wti && wti.series;
+  if (!ho || !ho.rawPrice || !ho.prevPrice || !wtiSeries || wtiSeries.length < 2) return null;
+  const wtiCurr = wtiSeries[wtiSeries.length - 1], wtiPrev = wtiSeries[wtiSeries.length - 2];
+  const curr = ho.rawPrice * 42 - wtiCurr;
+  const prev = ho.prevPrice * 42 - wtiPrev;
+  const delta = curr - prev;
+  if (!Number.isFinite(curr) || !Number.isFinite(delta)) return null;
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '12px 14px', background: '#F8F7F3', borderLeft: '2px solid #C49A3E', marginBottom: 16 }}>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#132531', fontWeight: 600 }}>Diesel crack (1-1-0)</span>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#2E6B3E', display: 'inline-block' }} title="Computed from live prices" />
+        </div>
+        <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>HO ×42 − WTI · $/bbl</div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontSize: 17, fontFamily: 'ui-monospace, Menlo, monospace', color: '#132531', fontWeight: 500 }}>{curr.toFixed(2)}</span>
+          <span style={{ fontSize: 12, fontFamily: 'ui-monospace, Menlo, monospace', color: delta >= 0 ? '#2E6B3E' : '#C8321E', marginLeft: 8 }}>{delta >= 0 ? '+' : '−'}{Math.abs(delta).toFixed(2)}</span>
+        </div>
+        <Sparkline data={[prev, curr]} width={90} height={26} />
+      </div>
+    </div>
+  );
+}
+
 // ---- Commodity Atlas ------------------------------------------------------
 // Every map point stores real lon/lat and is projected at render time:
 //   x = 2.778 * (lon + 180), y = 3.69 * (75 - lat), viewBox 0 0 1000 480
@@ -1731,6 +1767,7 @@ function CommoditiesPage({ onNav }) {
               <div style={{ marginTop: 28 }}>
                 <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#C49A3E', marginBottom: 12 }}>Key spreads &amp; benchmarks</div>
                 {cat.cat === 'CRUDE & REFINED' && <LiveSpreadStrip prices={prices} />}
+                {cat.cat === 'CRUDE & REFINED' && <DieselCrackStrip prices={prices} />}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {cat.spreads.map((sp) =>
                   <div key={sp.name} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
@@ -2472,6 +2509,10 @@ async function fetchOPQuote(sym, cfg) {
     chg: `${sign}${chg24h.percent.toFixed(2)}%`,
     date: d.as_of || d.updated_at || null,
     source: 'oilpriceapi',
+    // raw numbers (not the display-formatted string) for spread math elsewhere,
+    // e.g. the diesel crack card diffing this against the WTI series
+    rawPrice: d.price,
+    prevPrice: chg24h.previous_price,
   };
 }
 
