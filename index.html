@@ -1057,8 +1057,8 @@ const COMMODITIES = [
 {
   cat: 'CRUDE & REFINED', sub: 'Crude oil &amp; refined products',
   items: [
-  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '103.18', chg: '−2.60%', featured: true },
-  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '100.78', chg: '−1.80%' },
+  { sym: 'BRN', name: 'Brent Crude', unit: '$/bbl', price: '99.42', chg: '−1.05%', featured: true },
+  { sym: 'WTI', name: 'WTI Crude', unit: '$/bbl', price: '90.58', chg: '−1.92%' },
   { sym: 'RB', name: 'RBOB Gasoline', unit: '$/gal', price: '3.42', chg: '−1.97%' },
   { sym: 'HO', name: 'Diesel', unit: '$/gal', price: '3.55', chg: '−1.20%' },
   { sym: 'JET', name: 'Jet Fuel', unit: '$/gal', price: '3.61', chg: '+0.40%' }],
@@ -1197,16 +1197,16 @@ function Sparkline({ data, width = 64, height = 20 }) {
   );
 }
 
-// Live Brent–WTI front spread computed from the AV daily series. The two series
-// share the EIA publication calendar, so they're aligned tail-first (most
-// recent session last). Renders nothing until both series are available.
+// Live Brent–WTI front spread. Both legs come from OilPriceAPI now (see
+// OP_MAP) — only a 2-point delta (today vs. OilPriceAPI's own previous_price)
+// since /latest doesn't return history and fetching /past_month would add
+// requests against the free plan's monthly quota just for a sparkline.
 function LiveSpreadStrip({ prices = {} }) {
-  const brn = prices.BRN && prices.BRN.series;
-  const wti = prices.WTI && prices.WTI.series;
-  if (!brn || !wti || brn.length < 2 || wti.length < 2) return null;
-  const n = Math.min(brn.length, wti.length);
-  const series = Array.from({ length: n }, (_, i) => brn[brn.length - n + i] - wti[wti.length - n + i]);
-  const last = series[n - 1], delta = last - series[n - 2];
+  const brn = prices.BRN, wti = prices.WTI;
+  if (!brn || !brn.rawPrice || !brn.prevPrice || !wti || !wti.rawPrice || !wti.prevPrice) return null;
+  const last = brn.rawPrice - wti.rawPrice;
+  const prev = brn.prevPrice - wti.prevPrice;
+  const delta = last - prev;
   if (!Number.isFinite(last) || !Number.isFinite(delta)) return null; // stale/malformed cache
 
   return (
@@ -1216,32 +1216,28 @@ function LiveSpreadStrip({ prices = {} }) {
           <span style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#132531', fontWeight: 600 }}>Brent–WTI arb</span>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#2E6B3E', display: 'inline-block' }} title="Computed from live prices" />
         </div>
-        <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>Front spread · last {n} sessions · $/bbl</div>
+        <div style={{ fontSize: 11, color: '#8F8F8F', marginTop: 2 }}>Front spread · $/bbl</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
           <span style={{ fontSize: 17, fontFamily: 'ui-monospace, Menlo, monospace', color: '#132531', fontWeight: 500 }}>{last.toFixed(2)}</span>
           <span style={{ fontSize: 12, fontFamily: 'ui-monospace, Menlo, monospace', color: delta >= 0 ? '#2E6B3E' : '#C8321E', marginLeft: 8 }}>{delta >= 0 ? '+' : '−'}{Math.abs(delta).toFixed(2)}</span>
         </div>
-        <Sparkline data={series} width={90} height={26} />
+        <Sparkline data={[prev, last]} width={90} height={26} />
       </div>
     </div>
   );
 }
 
-// Live diesel crack (1-1-0): NY Harbor ULSD futures (OilPriceAPI, $/gal, ×42
-// to convert to $/bbl) minus WTI ($/bbl, Alpha Vantage). Only a 2-point series
-// (today vs. OilPriceAPI's own previous_price) since OP's /latest endpoint
-// doesn't return history — fetching /past_week would double the request
-// volume against the free plan's monthly quota for a sparkline. Renders
-// nothing until both sides are live.
+// Live diesel crack (1-1-0): NY Harbor ULSD futures ($/gal, ×42 to convert to
+// $/bbl) minus WTI ($/bbl) — both from OilPriceAPI now, so it's a straight
+// 2-point delta (today vs. OilPriceAPI's own previous_price) rather than a
+// full series. Renders nothing until both sides are live.
 function DieselCrackStrip({ prices = {} }) {
   const ho = prices.HO, wti = prices.WTI;
-  const wtiSeries = wti && wti.series;
-  if (!ho || !ho.rawPrice || !ho.prevPrice || !wtiSeries || wtiSeries.length < 2) return null;
-  const wtiCurr = wtiSeries[wtiSeries.length - 1], wtiPrev = wtiSeries[wtiSeries.length - 2];
-  const curr = ho.rawPrice * 42 - wtiCurr;
-  const prev = ho.prevPrice * 42 - wtiPrev;
+  if (!ho || !ho.rawPrice || !ho.prevPrice || !wti || !wti.rawPrice || !wti.prevPrice) return null;
+  const curr = ho.rawPrice * 42 - wti.rawPrice;
+  const prev = ho.prevPrice * 42 - wti.prevPrice;
   const delta = curr - prev;
   if (!Number.isFinite(curr) || !Number.isFinite(delta)) return null;
 
@@ -2380,26 +2376,26 @@ Object.assign(window, { MembershipPage });
 
 const AV_KEY = 'I8R6FD24WF3Y1JN3';
 const FH_KEY = 'd85t531r01qm56kslilgd85t531r01qm56kslim0';
-// OilPriceAPI covers refined products + carbon AV/Finnhub don't (diesel, jet
-// fuel, EU carbon allowances — no ETF proxy exists for any of these). Free
-// plan: 10,000 requests/month, shared across every visitor's browser since
-// the key ships client-side — see OP_CACHE_TTL below for how that's managed.
+// OilPriceAPI covers crude, refined products, and carbon (BRN/WTI moved here
+// from Alpha Vantage — see AV_MAP; diesel/jet/carbon have no AV or ETF-proxy
+// equivalent at all). Free plan: 10,000 requests/month, shared across every
+// visitor's browser since the key ships client-side — see OP_CACHE_TTL below.
 const OP_KEY = 'ae6b8ef4e46531ef852b4ecf3e78e161e668c82f451b6585699211aab115fce1';
 const PRICE_CACHE_KEY = 'ctsc-live-prices-v5';
-const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours — Alpha Vantage / Finnhub
-const OP_CACHE_KEY = 'ctsc-op-prices-v1';
-const OP_CACHE_TTL = 24 * 60 * 60 * 1000; // 24h — keeps OilPriceAPI usage to ~3 req/visitor/day, well inside the 10k/month plan even at a few hundred daily visitors
+const PRICE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours — Finnhub (+ AV for the metals/ag it still covers)
+const OP_CACHE_KEY = 'ctsc-op-prices-v2'; // v2: adds BRN/WTI, adds rawPrice/prevPrice — bumped to force a refetch past any v1 cache stuck without those fields
+const OP_CACHE_TTL = 24 * 60 * 60 * 1000; // 24h — keeps OilPriceAPI usage to ~5 req/visitor/day (~66 unique cache-miss visitors/day sustainable on the 10k/month free plan)
 
 // Alpha Vantage commodity endpoints
 // multiplier: convert AV raw value → display unit shown on site
-// AV units (verified against the API's own "unit" field): WTI/BRENT $/bbl,
-//           NATURAL_GAS $/MMBtu, COPPER $/mt, ALUMINUM $/mt, CORN $/mt,
-//           WHEAT $/mt, COTTON ¢/lb, COFFEE ¢/lb
+// AV units (verified against the API's own "unit" field): NATURAL_GAS $/MMBtu,
+//           COPPER $/mt, ALUMINUM $/mt, CORN $/mt, WHEAT $/mt, COTTON ¢/lb, COFFEE ¢/lb
+// BRN/WTI moved to OilPriceAPI (see OP_MAP) — AV's free WTI/BRENT feed runs
+// several days stale and contains malformed rows (a literal "." for some
+// sessions); OilPriceAPI's crude data was current and clean when checked.
 const BU_PER_MT_CORN = 1000 / 25.40117;  // corn bushel = 56 lb
 const BU_PER_MT_WHEAT = 1000 / 27.2155;  // wheat bushel = 60 lb
 const AV_MAP = {
-  'BRN': { func: 'BRENT',        interval: 'daily',   multiplier: 1,   decimals: 2 },
-  'WTI': { func: 'WTI',          interval: 'daily',   multiplier: 1,   decimals: 2 },
   'HH':  { func: 'NATURAL_GAS',  interval: 'daily',   multiplier: 1,   decimals: 2 },
   'CU':  { func: 'COPPER',       interval: 'monthly', multiplier: 1/2204.62, decimals: 3 }, // AV returns $/mt, site shows $/lb
   'AL':  { func: 'ALUMINUM',     interval: 'monthly', multiplier: 1,   decimals: 0 },
@@ -2422,6 +2418,8 @@ const FH_MAP = {
 // OilPriceAPI codes — real futures/spot prices, not ETF proxies. change_24h
 // comes back as a percent already, so no fmtChg conversion needed.
 const OP_MAP = {
+  'BRN': { code: 'BRENT_CRUDE_USD' },
+  'WTI': { code: 'WTI_USD' },
   'HO':  { code: 'HEATING_OIL_USD' }, // NY Harbor ULSD futures — the site's "Diesel" row
   'JET': { code: 'JET_FUEL_USD' },
   'EUA': { code: 'EU_CARBON_EUR' },   // EU ETS carbon allowances, €/tCO2
@@ -2457,20 +2455,24 @@ async function fetchAVCommodity(sym, cfg) {
   const url = `https://www.alphavantage.co/query?function=${cfg.func}&interval=${cfg.interval}&apikey=${AV_KEY}`;
   const res = await fetch(url);
   const json = await res.json();
-  if (!json.data || json.data.length < 2) return null; // rate limit or error
-  const curr = parseFloat(json.data[0].value) * cfg.multiplier;
-  const prev = parseFloat(json.data[1].value) * cfg.multiplier;
+  if (!json.data) return null; // rate limit or error
+  // AV occasionally drops a literal "." in place of a value for a missing
+  // session — filter those out before picking curr/prev, otherwise a NaN
+  // silently renders as the literal string "NaN" / "NaN%" in the price table.
+  const valid = json.data.filter((d) => !isNaN(parseFloat(d.value)));
+  if (valid.length < 2) return null;
+  const curr = parseFloat(valid[0].value) * cfg.multiplier;
+  const prev = parseFloat(valid[1].value) * cfg.multiplier;
   const raw = curr.toFixed(cfg.decimals);
   // format large numbers with comma (e.g. 2,418)
   const price = cfg.decimals === 0 ? Number(raw).toLocaleString('en-US') : raw;
   // recent trend for sparklines: ~30 sessions for daily series, 12 for monthly.
   // AV returns newest-first; reverse so the sparkline reads left → right in time.
   const span = cfg.interval === 'daily' ? 30 : 12;
-  const series = json.data.slice(0, span).
+  const series = valid.slice(0, span).
   map((d) => parseFloat(d.value) * cfg.multiplier).
-  filter((v) => !isNaN(v)).
   reverse();
-  return { price, chg: fmtChg(curr, prev), date: json.data[0].date, source: 'alphavantage', series };
+  return { price, chg: fmtChg(curr, prev), date: valid[0].date, source: 'alphavantage', series };
 }
 
 async function fetchFHQuote(sym, cfg) {
