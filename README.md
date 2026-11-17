@@ -1,22 +1,45 @@
-# CODING AGENTS: READ THIS FIRST
+# Commodity Trading & Shipping Club website
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Public site for the Commodity Trading & Shipping Club (CTSC) at Indiana University: <https://commoditytradingandshipping.com>
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+One self-contained `index.html` (React 18 + in-browser Babel from CDN). No build step, no framework, no bundler.
 
-## What you should do — IMPORTANT
+## Start here
 
-**Read `commodity-club-website/project/index.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+| You are | Read |
+|---|---|
+| A contributor (human) | [CONTRIBUTING.md](CONTRIBUTING.md) — workflow, rules, how to get help |
+| A contributor's Claude / any coding agent | [CLAUDE.md](CLAUDE.md) — full architecture and rules, read it entirely before editing |
+| Stuck on something only the owner can fix | [Open a Help Request](../../issues/new?template=help-request.yml) |
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Run locally
 
-## About the design files
+```bash
+bun install        # once, dev-only test tooling
+bun run test       # must print "0 failed" before every PR
+python3 -m http.server 8080   # then open http://localhost:8080
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+(`npm install && npm test` also works.)
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## How changes ship
 
-## Bundle contents
+1. Branch off `master`: `git checkout -b yourname/short-description`
+2. Edit, run `bun run test`
+3. Push the branch, open a Pull Request into `master`
+4. Owner reviews and merges. Cloudflare Pages deploys `master` automatically (about a minute). PRs also get a preview URL.
 
-- `commodity-club-website/README.md` — this file
-- `commodity-club-website/project/` — the `Commodity Club Website` project files (HTML prototypes, assets, components)
+Never push straight to `master`.
+
+## Layout
+
+```
+index.html        the whole site (data arrays at top of each page section)
+tests/            test harness (JSX compile, assets, data integrity, render smoke)
+scripts/          generate-world-paths.mjs (map geometry)
+ed1-*.png         newsletter chart images, referenced by filename from repo root
+images/, *.jpeg   photos, referenced by filename from repo root
+commodities_primer.md, commodity_news_sources.md   source of truth for page copy
+DESIGN-ferrari.md design system reference
+project/          OLD design prototype from Claude Design. Reference only, not shipped.
+```

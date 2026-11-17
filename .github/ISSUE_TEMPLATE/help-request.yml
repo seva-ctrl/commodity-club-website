@@ -1,0 +1,44 @@
+name: Help Request
+description: Stuck on hosting, deploy, DNS, API keys, permissions, or a failure you can't fix from the repo
+title: "[Help] "
+labels: ["help-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Owner handles hosting/DNS/API accounts. Never paste keys, passwords, or tokens here.
+        If the live site is down, start the title with URGENT and message the owner directly too.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What were you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened instead? (exact error text)
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Branch name or PR link
+  - type: textarea
+    id: tried
+    attributes:
+      label: What did you / your Claude already try?
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Deploy / preview
+        - Domain / DNS / email
+        - Live prices / API
+        - Repo permissions / merge
+        - Tests failing
+        - Other
+    validations:
+      required: true

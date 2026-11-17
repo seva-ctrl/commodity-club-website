@@ -2,13 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Contributor rules (READ FIRST if you are not the owner)
+
+The repo owner (GitHub `seva-ctrl`) owns hosting, DNS, domain, email forwarding, and API accounts. Contributors change content/code through pull requests only. Human-facing version: `CONTRIBUTING.md`.
+
+**Workflow**: `git checkout master && git pull` → `git checkout -b <name>/<topic>` → edit → `bun run test` (must be 0 failed) → push branch → open PR into `master` (`gh pr create`). Never push to or force-push `master`. Cloudflare Pages auto-deploys `master` and gives each PR a preview URL. Production branch is `master`.
+
+**Never**: commit secrets or add API keys; edit `AV_KEY`/`FH_KEY`/`OP_KEY`; hand-edit the `WORLD_PATHS` blob; add `import`/`export`, a bundler, or runtime npm deps; create a `newsletter/` dir (collides with `Newsletter/`); add images over ~600KB; use em dashes in visible copy; edit `project/` (stale design prototype, reference only). Keep `Object.assign(window, {...})` exports intact.
+
+**Known state to verify before assuming**: the Events calendar is hidden on the About page (see git history "hide the events calendar"); ask the owner before un-hiding. Edition 1 may still contain a literal `$X` placeholder (grep `index.html`).
+
+**Help-request protocol (stop and escalate, do not work around)**: if the problem is hosting/deploy/DNS/email/API quota/keys/repo permissions, or you have failed the same fix twice, STOP. Do not retry in a loop, do not hack around infrastructure, do not paste secrets. Create a GitHub issue for the owner:
+```
+gh issue create --label help-request --title "[Help] <short title>" --body "<goal; exact error text; branch/PR link; what was tried>"
+```
+(or use the Help Request issue template in the web UI). Prefix the title with `URGENT` if the live site is down or blank. Then tell your user the issue is filed, and continue with unrelated work on another branch. The owner checks the `help-request` label, fixes the hosting side, and replies on the issue.
+
 ## What this is
 
-A single-file static website for the **Commodity Trading & Shipping Club (CTSC)** at Indiana University. The deliverable is `/Users/seva/Downloads/commodity-club-website/index.html` — one self-contained HTML file that runs entirely in the browser with no build step.
+A single-file static website for the **Commodity Trading & Shipping Club (CTSC)** at Indiana University. The deliverable is `index.html` at the repo root — one self-contained HTML file that runs entirely in the browser with no build step.
 
 To preview: open `index.html` directly in a browser, or run a local server:
 ```
-cd /Users/seva/Downloads/commodity-club-website
 python3 -m http.server 8080
 ```
 
@@ -21,7 +36,7 @@ bun install   # once
 bun run test  # runs tests/run-tests.mjs
 ```
 
-(The machine has bun, not node; the script also runs under `node tests/run-tests.mjs` if node is ever installed.)
+(Uses bun; `npm install && npm test` also works. CI runs the same tests on every PR.)
 
 `tests/run-tests.mjs` checks, in order:
 1. **JSX compile** — every `<script type="text/babel">` block compiles with Babel. A syntax error in this file ships a blank page, so this is the most important check.
@@ -73,7 +88,7 @@ Known pending item: Edition 1's Natural Gas section contains a literal `$X` (unf
 **Do not create a `newsletter/` directory** — the untracked `Newsletter/` folder (source .docx) in the main checkout would collide on macOS's case-insensitive filesystem.
 
 ### Live prices & sparklines
-`useLivePrices` fetches Alpha Vantage (commodities) and Finnhub (ETF proxies), cached in `localStorage` (`ctsc-live-prices-v4`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
+`useLivePrices` fetches OilPriceAPI (crude, refined products, EU carbon; `OP_MAP`, 24h cache), Alpha Vantage (metals/ag, `AV_MAP`) and Finnhub (ETF proxies, `FH_MAP`), cached in `localStorage` (`ctsc-live-prices-v4`, 6h TTL). `fetchAVCommodity` also returns a `series` array (30 daily / 12 monthly points) rendered by the `Sparkline` component in the price tables. Static prices in `COMMODITIES` are the offline fallback — keep them realistic. Bump the cache key suffix whenever the cached shape changes.
 
 `AV_MAP`'s `multiplier` must convert Alpha Vantage's raw unit (check the API response's own `unit` field, not just the docs) to the unit `COMMODITIES` displays — CORN and WHEAT come back in $/metric ton and need the bushel conversion baked into the multiplier (`BU_PER_MT_CORN`/`BU_PER_MT_WHEAT`), COFFEE already comes back in ¢/lb. RB (RBOB Gasoline) has no Alpha Vantage commodity endpoint, so it's wired through `FH_MAP` as an ETF proxy (UGA) like AU/ZS/LI/FE/NI — the `ETF` badge in `PriceRow` disclaims it's a correlated fund price, not the literal spot commodity.
 
@@ -114,7 +129,7 @@ CSS classes in the second `<style>` block + React helpers: `Reveal` (Intersectio
 **Gotcha:** `.page-enter` must keep `animation-fill-mode: backwards` (NOT `both`/`forwards`) — a retained transform makes the page wrapper the containing block for `position: fixed` children (lightbox, progress bar), pinning them to the document instead of the viewport.
 
 ## Key content files
-- `Newsletter/Commodity Club Newsletter.docx` (main checkout, untracked) — source document for Edition 1
+- `Newsletter/Commodity Club Newsletter.docx` (owner's machine only, untracked; ask the owner if you need it) — source document for Edition 1
 - `commodities_primer.md` — source of truth for commodity market descriptions, firms, instruments, and the "key spreads" lists
 - `commodity_news_sources.md` — source of truth for the News & Data Sources section
 - `DESIGN-ferrari.md` — full color palette, typography rules, and component styling reference
